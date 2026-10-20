@@ -1,0 +1,1334 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+
+    <title>Layout de Pré-venda/Pedido</title>
+
+
+    <style type="text/css">
+    <!--
+    @import url("style.css");
+    -->
+    </style>
+  </head>
+<body>
+
+<div id="topo">
+<a name="Pre_Venda/Pedido"><h3>Layout de Pré-venda/Pedido
+<div id="versao">Versão 19.0.0.20313</div>
+</h3>
+</a></div><a name="Pre_Venda/Pedido">
+
+<br clear="all">
+<br clear="all">
+
+<h2>Considerações sobre o preenchimento dos campos:</h2>
+
+<div class="texto">
+1. Campos de data devem ser preenchidos conforme a coluna formato indicada no
+layout.<br>
+2. Campos numéricos devem usar o caractere <strong>PONTO</strong> (.) como separador de decimais da forma especificada na coluna formato.<br>
+3. Código de funcionário de 4 dígitos. Caso queira utilizar com 6 dígitos, o
+referido campo com esse tamanho encontra-se entre os últimos do registro.<br>
+4. Código da pré-venda de 9 dígitos. Caso queira utilizar com 10 dígitos, o
+referido campo com esse tamanho encontra-se entre os últimos do registro.<br>
+5. Campos no formato numérico não contemplados pelo integrador devem obrigatoriamente está preenchidos com ZEROS.<br>
+</div>
+
+<br clear="all">
+<br clear="all">
+
+<h2>Planilhas</h2>
+
+</a>
+<div class="link"><a name="Pre_Venda/Pedido"></a>
+<a href="#Registro1">Registro 1: Pré-venda/Pedido</a></div>
+<div class="link"><a href="#Registro2">Registro 2: Itens da pré-venda/pedido</a></div>
+<div class="link"><a href="#Registro3">Registro 3: Finalização da pré-venda/pedido <strong>(OPCIONAL)</strong></a></div>
+<br>
+<div class="link"><a href="#Registro4">Arquivo VDA9999999.LID: Retorno da pré-venda efetivada</a></div>
+<br>
+<div class="link"><a href="#Registro5">Arquivo VDA9999999.CAN: Cancelamento de cupom fiscal</a></div>
+
+<br clear="all">
+
+<div class="texto">Registro 1: Pré-venda/pedido<a name="Registro1"></a></div>
+<h2>RPX9999999.ECF</h2>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+<br clear="all">
+
+
+
+<table width="1400" class="bordasimples tabela validacao_completa_e_simples">
+<tbody><tr>
+    <td align="center" valign="top" class="bg coluna_numero"><h1>Nº</h1></td>
+    <td width="290" align="left" class="bg" valign="top"><h1>Nome do campo</h1></td>
+    <td width="500" align="left" class="bg" valign="top"><h1>Conteúdo</h1></td>
+    <td width="95" align="center" class="bg" valign="top"><h1>Tamanho</h1></td>
+    <td width="160" align="left" class="bg" valign="top"><h1>Formato</h1></td>
+    
+<td width="97" align="center" class="bgOrange" valign="top"><h1>Validação completa</h1></td>
+<td width="97" align="center" class="bgGreen" valign="top"><h1>Validação simples</h1></td>
+    <td align="center" width="97" class="bg">
+	<h1>Posição <br> Inicio Fim</h1>
+</td>
+</tr>
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto" height="28">Tipo de registro</td>
+    <td class="texto">Campo fixo contendo "01" </td>
+    <td class="texto" align="center">02</td>
+    <td class="texto">99</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto" align="center">
+	001 002
+</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Número da pré-venda/pedido</td>
+    <td class="texto">Número de pré-venda. Vide consideração 4</td>
+    <td class="texto" align="center">09</td>
+    <td class="texto">999999999</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto" align="center">
+003 011	
+</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">003</td>
+    <td class="texto">Código do cliente</td>
+    <td class="texto">Código interno ou CPF/CNPJ do cliente</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto">999999999999999</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto" align="center">012 026
+</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">004</td>
+    <td class="texto">Data de emissão</td>
+    <td class="texto">Data de emissão. Vide consideração</td>
+    <td class="texto" align="center">08</td>
+    <td class="texto">DDMMAAAA</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto" align="center">027 034</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">005</td>
+    <td class="texto">Hora de emissão</td>
+    <td class="texto">Hora de emissão</td>
+    <td class="texto" align="center">04</td>
+    <td class="texto">9999</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto" align="center">035 038</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">006</td>
+    <td class="texto">Código de funcionário</td>
+    <td class="texto">Código do vendedor. Vide consideração 3</td>
+    <td class="texto" align="center">04</td>
+    <td class="texto">9999</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto" align="center">039 042</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">007</td>
+    <td class="texto">Valor da pré-venda/pedido</td>
+    <td class="texto">Valor total da pré-venda. Preencher com zeros à esquerda e com 2 casas decimais. Caso os itens tenham desconto este deve ser o valor líquido</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto">999999999999.99</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto" align="center">043 057</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">008</td>
+    <td class="texto">Observação</td>
+    <td class="texto">&nbsp;</td>
+    <td class="texto" align="center">60</td>
+    <td class="texto">A</td>
+    
+<td class="texto" align="center">N</td><td class="texto" align="center">N</td>
+    <td class="texto" align="center">058 117</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">009</td>
+    <td class="texto">Campo Reservado</td>
+    <td class="texto">Campo Reservado</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto">999999999999.99</td>
+    
+<td class="texto" align="center">N</td><td class="texto" align="center">N</td>
+    <td class="texto" align="center">118 132</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">010</td>
+    <td class="texto">Descrição do cliente</td>
+    <td class="texto">Nome Completo do Cliente</td>
+    <td class="texto" align="center">40</td>
+    <td class="texto">A</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto" align="center">133 172</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">011</td>
+    <td class="texto">Endereço do cliente</td>
+    <td class="texto">Endereço de localização do cliente</td>
+    <td class="texto" align="center">45</td>
+    <td class="texto">A</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto" align="center">173 217</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">012</td>
+    <td class="texto">Bairro do cliente</td>
+    <td class="texto">Nome do bairro</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto">A</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto" align="center">218 232</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">013</td>
+    <td class="texto">Cidade do cliente</td>
+    <td class="texto">Nome da cidade</td>
+    <td class="texto" align="center">20</td>
+    <td class="texto">A</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto" align="center">233 252</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">014</td>
+    <td class="texto">Estado do cliente</td>
+    <td class="texto">Unidade da Federação (UF)</td>
+    <td class="texto" align="center">02</td>
+    <td class="texto">A</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto" align="center">253 254</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">015</td>
+    <td class="texto">Número do endereço cliente</td>
+    <td class="texto">&nbsp;</td>
+    <td class="texto" align="center">06</td>
+    <td class="texto">999999</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto" align="center">255 260</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">016</td>
+    <td class="texto">Complemento do endereço do cliente</td>
+    <td class="texto">Número da casa, apto, etc.</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto">A</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto" align="center">261 275</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">017</td>
+    <td class="texto">Códido do funcionário</td>
+    <td class="texto">Código do vendedor. Vide consideração 3</td>
+    <td class="texto" align="center">06</td>
+    <td class="texto">999999</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto" align="center">276 281</td>
+  </tr>
+  <tr>
+    <td height="20" align="center" class="bgCelula">018</td>
+    <td class="texto">Número da pré-venda/pedido</td>
+    <td class="texto">Número de pré-venda. Vide consideração 4</td>
+    <td class="texto" align="center">10</td>
+    <td class="texto">9999999999</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto" align="center">282 291</td>
+  </tr>
+
+  <tr>
+    <td height="20" align="center" class="bgCelula">019</td>
+    <td class="texto">Nome do vendedor</td>
+    <td class="texto">Nome do vendedor</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto">A</td>
+    
+<td class="texto" align="center">N</td><td class="texto" align="center">N</td>
+    <td class="texto" align="center">292 386</td>
+  </tr>
+   <tr>
+    <td height="20" align="center" class="bgCelula">020</td>
+    <td class="texto">Telefone</td>
+    <td class="texto">Telefone do cliente para impressão no cupom</td>
+    <td class="texto" align="center">12</td>
+    <td class="texto">999999999999</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+
+    <td class="texto" align="center">307 318</td>
+	</tr>
+   <tr>
+    <td height="20" align="center" class="bgCelula">021</td>
+    <td class="texto">Tipo de Pessoa</td>
+    <td class="texto">Valores possíveis: F-Física ou J-Jurídica</td>
+    <td class="texto" align="center">1</td>
+    <td class="texto">A</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto" align="center">319 319</td>
+	</tr>
+   <tr>
+    <td height="20" align="center" class="bgCelula">022</td>
+    <td class="texto">Inscrição Estadual</td>
+    <td class="texto">Inscrição Estadual</td>
+    <td class="texto" align="center">20</td>
+    <td class="texto">99999999999999999999</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto" align="center">320 339</td>
+	</tr>
+   <tr>
+    <td height="20" align="center" class="bgCelula">023</td>
+    <td class="texto">Código do Pais</td>
+    <td class="texto">Código do Pais</td>
+    <td class="texto" align="center">5</td>
+    <td class="texto">999999999999</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto" align="center">340 344</td>
+	</tr>
+   <tr>
+    <td height="20" align="center" class="bgCelula">024</td>
+    <td class="texto">Código do IBGE</td>
+    <td class="texto">Código da UF + Código do município</td>
+    <td class="texto" align="center">7</td>
+    <td class="texto">999999999</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto" align="center">345 351</td>
+	</tr>
+   <tr>
+    <td height="20" align="center" class="bgCelula">025</td>
+    <td class="texto">CEP</td>
+    <td class="texto">CEP</td>
+    <td class="texto" align="center">8</td>
+    <td class="texto">99999999</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto" align="center">352 359</td>
+   </tr>
+   <tr>
+    <td height="20" align="center" class="bgCelula">026</td>
+    <td class="texto">CPF/CNPJ</td>
+    <td class="texto">CPF se for pessoa física, CNPJ se for pessoa jurídica. vide campo 21</td>
+    <td class="texto" align="center">14</td>
+    <td class="texto">99999999999999</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto" align="center">360 373</td>
+  </tr>
+</tbody></table>
+
+<br clear="all">
+
+<div class="texto"><strong>Exemplo:</strong><br><br>
+<input style="margin: 0px; width: 1400px; height: 30px;" readonly="" type="text" value="012013001970000646753434491305202015170001000000000142.80Pré-venda 201300197 da Sede-Aluno 57-135156 000000000341.97 000000000000000MARCONE ANCHIETA DA NOBREGA CANDEIA     Rua Luiza Miranda Coelho                     Luciano CavalcaFortaleza           CE000001Complemento end0000010201300197ALBERTO MOREIRA085328945130F000000000000698850280105823044006074377011111111100000"><a name="Registro5"></a>
+	<br clear="all"></div><table width="1376" border="0">
+  <tbody><tr>
+	
+  </tr>
+</tbody></table>
+<br clear="all">
+
+<div class="texto">Registro 2: Itens da pré-venda/pedido<a name="Registro2"></a></div>
+<h2>RPX9999999.ECF</h2>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all">
+
+
+
+<table width="1400" class="bordasimples tabela validacao_completa_e_simples">
+<tbody><tr>
+    <td align="center" valign="top" class="bg coluna_numero"><h1>Nº</h1></td>
+    <td width="290" align="left" class="bg" valign="top"><h1>Nome do campo</h1></td>
+    <td width="500" align="left" class="bg" valign="top"><h1>Conteúdo</h1></td>
+    <td width="95" align="center" class="bg" valign="top"><h1>Tamanho</h1></td>
+    <td width="160" align="left" class="bg" valign="top"><h1>Formato</h1></td>
+    <td width="97" align="center" class="bgOrange" valign="top"><h1>Validação completa</h1></td>
+<td width="97" align="center" class="bgGreen" valign="top"><h1>Validação simples</h1></td>
+    <td align="center" valign="top" class="bg" width="97">
+	<h1>Posição <br> Inicio Fim</h1></td>
+</tr>
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Tipo de registro</td>
+    <td class="texto">Campo fixo contendo "02"</td>
+    <td class="texto" align="center">02</td>
+    <td class="texto">99</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto">001 002</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Número da pré-venda/pedido</td>
+    <td class="texto">Número de pré-venda. Vide consideração 4</td>
+    <td class="texto" align="center">09</td>
+    <td class="texto">999999999</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto">003 011</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">003</td>
+    <td class="texto">Código do produto</td>
+    <td class="texto">Código interno ou Código de barras</td>
+    <td class="texto" align="center">14</td>
+    <td class="texto">99999999999999</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto">012 025</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">004</td>
+    <td class="texto">Descrição completa do produto</td>
+    <td class="texto">Descritivo do produto</td>
+    <td class="texto" align="center">45</td>
+    <td class="texto">A</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">N</td>
+    <td class="texto">026 070</td>
+  </tr><tr>
+    <td align="center" class="bgCelula">005</td>
+    <td class="texto">Descrição reduzida do produto</td>
+    <td class="texto">Descritivo padrão utilizado no cupom</td>
+    <td class="texto" align="center">20</td>
+    <td class="texto">A</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto">071 090</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">006</td>
+    <td class="texto">Quantidade</td>
+    <td class="texto">Preencher com zeros à esquerda e com 3 casas decimais</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto">99999999999.999</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto">091 105</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">007</td>
+    <td class="texto">Valor unitário</td>
+    <td class="texto">Preencher com zeros à esquerda e com 2 casas decimais. Somente aceita 3 casas decimais na rotina de pré-venda e se na importação do Service estiver marcado a opção "Valor Unitário com 3 casas decimais", devendo enviar no seguinte formato 99999999999.999 mantendo a mesma posição do layout</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto">999999999999.99</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto">106 120</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">008</td>
+    <td class="texto">Valor dos desconto</td>
+    <td class="texto">Desconto a ser aplicado no produto. Preencher com zeros à esquerda e com 2 casas decimais. Caso preencham o desconto o valor do produto deve ser o valor bruto</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto">999999999999.99</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto">121 135</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">009</td>
+    <td class="texto">Tributação</td>
+    <td class="texto">Tributação de venda do produto. Exemplo: T17(tributado 17%), T25(tributado 25%)</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto">A99</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto">136 138</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">010</td>
+    <td class="texto">Complemento descrição produto</td>
+    <td class="texto">Utilizado para fins de impressão detalhada
+  no cupom fiscal, deve-se atentar se o modelo do ECF suporta impressão com
+  descrição maior que 20 caracteres</td>
+    <td class="texto" align="center">70</td>
+    <td class="texto">A</td>
+    
+<td class="texto" align="center">N</td><td class="texto" align="center">N</td>
+    <td class="texto">139 208</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">011</td>
+    <td class="texto">Observação</td>
+    <td class="texto">&nbsp;</td>
+    <td class="texto" align="center">255</td>
+    <td class="texto">A</td>
+    
+<td class="texto" align="center">N</td><td class="texto" align="center">N</td>
+    <td class="texto">209 463</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">012</td>
+    <td class="texto">Alterar produto </td>
+    <td class="texto">Alterar produto no cadastro. S = Sim ou N = Não</td>
+    <td class="texto" align="center">01</td>
+    <td class="texto">A</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">N</td>
+    <td class="texto">464 465</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">013</td>
+    <td class="texto">Número da pré-venda/pedido</td>
+    <td class="texto">Número de pré-venda. Vide consideração 4</td>
+    <td class="texto" align="center">10</td>
+    <td class="texto">9999999999</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto">465 474</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">014</td>
+    <td class="texto">Código Auxiliar</td>
+    <td class="texto">Código Auxiliar</td>
+    <td class="texto" align="center">20</td>
+    <td class="texto">A</td>
+    
+<td class="texto" align="center">N</td><td class="texto" align="center">N</td>
+    <td class="texto">475 494</td>
+  </tr><tr>
+    <td align="center" class="bgCelula">015</td>
+    <td class="texto">Unidade de Venda</td>
+    <td class="texto">Unidade de Venda. Caso não seja enviada será utilizada a unidade padrão UN</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto">A</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">N</td>
+    <td class="texto">495 497</td>
+  </tr>
+   <tr>
+    <td align="center" class="bgCelula">016</td>
+    <td class="texto">Código NCM</td>
+    <td class="texto">Nomenclatura Comum do MERCOSUL </td>
+    <td class="texto" align="center">08</td>
+    <td class="texto">99999999</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto">498 505</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">017</td>
+    <td class="texto">Sigla do PIS</td>
+    <td class="texto"> Sigla do PIS na venda. Valor válido: P = PIS </td>
+    <td class="texto" align="center">01</td>
+    <td class="texto">A</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto">506 506</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">018</td>
+    <td class="texto">Alíquota do PIS</td>
+    <td class="texto">Alíquota do PIS</td>
+    <td class="texto" align="center">08</td>
+    <td class="texto">99999.99</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto">507 514</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">019</td>
+    <td class="texto">CST do PIS</td>
+    <td class="texto">Código da Situação Tributária do PIS</td>
+    <td class="texto" align="center">02</td>
+    <td class="texto">99</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto">515 516</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">020</td>
+    <td class="texto">Sigla da COFINS</td>
+    <td class="texto"> Sigla da COFINS.  Valor válido: C = COFINS</td>
+    <td class="texto" align="center">01</td>
+    <td class="texto">A</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto">517 517</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">021</td>
+    <td class="texto">Alíquota COFINS</td>
+    <td class="texto">Alíquota COFINS</td>
+    <td class="texto" align="center">08</td>
+    <td class="texto">99999.99 </td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto">518 525</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">022</td>
+    <td class="texto">CST da COFINS</td>
+    <td class="texto"> Código da Situação Tributária da COFINS</td>
+    <td class="texto" align="center">02</td>
+    <td class="texto">99</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto">526 527</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">023</td>
+    <td class="texto">Natureza</td>
+    <td class="texto">Natureza dos impostos federais. Para CST 04 a 09 é obrigatório o código da natureza.</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto">999</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">N</td>
+    <td class="texto">528 530</td>
+  </tr>
+  <tr>
+      <td align="center" class="bgCelula">024</td>
+      <td class="texto">Código Exceção NCM</td>
+      <td class="texto">Código Exceção NCM </td>
+      <td class="texto" align="center">02</td>
+      <td class="texto">99</td>
+      <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+      <td class="texto">531 532</td>
+  </tr>
+  <tr>
+      <td align="center" class="bgCelula">025</td>
+      <td class="texto">Tabela A</td>
+      <td class="texto">Tabela A </td>
+      <td class="texto" align="center">01</td>
+      <td class="texto">9</td>
+      <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+      <td class="texto">533 533</td>
+  </tr>
+  <tr>
+      <td align="center" class="bgCelula">026</td>
+      <td class="texto">Valor Garantia</td>
+      <td class="texto">Valor da garantia do produto</td>
+      <td class="texto" align="center">15</td>
+      <td class="texto">999999999999.99</td>
+      <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+      <td class="texto">534 548</td>
+        </tr>
+	    <tr>
+	        <td align="center" class="bgCelula">027</td>
+	        <td class="texto">Tabela B</td>
+	        <td class="texto">CST ICMS</td>
+	        <td class="texto" align="center">02</td>
+	        <td class="texto">99</td>
+	        <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+	        <td class="texto">549 550</td>
+      </tr>
+	  	    <tr>
+	  	        <td align="center" class="bgCelula">028</td>
+	  	        <td class="texto">CSOSN</td>
+	  	        <td class="texto">CSOSN</td>
+	  	        <td class="texto" align="center">03</td>
+	  	        <td class="texto">99</td>
+	  	        <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+	  	        <td class="texto">551 553</td>
+        </tr>
+	    <tr>
+	        <td align="center" class="bgCelula">029</td>
+	        <td class="texto">CFOP</td>
+	        <td class="texto">CFOP associada a tributação</td>
+	        <td class="texto" align="center">04</td>
+	        <td class="texto">9999</td>
+	        <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+	        <td class="texto">554 557</td>
+	    </tr>
+  <tr>
+    <td align="center" class="bgCelula">030</td>
+    <td class="texto">Código do Imposto PIS</td>
+    <td class="texto">Valores válidos PIS: 01 a 99</td>
+    <td align="center" class="texto">02</td>
+    <td class="texto">99</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto">558 559</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">031</td>
+    <td class="texto">Código do Imposto COFINS</td>
+    <td class="texto">Valores válidos COFINS: 01 a 99</td>
+    <td align="center" class="texto">02</td>
+    <td class="texto">99</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto">560 561</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">032</td>
+    <td class="texto">CEST</td>
+    <td class="texto">Código Especificador da Substituição Tributária</td>
+    <td align="center" class="texto">07</td>
+    <td class="texto">9999999</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto">562 568</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">033</td>
+    <td class="texto">Alíquota do ICMS de origem</td>
+    <td class="texto">Deve ser preenchido, quando o ICMS tiver CST = 60 ou CSOSN = 500 para a venda ao consumidor final.</td>
+    <td align="center" class="texto">15</td>
+    <td class="texto">999999999999.99</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto">569 583</td>
+  </tr>
+  <tr>
+     <td align="center" class="bgCelula">034</td>
+    <td class="texto">Percentual de redução do ICMS de origem</td>
+    <td class="texto">Deve ser preenchido, quando o ICMS tiver CST = 60 ou CSOSN = 500  para a venda ao consumidor final.</td>
+    <td align="center" class="texto">15</td>
+    <td class="texto">999999999999.99</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+    <td class="texto">584 598</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">035</td>
+    <td class="texto">Código do beneficio fiscal</td>
+    <td class="texto">Código do beneficio fiscal, utilizado para produtos que trabalham com desorneração do ICMS.</td>
+    <td align="center" class="texto">08</td>
+    <td class="texto">A</td>
+    
+<td class="texto" align="center">N</td><td class="texto" align="center">N</td>
+    <td class="texto">599 606</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">036</td>
+    <td class="texto">Destaca Desoneração do ICMS</td>
+    <td class="texto">Desoneração (S-Sim N-Não).</td>
+    <td align="center" class="texto">01</td>
+    <td class="texto">A</td>
+    <td class="texto" align="center">N</td>
+	<td class="texto" align="center">N</td>
+    <td class="texto">607 607</td>
+ </td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">037</td>
+    <td class="texto">Destaca ICMS ST Origem</td>
+    <td class="texto">ICMS ST origem (S-Sim N-Não).</td>
+    <td align="center" class="texto">01</td>
+    <td class="texto">A</td>
+    <td class="texto" align="center">N</td>
+	<td class="texto" align="center">N</td>
+    <td align="center" class="texto">608 608</td>
+</tbody>
+</table>
+
+
+<br clear="all">
+
+<table width="1400" border="0">
+  <tbody><tr>
+    <td class="texto"><strong>Exemplo:</strong>
+<br>
+<br><input style="margin: 0px; width: 1400px; height: 30px;" readonly="" width="1395" type="text" value="0204000001900000000000001VENT. 40CM MESA FD40/VE40 ARNO               VENT.40CM MESA FD40 00000000001.000000000000142.80000000000000.00T17ARNO 	S0040000019                                                                                                                                                                                                                                                                                                                     0000000000                       00000000 0000000000 000000000000000000000000000000000000000000000000000000000000000000000000000000000        "></td>
+    
+    
+    
+    
+    
+  </tr>
+</tbody></table>
+
+
+
+
+<br clear="all">
+
+<br>
+<div class="texto">Registro 3: Finalização da pré-venda/pedido<a name="Registro3"></a></div>
+<h2>RPX9999999.ECF</h2>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+<br clear="all">
+
+<table width="1400" class="bordasimples tabela validacao_completa_e_simples">
+  <tbody><tr>
+    <td align="center" class="bg coluna_numero"><h1>Nº</h1></td>
+    <td width="290" align="left" class="bg"><h1>Nome do Campo</h1></td>
+    <td width="500" align="left" class="bg"><h1>Conteúdo</h1></td>
+    <td width="95" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="160" align="left" class="bg"><h1>Formato</h1></td>
+    
+    
+  <td width="97" align="center" class="bgOrange"><h1>Validação completa</h1></td><td width="97" align="center" class="bgGreen" valign="top"><h1>Validação simples</h1></td><td align="center" valign="top" class="bg" width="97">
+	<h1>Posição <br> Inicio Fim</h1></td></tr>
+  <tr>
+    <td height="26" align="center" class="bgCelula">001</td>
+    <td class="texto">Tipo de registro</td>
+    <td class="texto">Campo fixo contendo "03"</td>
+    <td class="texto" align="center">02</td>
+    <td class="texto">99</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+    <td class="texto">001 002</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Código da finalizadora</td>
+    <td class="texto">Forma de pagamento utilizada na pré-venda/pedido</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto">999</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+	<td class="texto">003 005</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">003</td>
+    <td class="texto">Número da pré-venda/pedido</td>
+    <td class="texto">Número de pré-venda/pedido (vide consideração 4)</td>
+    <td class="texto" align="center">09</td>
+    <td class="texto">999999999</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+	<td class="texto">006 014</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">004</td>
+    <td class="texto">Valor do troco</td>
+    <td class="texto">Preenchido com zeros a esquerda</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto">999999999999.99</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+	<td class="texto">015 029</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">005</td>
+    <td class="texto">Valor da finalização</td>
+    <td class="texto">Preenchido com zeros a esquerda</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto"> 999999999999.99</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+	<td class="texto">030 044</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">006</td>
+    <td class="texto">Código do plano de pagamento</td>
+    <td class="texto">Plano de pagamento utilizado</td>
+    <td class="texto" align="center">02</td>
+    <td class="texto">99</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">N</td>
+	<td class="texto">045 046</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">007</td>
+    <td class="texto">Valor da entrada</td>
+    <td class="texto">&nbsp;</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto">999999999999.99</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+	<td class="texto">047 061</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">008</td>
+    <td class="texto">Valor da primeira parcela</td>
+    <td class="texto">Valor da primeira parcela</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto">999999999999.99</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+	<td class="texto">062 076</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">009</td>
+    <td class="texto">Código da finalizadora</td>
+    <td class="texto">Código da finalizadora em que foi dado a entrada</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto">999</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+	<td class="texto">077 080</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">010</td>
+    <td class="texto">Número parcelas finalizadora</td>
+    <td class="texto">Numero de Parcelas desta finalizadora</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto">999</td>
+    <td class="texto" align="center">S</td>
+<td class="texto" align="center">N</td>
+	<td class="texto">081 083</td>
+  </tr>
+  <tr>
+    <td height="20" align="center" class="bgCelula">011</td>
+    <td class="texto">Número da pré-venda/pedido</td>
+    <td class="texto">Número de pré-venda/pedido</td>
+    <td class="texto" align="center">10</td>
+    <td class="texto">9999999999</td>
+    
+<td class="texto" align="center">S</td><td class="texto" align="center">S</td>
+	<td class="texto">084 093</td>
+  </tr>
+</tbody></table>
+
+<br clear="all">
+
+<table width="1400" border="0">
+  <tbody><tr>
+    <td class="texto" width="1400"><strong>Exemplo:</strong>
+<br>
+<br><input style="margin: 0px; width: 1400px; height: 30px;" readonly="" type="text" value="03003040000019000000000000.00000000000142.8004000000000000000000000000142.800000120040000019"></td>
+  </tr>
+</tbody></table>
+
+
+
+<br clear="all">
+
+<br>
+<div class="texto">Arquivo de Retorno da pré-venda<a name="Registro4"></a></div>
+<h2>VDA9999999.LID</h2>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+<br clear="all">
+
+<table width="1400" class="bordasimples tabela tabela_padrao">
+  <tbody><tr>
+    <td align="center" class="bg coluna_numero"><h1>Nº</h1></td>
+    <td width="290" align="left" class="bg"><h1>Nome do Campo</h1></td>
+    <td width="500" align="left" class="bg"><h1>Conteúdo</h1></td>
+    <td width="95" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="140" align="left" class="bg"><h1>Formato</h1></td>
+    
+  <td align="center" valign="top" class="bg" width="97">
+	<h1>Posição <br> Inicio Fim</h1></td><td align="center" valign="top" class="bg" width="97" style="
+    visibility: hidden;
+">
+    <h1></h1>
+</td><td align="center" valign="top" class="bg" width="97" style="
+    visibility: hidden;
+">
+    <h1></h1>
+</td></tr>
+  <tr>
+    <td height="30" align="center" class="bgCelula">001</td>
+    <td class="texto">Tipo de registro</td>
+    <td class="texto">Tipo de registro fixo (01 - pre venda)</td>
+    <td class="texto" align="center">02</td>
+    <td class="texto">99</td>
+    <td class="texto">001 002</td>
+  </tr>
+  <tr>
+	<td align="center" class="bgCelula">002</td>
+    <td class="texto">Código do funcionário</td>
+    <td class="texto">Código do vendedor Vide consideração 3</td>
+    <td class="texto" align="center">04</td>
+    <td class="texto">9999</td>
+	<td class="texto">003 006</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">003</td>
+    <td class="texto">Número da pré-venda/pedido</td>
+    <td class="texto">Número de pré-venda. Vide consideração 4</td>
+    <td class="texto" align="center">09</td>
+    <td class="texto">999999999</td>
+	<td class="texto">007 015</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">004</td>
+    <td class="texto">COO</td>
+    <td class="texto">Sequencial do Cupom Fiscal</td>
+    <td class="texto" align="center">06</td>
+    <td class="texto">999999</td>
+	<td class="texto">016 021</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">005</td>
+    <td class="texto">Valor total</td>
+    <td class="texto">Preenchido com zeros à esquerda e com 2 casas decimais</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto">999999999999.99</td>
+	<td class="texto">022 036</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">006</td>
+    <td class="texto">Número do caixa</td>
+    <td class="texto">Número do caixa</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto">999</td>
+	<td class="texto">037 039</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">007</td>
+    <td class="texto">Série do ECF/CF-e</td>
+    <td class="texto">Número de série do ECF/CF-e</td>
+    <td class="texto" align="center">20</td>
+    <td class="texto">A</td>
+	<td class="texto">040 059</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">008</td>
+    <td class="texto">Código do funcionário</td>
+    <td class="texto">Código do vendedor. Vide consideração 3</td>
+    <td class="texto" align="center">06</td>
+    <td class="texto">999999</td>
+	<td class="texto">060 065</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">009</td>
+    <td class="texto">Sequencial</td>
+    <td class="texto">Sequencial interno do sistema</td>
+    <td class="texto" align="center">06</td>
+    <td class="texto">999999</td>
+	<td class="texto">066 071</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">010</td>
+    <td class="texto">Número da pré-venda/pedido</td>
+    <td class="texto">Número de pré-venda. Vide consideração 4</td>
+    <td class="texto" align="center">10</td>
+    <td class="texto">9999999999</td>
+	<td class="texto">072 081</td>
+  </tr>
+  <tr>
+	    <td align="center" class="bgCelula">011</td>
+	    <td class="texto">Série</td>
+	    <td class="texto">Série da Nota</td>
+	    <td class="texto" align="center">03</td>
+	    <td class="texto">999</td>
+		<td class="texto">082 084</td>
+	  </tr>
+	  <tr>
+	    <td align="center" class="bgCelula">012</td>
+	    <td class="texto">Número</td>
+	    <td class="texto">Número da Nota</td>
+	    <td class="texto" align="center">10</td>
+	    <td class="texto">9999999999</td>
+		<td class="texto">085 094</td>
+	  </tr>
+	  <tr>
+	    <td align="center" class="bgCelula">013</td>
+	    <td class="texto">Chave</td>
+	    <td class="texto">Chave da Nota</td>
+	    <td class="texto" align="center">50</td>
+	    <td class="texto" width="160">99999999999999999999</td>
+		<td class="texto">095 144</td>
+	  </tr>
+	  <tr>
+	    <td align="center" class="bgCelula">014</td>
+	    <td class="texto">Protocolo</td>
+	    <td class="texto">Protocolo da Nota</td>
+	    <td class="texto" align="center">20</td>
+	    <td class="texto">99999999999999999999</td>
+		<td class="texto">145 164</td>
+	  </tr>
+	  <tr>
+	    <td align="center" class="bgCelula">015</td>
+	    <td class="texto">Status</td>
+	    <td class="texto">Status da Nota</td>
+	    <td class="texto" align="center">02</td>
+	    <td class="texto">A</td>
+		<td class="texto">165 166</td></tr></tbody></table>
+
+<table width="1400" class="bordasimples tabela tabela_padrao">
+  <tbody><tr>
+    <td align="center" class="bg coluna_numero"><h1>Nº</h1></td>
+    <td width="290" align="left" class="bg"><h1>Nome do Campo</h1></td>
+    <td width="500" align="left" class="bg"><h1>Conteúdo</h1></td>
+    <td width="95" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="160" align="left" class="bg"><h1>Formato</h1></td>
+    
+  <td align="center" valign="top" class="bg" width="97">
+	<h1>Posição <br> Inicio Fim</h1></td><td align="center" valign="top" class="bg" width="97" style="
+    visibility: hidden;
+">
+    <h1></h1>
+</td><td align="center" valign="top" class="bg" width="97" style="
+    visibility: hidden;
+">
+    <h1></h1>
+</td></tr>
+  <tr>
+    <td height="27" align="center" class="bgCelula">001</td>
+    <td class="texto">Tipo de registro</td>
+    <td class="texto">Tipo de registro fixo (02 - finalização)</td>
+    <td class="texto" align="center">02</td>
+    <td class="texto">99</td>
+    <td class="texto">001 002</td>
+  </tr>
+  <tr>
+	<td height="23" align="center" class="bgCelula">002</td>
+    <td class="texto">Código da finalizadora</td>
+    <td class="texto">Código da finalizadora</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto">999</td>
+	<td class="texto">003 005</td>
+  </tr>
+  <tr>
+    <td height="23" align="center" class="bgCelula">003</td>
+    <td class="texto">Número da autorizadora</td>
+    <td class="texto">Número da autorização retornada pela instituição de crédito via TEF</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto">999999999999999</td>
+	<td class="texto">006 020</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">004</td>
+    <td class="texto">Tipo de parcelamento</td>
+    <td class="texto">Parcelamento foi pela Administradora ou Pelo Estabelecimento</td>
+    <td class="texto" align="center">04</td>
+    <td class="texto">9999</td>
+	<td class="texto">021 024</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">005</td>
+    <td class="texto">Redes autorizadoras</td>
+    <td class="texto">	00000-Outra, não definida;<br>
+						00001-Tecban;<br>
+						00004-Visanet;<br>
+						00005-Redecard</td>
+    <td class="texto" align="center">05</td>
+    <td class="texto">99999</td>
+	<td class="texto">025 029</td>
+  </tr>
+  <tr>
+    <td height="21" align="center" class="bgCelula">006</td>
+    <td class="texto">Número de parcelas</td>
+    <td class="texto">Quantidade de parcelas da venda retornada pelo TEF</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto">999</td>
+	<td class="texto">030 032</td>
+  </tr>
+  <tr>
+    <td height="21" align="center" class="bgCelula">007</td>
+    <td class="texto">NSU Sitef</td>
+    <td class="texto">Número do sequencial único - NSU</td>
+    <td class="texto" align="center">06</td>
+    <td class="texto">999999</td>
+	<td class="texto">033 038</td>
+  </tr>
+  <tr>
+    <td height="21" align="center" class="bgCelula">008</td>
+    <td class="texto">CPF/CNPJ do Cliente</td>
+    <td class="texto">CPF/CNPJ do Cliente</td>
+    <td class="texto" align="center">14</td>
+    <td class="texto">99999999999999</td>
+	<td class="texto">039 052</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">009</td>
+    <td class="texto">Bandeira do cartão</td>
+    <td class="texto">	00000-Outro, não definido;<br>
+						00001-Visa;<br>
+						00002-Mastercard;<br>
+						00003-Diners;<br>
+						00004-American Express;<br>
+						00005-Sollo;<br>
+						00006-Sidecard (Redecard);<br>
+						00007-Private Label (Redecard);<br>
+						00008-Redeshop;<br>
+						00010-Fininvest.
+	</td>
+    <td class="texto" align="center">05</td>
+    <td class="texto">99999</td>
+	<td class="texto">053 057</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">010</td>
+    <td class="texto">Bin do cartão</td>
+    <td class="texto">Bin do cartão</td>
+    <td class="texto" align="center">06</td>
+    <td class="texto">999999</td>
+	<td class="texto">058 063</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">011</td>
+    <td class="texto">NSU HOST</td>
+    <td class="texto">NSU HOST</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto">999999999999999</td>
+	<td class="texto">064 078</td>
+	  </tr>
+	
+  
+</tbody></table>
+
+
+<br clear="all">
+
+<br>
+<div class="texto">Arquivo de Cancelamento do Cupom Fiscal<a name="Registro5"></a>
+	<br clear="all">
+
+    Observação: Arquivo gerado somente se realizado cancelamento de cupom no PDV através da função 125.
+</div>
+<h2>VDA9999999.CAN</h2>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+<br clear="all">
+
+<table width="1400" class="bordasimples tabela tabela_padrao">
+  <tbody><tr>
+    <td align="center" class="bg coluna_numero"><h1>Nº</h1></td>
+    <td width="290" align="left" class="bg"><h1>Nome do Campo</h1></td>
+    <td width="500" align="left" class="bg"><h1>Conteúdo</h1></td>
+    <td width="95" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="140" align="left" class="bg"><h1>Formato</h1></td>
+    
+  <td align="center" valign="top" class="bg" width="97">
+	<h1>Posição <br> Inicio Fim</h1></td><td align="center" valign="top" class="bg" width="97" style="
+    visibility: hidden;
+">
+    <h1></h1>
+</td><td align="center" valign="top" class="bg" width="97" style="
+    visibility: hidden;
+">
+    <h1></h1>
+</td></tr>
+  <tr>
+	<td height="30" align="center" class="bgCelula">001</td>
+	<td class="texto">Tipo de registro</td>
+	<td class="texto">Tipo de registro fixo (01 - pre venda)</td>
+	<td class="texto" align="center">02</td>
+	<td class="texto">99</td>
+	<td class="texto">001 002</td>
+  </tr>
+  <tr>
+    <td height="27" align="center" class="bgCelula">002</td>
+    <td class="texto">Código do funcionário</td>
+    <td class="texto">Código do vendedor. Vide consideração 3</td>
+    <td class="texto" align="center">04</td>
+    <td class="texto">9999</td>
+    <td class="texto">003 006</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">003</td>
+    <td class="texto">Número da pré-venda/pedido</td>
+    <td class="texto">Número de pré-venda. Vide consideração 4</td>
+    <td class="texto" align="center">09</td>
+    <td class="texto">999999999</td>
+	<td class="texto">007 015</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">004</td>
+    <td class="texto">COO</td>
+    <td class="texto">Sequencial do Cupom Fiscal</td>
+    <td class="texto" align="center">06</td>
+    <td class="texto">999999</td>
+	<td class="texto">016 021</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">005</td>
+    <td class="texto">Valor total</td>
+    <td class="texto">Preenchido com zeros à esquerda</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto">999999999999.99</td>
+	<td class="texto">022 036</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">006</td>
+    <td class="texto">Número do caixa</td>
+    <td class="texto">Número do caixa</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto">999</td>
+	<td class="texto">037 039</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">007</td>
+    <td class="texto">Série do ECF/CF-e</td>
+    <td class="texto">Número de série do ECF/CF-e</td>
+    <td class="texto" align="center">20</td>
+    <td class="texto">A</td>
+	<td class="texto">040 059</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">008</td>
+    <td class="texto">Código do funcionário</td>
+    <td class="texto">Código do vendedor. Vide consideração 3</td>
+    <td class="texto" align="center">06</td>
+    <td class="texto">999999</td>
+	<td class="texto">060 065</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">009</td>
+    <td class="texto">Sequencial</td>
+    <td class="texto">Sequencial interno do sistema</td>
+    <td class="texto" align="center">06</td>
+    <td class="texto">999999</td>
+	<td class="texto">066 071</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">010</td>
+    <td class="texto">Número da pré-venda/pedido</td>
+    <td class="texto">Número de pré-venda. Vide consideração 4</td>
+    <td class="texto" align="center">10</td>
+    <td class="texto">9999999999</td>
+	<td class="texto">072 081</td>
+    </tr>
+    <tr>
+      <td align="center" class="bgCelula">011</td>
+      <td class="texto">Série</td>
+      <td class="texto">Série da Nota</td>
+      <td class="texto" align="center">03</td>
+      <td class="texto">999</td>
+  	<td class="texto">082 084</td>
+    </tr>
+    <tr>
+      <td align="center" class="bgCelula">012</td>
+      <td class="texto">Número</td>
+      <td class="texto">Número da Nota</td>
+      <td class="texto" align="center">10</td>
+      <td class="texto">9999999999</td>
+  	<td class="texto">085 094</td>
+    </tr>
+    <tr>
+      <td align="center" class="bgCelula">013</td>
+      <td class="texto">Chave</td>
+      <td class="texto">Chave da Nota</td>
+      <td class="texto" align="center">50</td>
+      <td class="texto">99999999999999999999</td>
+  	<td class="texto">095 144</td>
+    </tr>
+    <tr>
+      <td align="center" class="bgCelula">014</td>
+      <td class="texto">Protocolo</td>
+      <td class="texto">Protocolo da Nota</td>
+      <td class="texto" align="center">20</td>
+      <td class="texto">99999999999999999999</td>
+  	<td class="texto">145 164</td>
+	  </tr>
+	  <tr>
+</tr></tbody></table>
+<br clear="all">
+<br clear="all">
+
+
+</body></html>

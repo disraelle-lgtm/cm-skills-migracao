@@ -1,0 +1,50 @@
+# Modelo de Tributação e Composição de Produtos
+
+> Exemplo genérico (insumo → produto composto → produto de venda), sem dados de cliente.
+
+## Tabela de Tributação (CST/CSOSN/Simbologia)
+
+| Código | Tributação | CSOSN entrada | CSOSN saída | Simbologia |
+|---|---|---|---|---|
+| 1 | CST 40 Alíquota 0% | 300 | 300 | I00 |
+| 2 | CST 41 Alíquota 0% | 400 | 400 | N00 |
+| 3 | CST 60 Alíquota 0% | 500 | 500 | F00 |
+| 4 | CST 00 Alíquota 4% | 102 | 102 | T04 |
+| 5 | CST 00 Alíquota 7% | 102 | 102 | T07 |
+| 6 | CST 00 Alíquota 12% | 102 | 102 | T12 |
+| 7 | CST 00 Alíquota 17% | 102 | 102 | T17 |
+| 8 | CST 00 Alíquota 18% | 102 | 102 | T18 |
+| 9 | CST 00 Alíquota 19% | 102 | 102 | T19 |
+| 10 | CST 00 Alíquota 20% | 102 | 102 | T20 |
+| 11 | CST 00 Alíquota 21% | 102 | 102 | T21 |
+| 12 | CST 00 Alíquota 22% | 102 | 102 | T22 |
+| 13 | CST 00 Alíquota 23% | 102 | 102 | T23 |
+| 14 | CST 00 Alíquota 24% | 102 | 102 | T24 |
+| 15 | CST 00 Alíquota 25% | 102 | 102 | T25 |
+| 16 | CST 10 Alíquota 12% | 202 | 500 | F12 |
+| 17 | CST 10 Alíquota 18% | 202 | 500 | F18 |
+| 18 | CST 10 Alíquota 19% | 202 | 500 | F19 |
+| 19 | CST 10 Alíquota 20% | 202 | 500 | F20 |
+| 20 | CST 10 Alíquota 21% | 202 | 500 | F21 |
+| 21 | CST 10 Alíquota 22% | 202 | 500 | F22 |
+| 22 | CST 10 Alíquota 23% | 202 | 500 | F23 |
+| 23 | CST 10 Alíquota 24% | 202 | 500 | F24 |
+| 24 | CST 10 Alíquota 25% | 202 | 500 | F25 |
+| 25 | CST 20 Alíquota Redução xx,xx% | 102 | 102 | — |
+| 26 | CST 70 Alíquota Redução xx,xx% | 202 | 500 | — |
+
+> Esta mesma tabela, em CSV, está em `tabela_tributacao_csosn_padrao.csv`.
+
+## Exemplo genérico de estruturação de produto composto
+
+| Produto | Tipo (Composto?) | Tipo de item | Finalidade | Controla estoque | Venda ou Produção | Frente de loja |
+|---|---|---|---|---|---|---|
+| Insumo base — ex.: "Tortilla de trigo" | NORMAL | Matéria-prima | Terceiros (comprado pronto) | SIM | — | Não |
+| Insumo transformado — ex.: "Patê de atum" | COMPOSTO | Matéria-prima | Próprio (produzido internamente) | SIM | Produção | Não |
+| Produto principal — ex.: "Wrap de atum" | COMPOSTO | Comercialização | Próprio | NÃO | Venda | Sim |
+
+Padrão de leitura: um insumo comprado de terceiros (não controla produção própria) vira
+matéria-prima de um insumo transformado internamente (produção própria, ainda não é
+produto de venda), que por sua vez compõe o produto final vendido ao cliente na frente
+de loja. Ao migrar produtos compostos/kits, mapeie cada nível dessa cadeia
+separadamente — não colapse insumo e produto final no mesmo cadastro.

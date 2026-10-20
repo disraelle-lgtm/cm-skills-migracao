@@ -1,0 +1,1015 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+<head>
+
+<title>Layout Comunicacao Palm</title>
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+
+<style type="text/css">
+<!--
+@import url("style.css");
+-->
+</style>
+
+</head>
+<body>
+
+<div id="topo">
+<h3><a name=Topo_Comunicacao></a>Layout Comunicação Palm Versão 2
+<div id="versao">Versão 15.1</div>
+</h3>
+</div>
+
+<br clear="all" />
+<br clear="all" />
+
+<div class="texto">Para a troca de informações entre SysPDV e PALM deverão ser gerados dois arquivos (PCPALM.TXT e PALMPC.TXT) conforme o layout especificado nas seções logo abaixo nesse documento.<br /><br />
+<strong>Para geração dos arquivos deverão ser considerados os seguintes pontos:</strong>
+</div>
+
+<br clear="all" />
+
+
+<div class="texto">1. Cada arquivo é composto por seções identificadas 
+ por uma palavra entre colchetes, semelhante aos arquivos .INI; </div>
+
+<div class="texto">
+2. Cada seção deverá ser formada por vários campos separados por ”;” (ponto e vírgula) para maior economia de espaço seguindo a seqüência de campos definida no layout abaixo; <br/>
+3. Os campos não devem ser preenchidos com espaços ou zeros para atingirem o tamanho indicado no documento. 
+Este tem a função de limitador;
+</div>
+<br clear="all" />
+
+<div class="texto">4. Não existe qualquer símbolo separador nos campos decimais de data ou hora.<br/> 
+5. Os campos data 
+devem ser gerados no formado DDMMAAAA Exemplo: 20012006 = 20/01/2006; <br/>
+6. 
+Os campos numéricos terão os seus dois últimos caracteres considerados como decimais. Ex: 125630 = 
+1.256,00; Os campos com horas devem ser gerados no formato hhmm. Ex:1020 = 10:20; Segue abaixo exemplo de arquivo:<br/> 
+7. Caso o cliente escolha utilizar o serviços do SysPDV server a extensão para leitura é *.palm</div>
+
+<br clear="all" />
+
+<div class="texto"><strong>1.PCPALM.TXT</strong></div>
+
+<br clear="all" />
+
+<div class="texto"><h2>Arquivo de envio de dados do PC para o PALM</h2></div>
+<div class="link"><a href="#Vendedor">Vendedor</a></div>
+<div class="link"><a href="#Cliente">Cliente</a></div>
+<div class="link"><a href="#Loja">Loja</a></div>
+<div class="link"><a href="#Local">Local</a></div>
+<div class="link"><a href="#Titulos_Abertos">Título Abertos</a></div>
+<div class="link"><a href="#Secao">Seção</a></div>
+<div class="link"><a href="#Grupo">Grupo</a></div>
+<div class="link"><a href="#Subgrupo">Subgrupo</a></div>
+<div class="link"><a href="#Produto">Produto</a></div>
+<div class="link"><a href="#Estoque">Estoque</a></div>
+<div class="link"><a href="#Preco">Preço</a></div>
+<div class="link"><a href="#Plano_Pagamento">Plano de Pagamento</a></div>
+<div class="link"><a href="#Meio_Pagamento">Meio Pagamento</a></div>
+
+<br clear="all" />
+
+<div class="texto"><strong>2.PCPALM.TXT</strong></div>
+
+<br clear="all" />
+
+<div class="link"><a href="#Pedido">Pedido</a></div>
+<div class="link"><a href="#Item_Pedido">Item Pedido</a></div>
+
+<br clear="all" />
+
+<div class="texto">VENDEDOR<a name=Vendedor></a></div>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all" />
+
+<table width="1079" class="bordasimples">
+  <tr>
+    <td width="37" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="439" align="center" class="bg"><h1>Descrição de Campo</h1></td>
+    <td width="171" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="105" align="center" class="bg"><h1>Tipo</h1></td>
+    <td width="303" align="center" class="bg"><h1>Detalhes</h1></td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Código Vendedor</td>
+    <td class="texto" align="center">04</td>
+    <td class="texto" align="center">N</td>
+    <td class="texto">9999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Nome do vendedor</td>
+    <td class="texto" align="center">100</td>
+    <td class="texto" align="center">C</td>
+    <td>A</td>
+  </tr>
+</table>
+
+<br clear="all" />
+
+<div class="texto">CLIENTE<a name=Cliente></a></div>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+
+<br clear="all" />
+
+<table width="1080" class="bordasimples">  
+<tr>
+  <td width="37" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="440" align="center" class="bg"><h1>Descrição de campo</h1></td>
+    <td width="171" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="105" align="center" class="bg"><h1>Tipo</h1></td>
+    <td width="303" align="center" class="bg"><h1>Detalhes</h1></td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Número CPF/CNPJ</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto" align="center">N</td>
+    <td class="texto">999999999999999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Código Cliente</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto" align="center">C</td>
+    <td class="texto">999999999999999</td>
+  </tr>
+    <tr>
+      <td align="center" class="bgCelula">003</td>
+    <td class="texto">Nome do cliente</td>
+    <td class="texto" align="center">40</td>
+    <td class="texto" align="center">C</td>
+    <td>A</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">004</td>
+    <td class="texto">Tipo Pessoa</td>
+    <td class="texto" align="center">01</td>
+    <td class="texto" align="center">C</td>
+    <td class="texto">Física = F; Jurídica = J</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">005</td>
+    <td class="texto">Tipo de Preço</td>
+    <td class="texto" align="center">01</td>
+    <td class="texto" align="center">N</td>
+    <td>9</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">006</td>
+    <td class="texto">Data Cadastro</td>
+    <td class="texto" align="center">08</td>
+    <td class="texto" align="center">D</td>
+    <td class="texto">DDMMAAAA</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">007</td>
+    <td class="texto">Endereço</td>
+    <td class="texto" align="center">50</td>
+    <td class="texto" align="center">C</td>
+    <td>A</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">008</td>
+    <td class="texto">Bairro</td>
+    <td class="texto" align="center">30</td>
+    <td class="texto" align="center">C</td>
+    <td>A</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">009</td>
+    <td class="texto">CEP</td>
+    <td class="texto" align="center">08</td>
+    <td class="texto" align="center">C</td>
+    <td>99999999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">010</td>
+    <td class="texto">Fone</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto" align="center">C</td>
+    <td>99999999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">011</td>
+    <td class="texto">Cidade</td>
+    <td class="texto" align="center">40</td>
+    <td class="texto" align="center">C</td>
+    <td>A</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">012</td>
+    <td class="texto">Siga UF</td>
+    <td class="texto" align="center">02</td>
+    <td class="texto" align="center">C</td>
+    <td>AA</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">013</td>
+    <td class="texto">Código do dia semana</td>
+    <td class="texto" align="center">08</td>
+    <td class="texto" align="center">C</td>
+    <td class="texto">Exemplo: 246 (Seg, Qua,Sex)</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">014</td>
+    <td class="texto">Situação de bloqueio</td>
+    <td class="texto" align="center">20</td>
+    <td class="texto" align="center">C</td>
+    <td class="texto">S-Sim (bloqueado); N-Não</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">015</td>
+    <td class="texto">Nome Fantasia</td>
+    <td class="texto" align="center">25</td>
+    <td class="texto" align="center">C</td>
+    <td>A</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">016</td>
+    <td class="texto">Ponto de Referência</td>
+    <td class="texto" align="center">50</td>
+    <td class="texto" align="center">C</td>
+    <td>A</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">017</td>
+    <td class="texto">Pessoa de Contato</td>
+    <td class="texto" align="center">25</td>
+    <td class="texto" align="center">C</td>
+    <td>A</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">018</td>
+    <td class="texto">Telefone do Contato</td>
+    <td class="texto" align="center">25</td>
+    <td class="texto" align="center">C</td>
+    <td>A</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">019</td>
+    <td class="texto">Zona do cliente</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto" align="center">N</td>
+    <td>999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">020</td>
+    <td class="texto">Limite de Crédito</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto" align="center">N</td>
+    <td>999999999999.99</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">021</td>
+    <td class="texto">Código do Vendedor</td>
+    <td class="texto" align="center">04</td>
+    <td class="texto" align="center">N</td>
+    <td>9999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">022</td>
+    <td class="texto">Código da tabela cliente</td>
+    <td class="texto" align="center">04</td>
+    <td class="texto" align="center">N</td>
+    <td>9999</td>
+  </tr>
+</table>
+
+<br clear="all" />
+
+<div class="texto">LOJA<a name=Loja></a></div>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all" />
+
+<table width="1080" class="bordasimples">  
+  <tr>
+    <td width="37" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="440" align="center" class="bg"><h1>Descrição de campo</h1></td>
+    <td width="171" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="105" align="center" class="bg"><h1>Tipo</h1></td>
+    <td width="303" align="center" class="bg"><h1>Detalhes</h1></td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Código da loja no cadastro do PRÓPRIO</td>
+    <td class="texto" align="center">04</td>
+    <td class="texto" align="center">N</td>
+    <td>9999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Descrição da loja</td>
+    <td class="texto" align="center">30</td>
+    <td class="texto" align="center">C</td>
+    <td>A</td>
+  </tr>
+</table>
+
+<br clear="all" />
+
+<div class="texto">LOCAL<a name=Local></a></div>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all" />
+
+<table width="1080" class="bordasimples">  
+  <tr>
+    <td width="37" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="440" align="center" class="bg"><h1>Descrição do campo</h1></td>
+    <td width="171" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="105" align="center" class="bg"><h1>Tipo</h1></td>
+    <td width="303" align="center" class="bg"><h1>Detalhes</h1></td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Código da loja no cadastro do PRÓPRIO</td>
+    <td class="texto" align="center">04</td>
+    <td class="texto" align="center">N</td>
+    <td>9999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Código da local de estoque</td>
+    <td class="texto" align="center">02</td>
+    <td class="texto" align="center">N</td>
+    <td>99</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">003</td>
+    <td class="texto">Descrição da loja</td>
+    <td class="texto" align="center">30</td>
+    <td class="texto" align="center">C</td>
+    <td>A</td>
+  </tr>
+</table>
+
+<br clear="all" />
+
+<div class="texto">TÍTULOS ABERTOS<a name=Titulos_Abertos></a></div>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all" />
+
+<table width="1080" class="bordasimples">  
+  <tr>
+    <td width="37" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="440" align="center" class="bg"><h1>Descrição de campo</h1></td>
+    <td width="171" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="105" align="center" class="bg"><h1>Tipo</h1></td>
+    <td width="303" align="center" class="bg"><h1>Detalhes</h1></td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">	
+Código da loja no cadastro do PRÓPRIO</td>
+    <td class="texto" align="center">04</td>
+    <td class="texto" align="center">N</td>
+    <td>9999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">CPF/CNPJ do cliente</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto" align="center">C</td>
+    <td>999999999999999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">003</td>
+    <td class="texto">Número título</td>
+    <td class="texto" align="center">12</td>
+    <td class="texto" align="center">C</td>
+    <td>999999999999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">004</td>
+    <td class="texto">Data vencimento</td>
+    <td class="texto" align="center">08</td>
+    <td class="texto" align="center">D</td>
+    <td>DDMMAAAA</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">005</td>
+    <td class="texto">Valor título</td>
+    <td class="texto" align="center">13,4</td>
+    <td class="texto" align="center">N</td>
+    <td>9999999999.99</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">006</td>
+    <td class="texto">Números de dias de atraso</td>
+    <td class="texto" align="center">05</td>
+    <td class="texto" align="center">N</td>
+    <td>99999</td>
+  </tr>
+</table>
+
+<br clear="all" />
+
+<div class="texto">SEÇÃO<a name=Secao></a></div>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all" />
+
+<table width="1080" class="bordasimples">    
+<tr>
+  <td width="37" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="440" align="center" class="bg"><h1>Descrição de  campo</h1></td>
+    <td width="171" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="105" align="center" class="bg"><h1>Tipo</h1></td>
+    <td width="303" align="center" class="bg"><h1>Detalhes</h1></td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Código da seção</td>
+    <td class="texto" align="center">02</td>
+    <td class="texto" align="center">N</td>
+    <td>99</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Descrição da seção</td>
+    <td class="texto" align="center">30</td>
+    <td class="texto" align="center">C</td>
+    <td>A</td>
+  </tr>
+</table>
+
+<br clear="all" />
+
+<div class="texto">GRUPO<a name=Grupo></a></div>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all" />
+
+<table width="1080" class="bordasimples">    
+<tr>
+  <td width="37" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="440" align="center" class="bg"><h1>Descrição de  campo</h1></td>
+    <td width="171" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="105" align="center" class="bg"><h1>Tipo</h1></td>
+    <td width="303" align="center" class="bg"><h1>Detalhes</h1></td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Código da seção</td>
+    <td class="texto" align="center">02</td>
+    <td class="texto" align="center">N</td>
+    <td>99</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Código do grupo</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto" align="center">N</td>
+    <td>999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">003</td>
+    <td class="texto">Descrição do grupo</td>
+    <td class="texto" align="center">30</td>
+    <td class="texto" align="center">C</td>
+    <td>A</td>
+  </tr>
+</table>
+
+<br clear="all" />
+
+<div class="texto">SUBGRUPO<a name=Subgrupo></a></div>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all" />
+
+<table width="1080" class="bordasimples">    
+<tr>
+  <td width="37" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="440" align="center" class="bg"><h1>Descrição de  campo</h1></td>
+    <td width="171" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="105" align="center" class="bg"><h1>Tipo</h1></td>
+    <td width="303" align="center" class="bg"><h1>Detalhes</h1></td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Código da seção</td>
+    <td class="texto" align="center">02</td>
+    <td class="texto" align="center">N</td>
+    <td>99</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Código do grupo</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto" align="center">N</td>
+    <td>999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">003</td>
+    <td class="texto">Código do subgrupo</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto" align="center">N</td>
+    <td>999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">004</td>
+    <td class="texto">Descrição do subgrupo</td>
+    <td class="texto" align="center">30</td>
+    <td class="texto" align="center">C</td>
+    <td>A</td>
+  </tr>
+</table>
+
+<br clear="all" />
+
+<div class="texto">PRODUTO<a name=Produto></a></div>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all" />
+
+<table width="1080" class="bordasimples">    
+<tr>
+  <td width="37" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="440" align="center" class="bg"><h1>Descrição de  campo</h1></td>
+    <td width="171" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="105" align="center" class="bg"><h1>Tipo</h1></td>
+    <td width="303" align="center" class="bg"><h1>Detalhes</h1></td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Código da loja no cadastro do PRÓPRIO</td>
+    <td class="texto" align="center">04</td>
+    <td class="texto" align="center">N</td>
+    <td>9999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Código do produto</td>
+    <td class="texto" align="center">06</td>
+    <td class="texto" align="center">N</td>
+    <td>999999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">003</td>
+    <td class="texto">Descrição do produto</td>
+    <td class="texto" align="center">50</td>
+    <td class="texto" align="center">C</td>
+    <td>A</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">004</td>
+    <td class="texto">Unidade de medida</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto" align="center">C</td>
+    <td>Exemplo: UND, CXA, PCT.</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">005</td>
+    <td class="texto">Código da seção</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto" align="center">N</td>
+    <td>99</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">006</td>
+    <td class="texto">Código do grupo</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto" align="center">N</td>
+    <td>999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">007</td>
+    <td class="texto">Código do subgrupo</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto" align="center">N</td>
+    <td>999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">008</td>
+    <td class="texto">Desconto máximo preço1</td>
+    <td class="texto" align="center">6,2</td>
+    <td class="texto" align="center">N</td>
+    <td>999.99</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">009</td>
+    <td class="texto">Desconto máximo preço2</td>
+    <td class="texto" align="center">6,2</td>
+    <td class="texto" align="center">N</td>
+    <td>999.99</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">010</td>
+    <td class="texto">Desconto máximo preço3</td>
+    <td class="texto" align="center">6,2</td>
+    <td class="texto" align="center">N</td>
+    <td> 999.99</td>
+  </tr>  
+  <tr>
+    <td align="center" class="bgCelula">011</td>
+    <td class="texto">Item embalagem – Quantidade de itens na embalagem</td>
+    <td class="texto" align="center">6,2</td>
+    <td class="texto" align="center">N</td>
+    <td> 999.99</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">012</td>
+    <td class="texto">Quantidade mínima para preço 2</td>
+    <td class="texto" align="center">7,2</td>
+    <td class="texto" align="center">N</td>
+    <td>9999.99</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">013</td>
+    <td class="texto">Quantidade mínima para preço 3</td>
+    <td class="texto" align="center">7,2</td>
+    <td class="texto" align="center">N</td>
+    <td>9999.99</td>
+  </tr>
+</table>
+
+<br clear="all" />
+
+<div class="texto">ESTOQUE<a name=Estoque></a></div>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all" />
+
+<table width="1080" class="bordasimples">    
+<tr>
+  <td width="37" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="440" align="center" class="bg"><h1>Descrição de  campo</h1></td>
+    <td width="171" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="105" align="center" class="bg"><h1>Tipo</h1></td>
+    <td width="303" align="center" class="bg"><h1>Detalhes</h1></td>
+  </tr>  
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Código da loja no cadastro do PRÓPRIO</td>
+    <td class="texto" align="center">04</td>
+    <td class="texto" align="center">N</td>
+    <td>9999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Código do local de estoque movimentado</td>
+    <td class="texto" align="center">02</td>
+    <td class="texto" align="center">N</td>
+    <td>99</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">003</td>
+    <td class="texto">Código do produto</td>
+    <td class="texto" align="center">06</td>
+    <td class="texto" align="center">N</td>
+    <td>999999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">004</td>
+    <td class="texto">Estoque atual - Quantidade</td>
+    <td class="texto" align="center">10,3</td>
+    <td class="texto" align="center">N</td>
+    <td>999999.999</td>
+  </tr>
+</table>
+
+<br clear="all" />
+
+<div class="texto">PREÇO<a name=Preco></a></div>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all" />
+
+<table width="1080" class="bordasimples">    
+<tr>
+  <td width="37" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="440" align="center" class="bg"><h1>Descrição de  campo</h1></td>
+    <td width="171" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="105" align="center" class="bg"><h1>Tipo</h1></td>
+    <td width="303" align="center" class="bg"><h1>Detalhes</h1></td>
+  </tr>  
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Código da loja no cadastro do PRÓPRIO</td>
+    <td class="texto" align="center">04</td>
+    <td class="texto" align="center">N</td>
+    <td>9999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Código do produto</td>
+    <td class="texto" align="center">06</td>
+    <td class="texto" align="center">N</td>
+    <td>999999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">003</td>
+    <td class="texto">Código da tabela de preços</td>
+    <td class="texto" align="center">02</td>
+    <td class="texto" align="center">N</td>
+    <td class="texto">99</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">004</td>
+    <td class="texto">Preço tipo 1</td>
+    <td class="texto" align="center">12,2</td>
+    <td class="texto" align="center">N</td>
+    <td>999999999.99</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">005</td>
+    <td class="texto">Preço tipo 2</td>
+    <td class="texto" align="center">12,2</td>
+    <td class="texto" align="center">N</td>
+    <td>999999999.99</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">006</td>
+    <td class="texto">Preço tipo 3</td>
+    <td class="texto" align="center">12,2</td>
+    <td class="texto" align="center">N</td>
+    <td>999999999.99</td>
+  </tr>  
+</table>
+
+<br clear="all" />
+
+<div class="texto">PLANO DE PAGAMENTO<a name=Plano_Pagamento></a></div>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all" />
+
+<table width="1080" class="bordasimples">    
+<tr>
+  <td width="37" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="440" align="center" class="bg"><h1>Descrição de  campo</h1></td>
+    <td width="171" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="105" align="center" class="bg"><h1>Tipo</h1></td>
+    <td width="303" align="center" class="bg"><h1>Detalhes</h1></td>
+  </tr>  
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Código do plano</td>
+    <td class="texto" align="center">05</td>
+    <td class="texto" align="center">N</td>
+    <td>99999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Descrição do plano</td>
+    <td class="texto" align="center">25</td>
+    <td class="texto" align="center">C</td>
+    <td>A</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">003</td>
+    <td class="texto">N&uacute;mero de parcelas</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto" align="center">N</td>
+    <td>999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">004</td>
+    <td class="texto">Prazo para primeira parcela</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto" align="center">N</td>
+    <td>999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">005</td>
+    <td class="texto">Prazo em dias entre parcelas</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto" align="center">N</td>
+    <td>999</td>
+  </tr>
+</table>
+
+<br clear="all" />
+
+<div class="texto">Condição de pagamento no desdobramento financeiro do SysPDV será sempre DD.</div>
+
+<br clear="all" />
+
+<div class="texto">MEIO PAGAMENTO<a name=Meio_Pagamento></a></div>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all" />
+
+<table width="1080" class="bordasimples">    
+<tr>
+  <td width="37" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="440" align="center" class="bg"><h1>Descrição de  campo</h1></td>
+    <td width="171" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="105" align="center" class="bg"><h1>Tipo</h1></td>
+    <td width="303" align="center" class="bg"><h1>Detalhes</h1></td>
+  </tr>  
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Código da forma de pagamento</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto" align="center">C</td>
+    <td>999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Descritivo da forma de pagamento</td>
+    <td class="texto" align="center">20</td>
+    <td class="texto" align="center">C</td>
+    <td>A</td>
+  </tr>
+</table>
+
+<br clear="all" />
+<br clear="all"/>
+<div class="texto"><strong>2.PALMPC.TXT - Arquivo de retorno de dados do PALM para o PC</strong></div>
+
+<br clear="all" />
+
+<div class="texto">PEDIDO<a name=Pedido></a></div>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all" />
+
+<table width="1080" class="bordasimples">    
+<tr>
+  <td width="37" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="440" align="center" class="bg"><h1>Descrição de  campo</h1></td>
+    <td width="171" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="105" align="center" class="bg"><h1>Tipo</h1></td>
+    <td width="303" align="center" class="bg"><h1>Detalhes</h1></td>
+  </tr>  
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Código do Vendedor</td>
+    <td class="texto" align="center">04</td>
+    <td class="texto" align="center">N</td>
+    <td class="texto">Vendedor que fez o pedido. Formato: 9999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Código da loja no cadastro do PRÓPRIO</td>
+    <td class="texto" align="center">04</td>
+    <td class="texto" align="center">N</td>
+    <td>9999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">003</td>
+    <td class="texto">Código do pedido</td>
+    <td class="texto" align="center">09</td>
+    <td class="texto" align="center">N</td>
+    <td class="texto">Código interno do Palm. Formato: 999999999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">004</td>
+    <td class="texto">CPF/CNPJ do cliente</td>
+    <td class="texto" align="center">15</td>
+    <td class="texto" align="center">N</td>
+    <td>999999999999999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">005</td>
+    <td class="texto">Plano de Pagamento</td>
+    <td class="texto" align="center">05</td>
+    <td class="texto" align="center">N</td>
+    <td>99999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">006</td>
+    <td class="texto">Data e Hora do pedido (dia,mês,ano, hora, minuto)</td>
+    <td class="texto" align="center">12</td>
+    <td class="texto" align="center">D</td>
+    <td class="texto">DDMMAAAAhhmm</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">007</td>
+    <td class="texto">Valor total desconto</td>
+    <td class="texto" align="center">13,4</td>
+    <td class="texto" align="center">N</td>
+    <td>99999999.9999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">008</td>
+    <td class="texto">Valor total pedido - Deve ser o valor liquido, ou seja, já abatido o valor total do desconto</td>
+    <td class="texto" align="center">13,4</td>
+    <td class="texto" align="center">N</td>
+    <td> 99999999.9999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">009</td>
+    <td class="texto">Situação do pedido</td>
+    <td class="texto" align="center">01</td>
+    <td class="texto" align="center">N</td>
+    <td>9</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">010</td>
+    <td class="texto">Meio de Pagamento – forma de pagamento (DINHEIRO, CHEQUE, Etc)</td>
+    <td class="texto" align="center">03</td>
+    <td class="texto" align="center">C</td>
+    <td>AAA</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">011</td>
+    <td class="texto">Observação</td>
+    <td class="texto" align="center">330</td>
+    <td class="texto" align="center">C</td>
+    <td class="texto">Observação</td>
+  </tr>
+</table>
+
+<br clear="all" />
+
+<div class="texto">ITEM  PEDIDO<a name=Item_Pedido></a></div>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all" />
+
+<table width="1080" class="bordasimples">    
+<tr>
+  <td width="37" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="440" align="center" class="bg"><h1>Descrição de  campo</h1></td>
+    <td width="171" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="105" align="center" class="bg"><h1>Tipo</h1></td>
+    <td width="303" align="center" class="bg"><h1>Detalhes</h1></td>
+  </tr> 
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Código da loja no cadastro do PRÓPRIO</td>
+    <td class="texto" align="center">04</td>
+    <td class="texto" align="center">N</td>
+    <td>9999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Código do pedido</td>
+    <td class="texto" align="center">09</td>
+    <td class="texto" align="center">N</td>
+    <td>999999999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">003</td>
+    <td class="texto">Código do produto</td>
+    <td class="texto" align="center">06</td>
+    <td class="texto" align="center">N</td>
+    <td>999999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">004</td>
+    <td class="texto">Data de entrega</td>
+    <td class="texto" align="center">08</td>
+    <td class="texto" align="center">D</td>
+    <td>DDMMAAAA</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">005</td>
+    <td class="texto">Quantidade do produto, somente para produtos de qtdes. Inteiras</td>
+    <td class="texto" align="center">05</td>
+    <td class="texto" align="center">N</td>
+    <td>99999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">006</td>
+    <td class="texto">Valor unitário bruto</td>
+    <td class="texto" align="center">13,4</td>
+    <td class="texto" align="center">N</td>
+    <td>99999999.9999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">007</td>
+    <td class="texto">Valor desconto. Se parametro 214 do syspdv server for igual a "0-Valor Total" o valor unitário deve ser multiplicado pela quantidade do item, caso P214 esteja com a opção igual a "1-Valor Unitário", no arquivo o desconto deve ser unitário</td>
+    <td class="texto" align="center">13,4</td>
+    <td class="texto" align="center">N</td>
+    <td>99999999.9999</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">008</td>
+    <td class="texto">Quantidade do produto fracionada, somente se produtos de peso variável.</td>
+    <td class="texto" align="center">15,3</td>
+    <td class="texto" align="center">N</td>
+    <td>99999999999.999</td>
+  </tr>
+</table>
+
+</body>
+
+</html>

@@ -1,0 +1,360 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+<head>
+<title>Layout coletores</title>
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+
+
+<style type="text/css">
+<!--
+@import url("style.css");
+-->
+</style>
+
+</head>
+<body>
+
+<div id="topo">
+<a name=coletores></a><h3>Layout de Coletores de Dados
+<div id="versao">Versão 15.1</div>
+</h3>
+</div>
+
+<br clear="all" />
+<br clear="all" />
+
+<div class="texto"><h2>Descrição nominal dos arquivos de coletores</h2></div>
+<div class="link"><a href="#Layout1">Arquivo de Layout a.1</a></div>
+<div class="link"><a href="#Layout2">Arquivo de Layout a.2</a></div>
+<div class="link"><a href="#Layout3">Arquivo de Layout a.3</a></div>
+<div class="link"><a href="#Layout3">Arquivo de Layout b.2</a></div>
+
+
+
+<br clear="all" />
+
+<div class="texto">
+Considerações iniciais: os campos não possuam delimitação inicial e final, visto que não são preenchidos com zeros para atingir a quantidade máxima permitida. Os campos gerados possuem como separador o ";" (ponto e vírgula).
+</div>
+
+<br clear="all" />
+
+<div class="texto">Os arquivos dos coletores são nomeados 
+ em uma forma padrão, que permite a identificação completa de cada arquivo, 
+ bem como sua função ou versão. Esta nomenclatura deve seguir o seguinte 
+ modelo: Col_NNNN_AAAAMM_TXXVYYY.EEE onde:</div>
+
+<br clear="all" />
+
+<table width="976" class="bordasimples">
+  <tr>
+    <td width="49" align="center" class="bg"><h1>Col:</h1></td>
+    <td width="915" class="texto">Significa arquivos de framework de coletor</td>
+  </tr>
+  <tr>
+    <td class="bg" align="center"><h1>NNNN:</h1></td>
+    <td class="texto">Significa o modelo do 
+ coletor o qual o framework pertence. Pois muitas vezes voc&ecirc; ter&aacute; o mesmo 
+ tipo de framework para dois ou mais modelos diferentes</td>
+  </tr>
+  <tr>
+    <td class="bg" align="center"><h1>AAAA:</h1></td>
+    <td class="texto">O ano que foi desenvolvido 
+ o framework. Este ano n&atilde;o deve mudar, a menos que uma nova vers&atilde;o do framework 
+ seja gerada.</td>
+  </tr>
+  <tr>
+    <td class="bg" align="center"><h1>MM:</h1></td>
+    <td class="texto">O M&ecirc;s que foi desenvolvido 
+ o framework. Este deve seguir as mesmas regras do ano. TXX: Tipo do framework. 
+ Onde X &eacute; o numero do tipo. Ex T01. Para framework de tipo 1</td>
+  </tr>
+  <tr>
+    <td class="bg" align="center"><h1>VYYY:</h1></td>
+    <td class="texto">Vers&atilde;o deste tipo de framework. 
+ Onde YYY &eacute; um numero de vers&atilde;o. Ex: V102 para Vers&atilde;o 1.02</td>
+  </tr>
+  <tr>
+    <td class="bg" align="center"><h1>EEE:</h1></td>
+    <td class="texto">Extens&atilde;o do arquivo</td>
+  </tr>
+</table>
+
+<br clear="all" />
+
+<div class="texto">Exemplo de nome de arquivo de framework: 
+ Col_8300_200702_T1V100.AGX -&gt; Para um framework do tipo 1 versão 1.00, 
+ criado para cypher 8300 em fevereiro de 2007.</div>
+
+<div class="texto">Tipos de frameworks: Coletores Cypher 
+ tipo 1 e tipo 2.</div>
+
+<h2>a. Tipo 1: Coletores Cyphers</h2>
+
+<h2>1. Arquivo de Layout 1: Usado para entrada de nota fiscal (Form1)<a name=Layout1></a></h2>
+<h2>Entrada:</h2>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all" />
+
+<table width="977" class="bordasimples">
+  <tr>
+    <td width="52" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="217" align="center" class="bg"><h1>Campo</h1></td>
+    <td width="100" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="177" align="center" class="bg"><h1>Formato</h1></td>
+    <td width="407" align="center" class="bg"><h1>Dado a enviar</h1></td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Código</td>
+    <td class="texto" align="center">14</td>
+    <td class="texto">99999999999999</td>
+    <td class="texto">Código do produto sem preenchimento com zeros</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Descrição</td>
+    <td class="texto" align="center">10</td>
+    <td class="texto">A</td>
+    <td class="texto">Descrição do produto</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">003</td>
+    <td class="texto">Quant. itens</td>
+    <td class="texto" align="center">8</td>
+    <td class="texto">99999999</td>
+    <td class="texto">Quantidade de produtos da nota (0)</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">004</td>
+    <td class="texto">Quant. na embalagem</td>
+    <td class="texto" align="center">6</td>
+    <td class="texto">999999</td>
+    <td class="texto">Quantidade de itens contida numa embalagem (0)</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">005</td>
+    <td class="texto">Fornecedor</td>
+    <td class="texto" align="center">4</td>
+    <td class="texto">9999</td>
+    <td class="texto">Código do fornecedor</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">006</td>
+    <td class="texto">Nota Fiscal</td>
+    <td class="texto" align="center">3</td>
+    <td class="texto">999</td>
+    <td class="texto">Número da nota fiscal</td>
+  </tr>
+</table>
+
+
+<h2>Saída:</h2> 
+<div class="texto">O mesmo arquivo de entrada modificado nos campos: Quantidade de itens e quantidade na embalagem.</div>
+
+<h2>2. Arquivo de Layout 2 : Usado para inventário (Form2)<a name=Layout2></a></h2>
+<h2>Entrada:</h2>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all" />
+
+<table width="977" class="bordasimples">
+  <tr>
+    <td width="51" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="214" align="center" class="bg"><h1>Campo</h1></td>
+    <td width="105" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="179" align="center" class="bg"><h1>Formato</h1></td>
+    <td width="404" align="center" class="bg"><h1>Dado a enviar</h1></td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Código</td>
+    <td class="texto" align="center">14</td>
+    <td class="texto">99999999999999</td>
+    <td class="texto">Código do produto sem preenchimento com zeros</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Descrição</td>
+    <td class="texto" align="center">10</td>
+    <td class="texto">A</td>
+    <td class="texto">Descrição do produto</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">003</td>
+    <td class="texto">Loja</td>
+    <td class="texto" align="center">4</td>
+    <td class="texto">9999</td>
+    <td class="texto">Número da loja do inventário</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">004</td>
+    <td class="texto">Local</td>
+    <td class="texto" align="center">2</td>
+    <td class="texto">99</td>
+    <td class="texto">Número do local do inventário na loja</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">005</td>
+    <td class="texto">Quantidade</td>
+    <td class="texto" align="center">6</td>
+    <td class="texto">999999</td>
+    <td class="texto">quantidade do produto (1)</td>
+  </tr>
+</table>
+
+<h2>Saída:</h2> 
+<div  class="texto"> Será gerado um novo arquivo dentro do coletor com os seguintes campos: 
+ Código do produto e quantidade. Podendo conter várias vezes o mesmo código 
+ e quantidade. Cada uma representando uma contagem. Ou seja, se o cliente 
+ contou o produto 17 três vezes com a quantidade 1 em cada contagem, o 
+ coletor gerará por três vezes o registro 17 com quantidade 1. E o sysac, 
+ ao receber, se encarrega de somar.</div>
+
+<br clear="all" />
+<table width="977" class="bordasimples">
+  <tr>
+    <td width="51" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="215" align="center" class="bg"><h1>Campo</h1></td>
+    <td width="104" align="center" class="bg"><h1>Formato</h1></td>
+    <td width="179" align="center" class="bg"><h1>tamanho</h1></td>
+    <td width="404" align="center" class="bg"><h1>Dado a enviar</h1></td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Código</td>
+    <td class="texto" align="center">14</td>
+    <td class="texto">99999999999999</td>
+    <td class="texto">Código do produto sem preenchimento com zeros</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Quantidade</td>
+    <td class="texto" align="center">6</td>
+    <td class="texto">999999</td>
+    <td class="texto">Quantidade coletada</td>
+  </tr>
+</table>
+
+<h2>Entrada:</h2>
+
+<h2>3. Arquivo de Layout 3 : Preço combate e Consulta de preço (Form3 e Form4)<a name=Layout3></a></h2>
+<h2>Entrada:</h2>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all" />
+
+<table width="977" class="bordasimples">
+  <tr>
+    <td width="51" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="218" align="center" class="bg"><h1>Campo</h1></td>
+    <td width="101" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="179" align="center" class="bg"><h1>Formato</h1></td>
+    <td width="404" align="center" class="bg"><h1>Dado a enviar</h1></td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Código</td>
+    <td class="texto" align="center">14</td>
+    <td class="texto">99999999999999</td>
+    <td class="texto">Código do produto sem preenchimento com zeros</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Descrição</td>
+    <td class="texto" align="center">10</td>
+    <td class="texto">A</td>
+    <td class="texto">Descrição do produto</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">003</td>
+    <td class="texto">Preço1</td>
+    <td class="texto" align="center">8</td>
+    <td class="texto">99999999</td>
+    <td class="texto">Preço de concorrência 1</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">004</td>
+    <td class="texto">Preço2</td>
+    <td class="texto" align="center">8</td>
+    <td class="texto">99999999</td>
+    <td class="texto">Preço de concorrência 2</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">005</td>
+    <td class="texto">Preço3</td>
+    <td class="texto" align="center">8</td>
+    <td class="texto">99999999</td>
+    <td class="texto">Preço de concorrência 3</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">006</td>
+    <td class="texto">Preço4</td>
+    <td class="texto" align="center">8</td>
+    <td class="texto">99999999</td>
+    <td class="texto">Preço de concorrência 4</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">007</td>
+    <td class="texto">Preço5</td>
+    <td class="texto" align="center">8</td>
+    <td class="texto">99999999</td>
+    <td class="texto">Preço de concorrência 5</td>
+  </tr>
+</table>
+
+
+<h2>Saída:</h2> 
+<div class="texto">O 
+ mesmo arquivo de entrada modificado nos campos: Preço1, Preço2, Preço3, 
+ Preço4, Preço5. Para a consulta de preço não há arquivo de saída.</div>
+
+<h2>b. Tipo 2: Coletores Cyphers </h2>
+
+<div class="texto">Os arquivos de Tipo 2 são idênticos aos 
+ arquivos de tipo 1, com exceção do arquivo de entrada do Layout 2.</div>
+
+<h2>Arquivo Layout2 : Usado para inventário (Form2)</h2>
+<h2>Entrada:</h2>
+
+<div class="link" align="right"><a href="#">Topo</a></div>
+
+<br clear="all" />
+
+<table width="977"class="bordasimples">
+  <tr>
+    <td width="51" align="center" class="bg"><h1>N&ordm;</h1></td>
+    <td width="218" align="center" class="bg"><h1>Campo</h1></td>
+    <td width="101" align="center" class="bg"><h1>Tamanho</h1></td>
+    <td width="179" align="center" class="bg"><h1>Formato</h1></td>
+    <td width="404" align="center" class="bg"><h1>Dado a enviar</h1></td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">001</td>
+    <td class="texto">Códido</td>
+    <td class="texto" align="center">14</td>
+    <td class="texto">99999999999999</td>
+    <td class="texto">Código do produto sem preenchimento com zeros</td>
+  </tr>
+  <tr>
+    <td align="center" class="bgCelula">002</td>
+    <td class="texto">Quantidade</td>
+    <td class="texto" align="center">6</td>
+    <td class="texto">999999</td>
+    <td class="texto">Quantidade do produto (1)</td>
+  </tr>
+</table>
+
+
+<h2>Saída:</h2>
+
+<div class="texto">Id&ecirc;nticos aos arquivos de a Tipo 1.</div>
+
+</body>
+
+</html>

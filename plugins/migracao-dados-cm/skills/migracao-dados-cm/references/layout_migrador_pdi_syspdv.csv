@@ -1,0 +1,192 @@
+LAYOUT DE IMPORTAÇÃO DE DADOS VIA MIGRADOR (PDI),,,,,,,,,,,,,,,,,,,,,,,,,
+Objetivo,Este registro contém informações referentes aos layouts de importação para o varejofacil e syspdv,,,,,,,,,,,,,,,,,,,,,,,,
+Observações,"Formato do arquivo: CSV
+Delimitador dos campos: ; (ponto-e-vírgula)
+Decimais são separados por . (ponto)
+Os campos como CPF, CNPJ, IE, RG, CEP, Telefone, NCM e CEST devem estar sem máscaras.",,,,,,,,,,,,,,,,,,,,,,,,
+Autor,"Equipe de Migração – Arquitetura
+migracao@casamagalhaes.com.br",,,,,,,,,,,,,,,,,,,,,,,,
+Arquivos modelo,Modelos de entrada syspdv,,,,,,,,,,,,,,,,,,,,,,,,
+1 - LOJA,,,,,,,,,,,,,,,,,,,,,,,,,
+NOME DO CAMPO,DESCRIÇÃO,TAMANHO DO CAMPO,TIPO DE DADO,CAMPO OBRIGATÓRIO,VALORES PADRÕES POSSÍVEIS,,,,,,,,,,,,,,,,,,,,
+Razao Social,Razão Social da loja,100.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Nome Fantasia,Nome fantasia da loja,100.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Documento,Número do CNPJ,14.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Inscricao Estadual,Inscrição estadual da loja,20.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Regime Federal,Regime federal da loja,1.0,String,SIM,"R = Lucro Real
+P = Lucro Presumido
+S = Simples Nacional",,,,,,,,,,,,,,,,,,,,
+Regime Estadual,Regime estadual da loja,1.0,String,SIM,"N = Normal
+E = Subs. Tributária
+A = Aliquota Efetiva
+S = Simples Nacional
+R = Esp. Bares/Restaurantes",,,,,,,,,,,,,,,,,,,,
+Endereco,Endereço da loja,100.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Numero,Número do endereço da loja,6.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Complemento,Número do endereço do cliente,40.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+Bairro,Bairro do endereço da loja,60.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Cidade,Cidade da loja,400.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Estado,Sigla do Estado (Unidade Federativa),2.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+CEP,Número do CEP do endereço da loja,10.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Codigo IBGE,Código IBGE da Cidade,7.0,Integer,SIM,,,,,,,,,,,,,,,,,,,,,
+Telefone,Telefone principal de contato da loja,11.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+E-mail,Endereço de e-mail da loja,70.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+2 - FUNCIONARIO,,,,,,,,,,,,,,,,,,,,,,,,,
+NOME DO CAMPO,DESCRIÇÃO,TAMANHO DO CAMPO,TIPO DE DADO,CAMPO OBRIGATÓRIO,VALORES PADRÕES POSSÍVEIS,,,,,,,,,,,,,,,,,,,,
+Codigo Funcionario,Código do Funcionário,6.0,Integer,NÃO,,,,,,,,,,,,,,,,,,,,,
+Nome Funcionario,Principal nome do Funcionário,100.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Documento,Principal documento do Funcionário (CPF),14.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+RG,Documento RG,20.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+3 - CLIENTE,,,,,,,,,,,,,,,,,,,,,,,,,
+NOME DO CAMPO,DESCRIÇÃO,TAMANHO DO CAMPO,TIPO DE DADO,CAMPO OBRIGATÓRIO,VALORES PADRÕES POSSÍVEIS,,,,,,,,,,,,,,,,,,,,
+Codigo Cliente,Código do cliente,6.0,Integer,SIM,,,,,,,,,,,,,,,,,,,,,
+Tipo Pessoa,Classificação do tipo de pessoa,1.0,String,SIM,"F = FISICA
+J = JURIDICA
+E = ESTRANGEIRO",,,,,,,,,,,,,,,,,,,,
+Nome Cliente,Principal nome do cliente,100.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Nome Fantasia,Nome ou apelido do cliente,100.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Documento,"Principal documento do cliente (CPF, CNPJ, Passaporte)",14.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+RG/IE,"Documento RG, caso o cliente seja pessoa física, ou IE (Inscrição Estadual) caso o cliente seja pessoa jurídica",20.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+Limite Credito,Valor inicial de credito do cliente,15.2,Number,NÃO,,,,,,,,,,,,,,,,,,,,,
+Endereco,Endereço do cliente,100.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+Numero,Número do endereço do cliente,6.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+Complemento,Número do endereço do cliente,40.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+Bairro,Bairro do endereço do cliente,60.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+Cidade,Cidade do cliente,400.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+Estado,Sigla do Estado (Unidade Federativa) da cidade do cliente,2.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+CEP,Número do CEP do endereço do cliente,8.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Codigo IBGE,Código IBGE da Cidade,7.0,Integer,SIM,,,,,,,,,,,,,,,,,,,,,
+Telefone 1,Telefone principal de contato do cliente,14.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+Telefone 2,Telefone principal de contato do cliente,14.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+E-mail,Endereço de e-mail (correio eletrônico) do cliente,80.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+4 - FORNECEDOR,,,,,,,,,,,,,,,,,,,,,,,,,
+NOME DO CAMPO,DESCRIÇÃO,TAMANHO DO CAMPO,TIPO DE DADO,CAMPO OBRIGATÓRIO,VALORES PADRÕES POSSÍVEIS,,,,,,,,,,,,,,,,,,,,
+Codigo Fornecedor,Código do fornecedor,6.0,Integer,SIM,,,,,,,,,,,,,,,,,,,,,
+Tipo Pessoa,Classificação do tipo de pessoa,1.0,String,SIM,"F = FISICA
+J = JURIDICA
+E = ESTRANGEIRO",,,,,,,,,,,,,,,,,,,,
+Nome Fornecedor,Principal nome do fornecedor,100.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Nome Fantasia,Nome fantasia do fornecedor,100.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Documento,"Principal documento do fornecedor (CPF, CNPJ, Passaporte)",14.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+RG/IE,"Documento RG, caso o fornecedor seja pessoa física, ou IE (Inscrição Estadual)",14.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+Endereco,Endereço do fornecedor,100.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+Numero,Número do endereço do fornecedor,6.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+Complemento,Complemento do endereço do fornecedor,40.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+Bairro,Bairro do endereço do fornecedor,60.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+Cidade,Cidade do fornecedor,400.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+Estado,Sigla do Estado (Unidade Federativa) da cidade do fornecedor,2.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+CEP,Número do CEP do endereço do fornecedor,8.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Codigo IBGE,Código IBGE da Cidade,7.0,Integer,SIM,,,,,,,,,,,,,,,,,,,,,
+Telefone,Telefone principal de contato do fornecedor,14.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+E-mail,Endereço de e-mail (correio eletrônico) do fornecedor,80.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+5 - SEÇÃO,,,,,,,,,,,,,,,,,,,,,,,,,
+NOME DO CAMPO,DESCRIÇÃO,TAMANHO DO CAMPO,TIPO DE DADO,CAMPO OBRIGATÓRIO,VALORES PADRÕES POSSÍVEIS,,,,,,,,,,,,,,,,,,,,
+Codigo secao,Codigo da seção,2.0,Integer,NÃO,,,,,,,,,,,,,,,,,,,,,
+Descricao,Nome da seção,60.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+6 - GRUPO,,,,,,,,,,,,,,,,,,,,,,,,,
+NOME DO CAMPO,DESCRIÇÃO,TAMANHO DO CAMPO,TIPO DE DADO,CAMPO OBRIGATÓRIO,VALORES PADRÕES POSSÍVEIS,,,,,,,,,,,,,,,,,,,,
+Codigo secao,Codigo da seção,2.0,Integer,NÃO,,,,,,,,,,,,,,,,,,,,,
+Codigo grupo,Codigo da seção,2.0,Integer,NÃO,,,,,,,,,,,,,,,,,,,,,
+Descricao drupo,Nome da seção,60.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+7 - SUBGRUPO,,,,,,,,,,,,,,,,,,,,,,,,,
+NOME DO CAMPO,DESCRIÇÃO,TAMANHO DO CAMPO,TIPO DE DADO,CAMPO OBRIGATÓRIO,VALORES PADRÕES POSSÍVEIS,,,,,,,,,,,,,,,,,,,,
+Codigo secao,Codigo da seção,2.0,Integer,NÃO,,,,,,,,,,,,,,,,,,,,,
+Codigo grupo,Codigo da seção,3.0,Integer,NÃO,,,,,,,,,,,,,,,,,,,,,
+Codigo subgrupo,Codigo da seção,3.0,Integer,NÃO,,,,,,,,,,,,,,,,,,,,,
+Descricao subgrupo,Nome da seção,80.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+8 - PRODUTO,,,,,,,,,,,,,,,,,,,,,,,,,
+NOME DO CAMPO,DESCRIÇÃO,TAMANHO DO CAMPO,TIPO DE DADO,CAMPO OBRIGATÓRIO,VALORES PADRÕES POSSÍVEIS,,,,,,,,,,,,,,,,,,,,
+Codigo produto,Código do produto,14.0,Integer,SIM,,,,,,,,,,,,,,,,,,,,,
+Descricao completa,Descrição completa do produto,80.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Descricao reduzida,Descrição reduzida do produto,20.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+Codigo Secao,Código da Seção do produto,2.0,Integer,SIM,,,,,,,,,,,,,,,,,,,,,
+Codigo Grupo,Código do Grupo do produto,3.0,Integer,NÃO,,,,,,,,,,,,,,,,,,,,,
+Codigo Subgrupo,Código do Subgrupo do produto,3.0,Integer,NÃO,,,,,,,,,,,,,,,,,,,,,
+Unidade de medida,Unidade de compra do produto,3.0,String,SIM,"CX = Caixa
+FD = Fardo
+GRS = Grosa
+KG = Quilo
+L = Litro
+LT = Lata
+MIL = Milímetros
+PCT = Pacotes
+SC = Saca
+UN = Unidade",,,,,,,,,,,,,,,,,,,,
+Itens unidade medida,Itens da unidade de compra,15.3,Number,NÃO,,,,,,,,,,,,,,,,,,,,,
+Preco 1,Preço 1 do produto,15.2,Number,SIM,,,,,,,,,,,,,,,,,,,,,
+Preco 2,Preço 2 do produto,15.2,Number,NÃO,,,,,,,,,,,,,,,,,,,,,
+Qtd min preco 2,Quantidade mínima para aplicar o preço 2,15.3,Number,NÃO,,,,,,,,,,,,,,,,,,,,,
+Preco 3,Preço 3 do produto,15.2,Number,NÃO,,,,,,,,,,,,,,,,,,,,,
+Qtd min preco 3,Quantidade mínima para aplicar o preço 3,15.3,Number,NÃO,,,,,,,,,,,,,,,,,,,,,
+Preco oferta 1,Preço 1 de oferta do produto,15.2,Number,NÃO,,,,,,,,,,,,,,,,,,,,,
+Preco oferta 2,Preço 2 de oferta do produto,15.2,Number,NÃO,,,,,,,,,,,,,,,,,,,,,
+Preco oferta 3,Preço 3 de oferta do produto,15.2,Number,NÃO,,,,,,,,,,,,,,,,,,,,,
+Custo reposicao,Custo de reposição do produto,15.2,Number,NÃO,,,,,,,,,,,,,,,,,,,,,
+Custo fiscal,Custo fiscal do produto,15.2,Number,NÃO,,,,,,,,,,,,,,,,,,,,,
+Custo medio,Custo médio do produto,15.2,Number,NÃO,,,,,,,,,,,,,,,,,,,,,
+NCM,NCM do produto,8.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+CEST,CEST do produto,7.0,Number,NÃO,,,,,,,,,,,,,,,,,,,,,
+Natureza,Natureza do produto,3.0,Integer,NÃO,,,,,,,,,,,,,,,,,,,,,
+PIS CST Entrada,PIS aplicado ao produto,2.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+PIS CST Saida,PIS aplicado ao produto,2.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+COFINS CST Entrada,PIS aplicado ao produto,2.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+COFINS CST Saida,COFINS aplicado ao produto,2.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+Envia para balanca,Define se o produto é enviado ou não para balança Toledo,1.0,String,NÃO,"S = Sim
+N = Não",,,,,,,,,,,,,,,,,,,,
+Produto ativo,Define se o produto está em linha (ativo) ou fora de linha (inativo),1.0,String,NÃO,"S = Sim
+N = Não",,,,,,,,,,,,,,,,,,,,
+Tributacao icms,Código da tributação de imposto estadual – situação fiscal,3.0,String,SIM,"F00 = Fonte
+I00 = Isento
+N00 = Nao Tributado 
+T18 = Tributado 18%
+",,,,,,,,,,,,,,,,,,,,
+Composicao,"Informa se o produto é Normal, Composto ou Kit",1.0,String,SIM,"N = Normal
+C = Composto
+K = Kit",,,,,,,,,,,,,,,,,,,,
+Tabela A,Origem do produto,1.0,String,SIM,"0 = Nacional
+1 = Estrangeira
+2 = Estrangeira",,,,,,,,,,,,,,,,,,,,
+9 - PRODUTO AUXILIAR,,,,,,,,,,,,,,,,,,,,,,,,,
+NOME DO CAMPO,DESCRIÇÃO,TAMANHO DO CAMPO,TIPO DE DADO,CAMPO OBRIGATÓRIO,VALORES PADRÕES POSSÍVEIS,,,,,,,,,,,,,,,,,,,,
+Codigo produto,Código do produto,14.0,Integer,SIM,,,,,,,,,,,,,,,,,,,,,
+Codigo auxiliar,Código auxiliar do produto,14.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Fator multiplicacao,Fator de multiplicação do código auxiliar,18.3,Number,NÃO,,,,,,,,,,,,,,,,,,,,,
+10 - REFERENCIAS DO PRODUTO NO FORNECEDOR,,,,,,,,,,,,,,,,,,,,,,,,,
+NOME DO CAMPO,DESCRIÇÃO,TAMANHO DO CAMPO,TIPO DE DADO,CAMPO OBRIGATÓRIO,VALORES PADRÕES POSSÍVEIS,,,,,,,,,,,,,,,,,,,,
+Codigo fornecedor,Código do fornecedor do produto,4.0,Integer,SIM,,,,,,,,,,,,,,,,,,,,,
+Documento Fornecedor,"Principal documento do fornecedor (CPF, CNPJ, Passaporte)",14.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Codigo produto,Código do produto,14.0,Integer,SIM,,,,,,,,,,,,,,,,,,,,,
+Unidade de medida,Unidade de compra do fornecedor do produto,3.0,String,NÃO,"CX = Caixa
+FD = Fardo
+GRS = Grosa
+KG = Quilo
+L = Litro
+LT = Lata
+MIL = Milímetros
+PCT = Pacotes
+SC = Saca
+UN = Unidade",,,,,,,,,,,,,,,,,,,,
+Itens unidade compra,Itens da unidade de compra do fornecedor do produto,15.3,Number,NÃO,,,,,,,,,,,,,,,,,,,,,
+Codigo referencia fornecedor,Código de referencia do produto no fornecedor,60.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+11 - SALDO DE ESTOQUE,,,,,,,,,,,,,,,,,,,,,,,,,
+NOME DO CAMPO,DESCRIÇÃO,TAMANHO DO CAMPO,TIPO DE DADO,CAMPO OBRIGATÓRIO,VALORES PADRÕES POSSÍVEIS,,,,,,,,,,,,,,,,,,,,
+Codigo produto,Código do produto,14.0,Integer,SIM,,,,,,,,,,,,,,,,,,,,,
+Saldo estoque,Quantidade em estoque do produto,17.3,Number,SIM,,,,,,,,,,,,,,,,,,,,,
+12 - TÍTULOS A RECEBER,,,,,,,,,,,,,,,,,,,,,,,,,
+NOME DO CAMPO,DESCRIÇÃO,TAMANHO DO CAMPO,TIPO DE DADO,CAMPO OBRIGATÓRIO,VALORES PADRÕES POSSÍVEIS,,,,,,,,,,,,,,,,,,,,
+Codigo cliente,Código do cliente,6.0,Integer,SIM,,,,,,,,,,,,,,,,,,,,,
+Documento cliente,"Principal documento do cliente (CPF, CNPJ, Passaporte)",14.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Numero documento,Número do documento de origem do título,20.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Valor,Valor do título,17.2,Number,SIM,,,,,,,,,,,,,,,,,,,,,
+Emissao,Data de emissão do título,AAAA/MM/DD,Date,SIM,,,,,,,,,,,,,,,,,,,,,
+Vencimento,Data de vencimento do título,AAAA/MM/DD,Date,SIM,,,,,,,,,,,,,,,,,,,,,
+Observacao,Observação do título,100.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,
+13 - TÍTULOS A PAGAR,,,,,,,,,,,,,,,,,,,,,,,,,
+NOME DO CAMPO,DESCRIÇÃO,TAMANHO DO CAMPO,TIPO DE DADO,CAMPO OBRIGATÓRIO,VALORES PADRÕES POSSÍVEIS,,,,,,,,,,,,,,,,,,,,
+Codigo fornecedor,Código do fornecedor,4.0,Integer,SIM,,,,,,,,,,,,,,,,,,,,,
+Documento fornecedor,"Principal documento do fornecedor (CPF, CNPJ, Passaporte)",14.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Numero documento,Número do documento de origem do título,20.0,String,SIM,,,,,,,,,,,,,,,,,,,,,
+Valor,Valor do título,17.2,Number,SIM,,,,,,,,,,,,,,,,,,,,,
+Emissao,Data de emissão do título,AAAA/MM/DD,Date,SIM,,,,,,,,,,,,,,,,,,,,,
+Vencimento,Data de vencimento do título,AAAA/MM/DD,Date,SIM,,,,,,,,,,,,,,,,,,,,,
+Observacao,Campo de observação do título,100.0,String,NÃO,,,,,,,,,,,,,,,,,,,,,

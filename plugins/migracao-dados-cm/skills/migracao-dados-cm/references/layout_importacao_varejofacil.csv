@@ -1,0 +1,344 @@
+LAYOUT DE IMPORTAÇÃO DE DADOS,,,,,,,,,,,,,,,,,,,,,,,,
+Objetivo,Este registro contém informações referentes aos layouts de importação para o varejofacil,,,,,,,,,,,,,,,,,,,,,,,
+Observações,"Formato do arquivo: CSV
+Delimitador dos campos: ; (ponto-e-vírgula)
+Decimais são separados por . (ponto)
+Os campos como CPF, CNPJ, IE, RG, CEP, Telefone, NCM e CEST devem estar sem máscaras.",,,,,,,,,,,,,,,,,,,,,,,
+Autor,"Equipe de Migração – Desenvolvimento
+migracao@casamagalhaes.com.br",,,,,,,,,,,,,,,,,,,,,,,
+"Segue os requisitos para os campos a serem preenchidos no arquivo:
+Os campos que estão marcados em amarelo, são campos obrigatórios.",,,,,,,,,,,,,,,,,,,,,,,,
+LOJA,,,,,,,,,,,,,,,,,,,,,,,,
+#,NOME,DESCRIÇÃO,TAMANHO,TIPO,FORMATO,VALORES POSSÍVEIS,,,,,,,,,,,,,,,,,,
+1.0,Código,Código da loja,6.0,Integer,99999.0,,,,,,,,,,,,,,,,,,,
+2.0,Tipo de pessoa,Classificação do tipo de pessoa,11.0,String,A," Física
+Jurídica",,,,,,,,,,,,,,,,,,
+3.0,Documento,"Principal documento do cliente (CPF, CNPJ, Passaporte)",14.0,String,99999999999.0,,,,,,,,,,,,,,,,,,,
+4.0,Razão Social,Razão Social da loja,100.0,String,AAAAAAAA,,,,,,,,,,,,,,,,,,,
+5.0,Nome fantasia,Nome fantasia da loja,100.0,String,AAAAAAAA,,,,,,,,,,,,,,,,,,,
+6.0,Inscrição Estadual,Inscrição estadual da loja,20.0,String,999999.0,,,,,,,,,,,,,,,,,,,
+7.0,CEP,Número do CEP do endereço da loja,10.0,String,99999999.0,,,,,,,,,,,,,,,,,,,
+8.0,Endereço,Endereço da loja,100.0,String,AAAAAAA,,,,,,,,,,,,,,,,,,,
+9.0,Número,Número do endereço da loja,6.0,String,AAAA,,,,,,,,,,,,,,,,,,,
+10.0,Bairro,Bairro do endereço da loja,60.0,String,AAAA,,,,,,,,,,,,,,,,,,,
+11.0,Estado,Estado (Unidade Federativa) da cidade da loja,2.0,String,AA,,,,,,,,,,,,,,,,,,,
+12.0,Cidade,Cidade da loja,400.0,String,AAAAA,,,,,,,,,,,,,,,,,,,
+13.0,Telefone 1,Telefone principal de contato da loja,11.0,String,DDD+NUMERO,,,,,,,,,,,,,,,,,,,
+14.0,E-mail,Endereço de e-mail (correio eletrônico) da loja,70.0,String,aaaa@bbbb.com.br,,,,,,,,,,,,,,,,,,,
+15.0,Loja matriz,Identifica se a loja é a matriz,1.0,String,A,"S = Sim (matriz)
+N = Não",,,,,,,,,,,,,,,,,,
+16.0,Regime Federal,Regime federal da loja,1.0,String,A,"R = Lucro Real
+P = Lucro Presumido
+S = Simples Nacional",,,,,,,,,,,,,,,,,,
+17.0,Regime Estadual,Regime estadual da loja,1.0,String,A,"1 = Normal
+2 = Subs. Tributária
+3 = Aliquota Efetiva
+4 = Simples Nacional",,,,,,,,,,,,,,,,,,
+18.0,Mix,Mix da Loja,10.0,String,AAAA,,,,,,,,,,,,,,,,,,,
+99.0,Codigo IBGE,Código IBGE da Cidade,7.0,Integer,999999.0,,,,,,,,,,,,,,,,,,,
+"Abaixo, segue um exemplo de um arquivo CSV.
+Lembrando que os dados dos campos devem ser separados por ; (ponto-e-vírgula), os campos que contém String devem estar entre aspas duplas (“ ”), exceto para campos com data.
+Exemplo:
+
+J"";07128945000132;""LOJA 1"";""LOJA 1"";""78978985"";""SEFAZ"";60000000;""RUA"";100;;""BAIRRO"";""CE"";""FORTALEZA"";08533333333;85999999999;;""loja1@empresa.com.br"";1;123456;""S"";""S",,,,,,,,,,,,,,,,,,,,,,,,
+STATUS,,,,,,,,,,,,,,,,,,,,,,,,
+#,NOME,DESCRIÇÃO,TAMANHO,TIPO,FORMATO,VALORES POSSÍVEIS,,,,,,,,,,,,,,,,,,
+1.0,Codigo do Status,Codigo sequencial do Status,1.0,Integer,9.0,,,,,,,,,,,,,,,,,,,
+2.0,Tipo de bloqueio,Status de liberação do cliente,1.0,String,1.0,"0 = Não bloqueado
+1 = Bloqueado
+2 = Bloqueado com autorização
+3 = Bloqueado com aviso",,,,,,,,,,,,,,,,,,
+3.0,Descrição,Nome do status,60.0,String,AAAAAAA,,,,,,,,,,,,,,,,,,,
+"Abaixo, segue um exemplo de um arquivo CSV.
+Lembrando que os dados dos campos devem ser separados por ; (ponto-e-vírgula), os campos que contém String devem estar entre aspas duplas (“ ”), exceto para campos com data.
+
+Exemplo:
+1;""0"";""SEM BLOQUEIO""",,,,,,,,,,,,,,,,,,,,,,,,
+CLIENTE,,,,,,,,,,,,,,,,,,,,,,,,
+#,NOME,DESCRIÇÃO,TAMANHO,TIPO,FORMATO,VALORES POSSÍVEIS,,,,,,,,,,,,,,,,,,
+18.0,Código,Código do cliente,6.0,Integer,999999.0,,,,,,,,,,,,,,,,,,,
+1.0,Tipo de pessoa,Classificação do tipo de pessoa,1.0,String,A," Física
+Jurídica
+Estrangeiro",,,,,,,,,,,,,,,,,,
+2.0,Documento,"Principal documento do cliente (CPF, CNPJ, Passaporte)",14.0,String,99999999.0,,,,,,,,,,,,,,,,,,,
+3.0,Nome do cliente,Principal nome do cliente,50.0,String,AAAAAAA,,,,,,,,,,,,,,,,,,,
+4.0,Nome fantasia,Nome ou apelido do cliente,25.0,String,AAAAAAA,,,,,,,,,,,,,,,,,,,
+5.0,RG/IE,"Documento RG, caso o cliente seja pessoa física, ou IE (Inscrição Estadual) caso o cliente seja pessoa jurídica",6.0,String,AAAAAAA,,,,,,,,,,,,,,,,,,,
+7.0,CEP,Número do CEP do endereço do cliente,8.0,String,99999999.0,,,,,,,,,,,,,,,,,,,
+8.0,Endereço,Endereço do cliente,48.0,String,AAAAAAA,,,,,,,,,,,,,,,,,,,
+9.0,Número,Número do endereço do cliente,6.0,String,AAAA,,,,,,,,,,,,,,,,,,,
+11.0,Bairro,Bairro do endereço do cliente,20.0,String,AAAA,,,,,,,,,,,,,,,,,,,
+12.0,Estado,Estado (Unidade Federativa) da cidade do cliente,2.0,String,AA,,,,,,,,,,,,,,,,,,,
+13.0,Cidade,Cidade do cliente,25.0,String,AAAAA,,,,,,,,,,,,,,,,,,,
+14.0,Telefone 1,Telefone principal de contato do cliente,12.0,String,DDD+NUMERO,,,,,,,,,,,,,,,,,,,
+17.0,E-mail,Endereço de e-mail (correio eletrônico) do cliente,70.0,String,aaaa@bbbb.com.br,,,,,,,,,,,,,,,,,,,
+19.0,Data de Nascimento,Data de nascimento do cliente,10.0,String,AAAA-MM-DD,,,,,,,,,,,,,,,,,,,
+20.0,Estado Civil,Estado civil do cliente,1.0,String,A,"S = Solteiro (a)
+O = Outros
+D = Divorciado (a)
+V = Viúvo (a)
+C = Casado (a)",,,,,,,,,,,,,,,,,,
+21.0,Sexo,Sexo do cliente,1.0,String,A,"M = Masculino
+F = Feminino",,,,,,,,,,,,,,,,,,
+22.0,Ramo de Atividade,Ramo de atividade do cliente,1.0,Integer,9.0,,,,,,,,,,,,,,,,,,,
+23.0,Status,Status do cliente,1.0,Integer,9.0,,,,,,,,,,,,,,,,,,,
+24.0,Limite de Credito,Valor inicial de credito do cliente,15.0,Number,9.99,,,,,,,,,,,,,,,,,,,
+99.0,Codigo IBGE,Código IBGE da Cidade,7.0,Integer,999999.0,,,,,,,,,,,,,,,,,,,
+"Abaixo, segue um exemplo de um arquivo CSV.
+Lembrando que os dados dos campos devem ser separados por ; (ponto-e-vírgula), os campos que contém String devem estar entre aspas duplas (“ ”), exceto para campos com data.
+Exemplo de cliente pessoa física:
+“F”;99988877766;”FULANO DA SILVA”;”FULANO”;”20162016”;”SSPCE”;60000000;”RUA SILVA SILVEIRA”;100;;”BAIRRO JOAO”;”CE”;”FORTALEZA”;08533333333;85999999999;;”fulano@gmail.com”;181818;1900/01/12;”S”;”M”;0;0
+Exemplo de cliente pessoa jurídica:
+“J”;99888777000133;”EMPRESA DA SILVA LTDA”;”EMPRESA”;”20162016”;;60000000;”RUA MARTINS”;12;;”BAIRRO LAMPIAO”;”CE”;”FORTALEZA”;08533333333;85999999999;;”contato@empresa.com”;365214;1960/06/28;”C”;”M”;0;
+0",,,,,,,,,,,,,,,,,,,,,,,,
+FORNECEDOR,,,,,,,,,,,,,,,,,,,,,,,,
+#,NOME,DESCRIÇÃO,TAMANHO,TIPO,FORMATO,VALORES POSSÍVEIS,,,,,,,,,,,,,,,,,,
+1.0,Tipo de pessoa,Classificação do tipo de pessoa,1.0,String,A,"F = Física
+J = Jurídica
+E = Estrangeiro",,,,,,,,,,,,,,,,,,
+2.0,Documento,"Principal documento do fornecedor (CPF, CNPJ, Passaporte)",14.0,String,AAAAAAAAAAAA,,,,,,,,,,,,,,,,,,,
+3.0,Nome do fornecedor,Principal nome do fornecedor,50.0,String,AAAAAAAAAAAA,,,,,,,,,,,,,,,,,,,
+4.0,Nome fantasia,Nome fantasia do fornecedor,25.0,String,AAAAAAAAAAAA,,,,,,,,,,,,,,,,,,,
+5.0,RG/IE,"Documento RG, caso o fornecedor seja pessoa física, ou IE (Inscrição Estadual)",14.0,String,AAAAAAAAAAAA,,,,,,,,,,,,,,,,,,,
+7.0,CEP,Número do CEP do endereço do fornecedor,8.0,String,AAAAAAAA,,,,,,,,,,,,,,,,,,,
+8.0,Endereço,Endereço do fornecedor,48.0,String,AAAAAAAAAAAA,,,,,,,,,,,,,,,,,,,
+9.0,Número,Número do endereço do fornecedor,6.0,String,AAAAAA,,,,,,,,,,,,,,,,,,,
+10.0,Complemento,Complemento do endereço do fornecedor,16.0,String,AAAAAAAAAAAA,,,,,,,,,,,,,,,,,,,
+11.0,Bairro,Bairro do endereço do fornecedor,20.0,String,AAAAAAAAAAAA,,,,,,,,,,,,,,,,,,,
+12.0,Estado,Estado (Unidade Federativa) da cidade do fornecedor,2.0,String,AA,,,,,,,,,,,,,,,,,,,
+13.0,Cidade,Cidade do fornecedor,25.0,String,AAAAAAAAAAAA,,,,,,,,,,,,,,,,,,,
+14.0,Telefone 1,Telefone principal de contato do fornecedor,12.0,String,999999999999.0,,,,,,,,,,,,,,,,,,,
+17.0,E-mail,Endereço de e-mail (correio eletrônico) do fornecedor,70.0,String,aaaa@bbbb.com.br,,,,,,,,,,,,,,,,,,,
+18.0,Código,Código do fornecedor,6.0,Integer,999999.0,,,,,,,,,,,,,,,,,,,
+19.0,Tipo,Tipo do fornecedor,20.0,String,A,"I = INDUSTRIA
+D = DISTRIBUIDORA
+S = SIMPLES_NACIONAL
+V = VAREJO
+O = OUTROS",,,,,,,,,,,,,,,,,,
+99.0,Codigo IBGE,Código IBGE da Cidade,7.0,Integer,999999.0,,,,,,,,,,,,,,,,,,,
+"Abaixo, segue um exemplo de um arquivo CSV.
+Lembrando que os dados dos campos devem ser separados por ; (ponto-e-vírgula), os campos que contém String devem estar entre aspas duplas (“ ”), exceto para campos com data.
+Exemplo:
+""J"";87622135000177;""EMPRESA DE TESTE"";""EMPRESA DE TESTE"";201620;;60000000;""RUA SILVA SILVEIRA"";100;;""BAIRRO JOAO"";""CE"";""FORTALEZA"";08533333333;85999999999;;""usuario@hotmail.com"";0254;""V""",,,,,,,,,,,,,,,,,,,,,,,,
+SEÇÃO,,,,,,,,,,,,,,,,,,,,,,,,
+#,NOME,DESCRIÇÃO,TAMANHO,TIPO,FORMATO,VALORES POSSÍVEIS,,,,,,,,,,,,,,,,,,
+1.0,Código da secao,Codigo da seção,2.0,Integer,99.0,,,,,,,,,,,,,,,,,,,
+2.0,Descrição,Nome da seção,60.0,String,AAAAAAAAAAAA,,,,,,,,,,,,,,,,,,,
+3.0,Descrição SPED,Desçrição para o SPED,2.0,String,AA,"00 - Mercadorias p/Revendas
+01 - Materia Prima
+02 - Embalagem
+03 - Produto em Processo
+04 - Produto Acabado
+05 - Subproduto
+06 - Produto Intermediario
+07 - Materia de Uso e Consumo
+08 - Ativo Imobilizado
+09 - Serviços
+10 - Outros Insumos
+99 – Outros",,,,,,,,,,,,,,,,,,
+"Abaixo, segue um exemplo de um arquivo CSV.
+Lembrando que os dados dos campos devem ser separados por ; (ponto-e-vírgula), os campos que contém String devem estar entre aspas duplas (“ ”), exceto para campos com data.
+Exemplo:
+1;""SECAO PADRAO"";""99""",,,,,,,,,,,,,,,,,,,,,,,,
+PRODUTO,,,,,,,,,,,,,,,,,,,,,,,,
+#,NOME,DESCRIÇÃO,TAMANHO,TIPO,FORMATO,VALORES POSSÍVEIS,,,,,,,,,,,,,,,,,,
+1.0,Código do produto,Código do produto,14.0,Integer,9.0,,,,,,,,,,,,,,,,,,,
+2.0,Descrição completa,Descrição completa do produto,45.0,String,AAAAAAAAAAAAAAA,,,,,,,,,,,,,,,,,,,
+3.0,Descrição reduzida,Descrição reduzida do produto,35.0,String,AAAAAAAAAAAAAAA,,,,,,,,,,,,,,,,,,,
+4.0,Seção,Seção do produto,2.0,Integer,9.0,,,,,,,,,,,,,,,,,,,
+5.0,Grupo,Grupo do produto,3.0,Integer,9.0,,,,,,,,,,,,,,,,,,,
+6.0,Subgrupo,Subgrupo do produto,3.0,Integer,9.0,,,,,,,,,,,,,,,,,,,
+7.0,Unidade de compra,Unidade de compra do produto,3.0,String,AA,"CX = Caixa
+FD = Fardo
+GRS = Grosa
+KG = Quilo
+L = Litro
+LT = Lata
+MIL = Milímetros
+PCT = Pacotes
+SC = Saca
+UN = Unidade",,,,,,,,,,,,,,,,,,
+8.0,Itens de unidade de compra,Itens da unidade de compra,15.0,Number,9.99,,,,,,,,,,,,,,,,,,,
+9.0,Unidade de venda,Unidade de venda do produto,3.0,String,AA,"CX = Caixa
+FD = Fardo
+GRS = Grosa
+KG = Quilo
+L = Litro
+LT = Lata
+MIL = Milímetros
+PCT = Pacotes
+SC = Saca
+UN = Unidade",,,,,,,,,,,,,,,,,,
+10.0,Itens de unidade de venda,Itens de unidade de venda,15.0,Number,9.99,,,,,,,,,,,,,,,,,,,
+11.0,Preço 1,Preço 1 do produto,15.0,Number,9.99,,,,,,,,,,,,,,,,,,,
+12.0,Preço 2,Preço 2 do produto,15.0,Number,9.99,,,,,,,,,,,,,,,,,,,
+13.0,Preço 3,Preço 3 do produto,15.0,Number,9.99,,,,,,,,,,,,,,,,,,,
+14.0,Preço 1 de oferta,Preço 1 de oferta do produto,15.0,Number,9.99,,,,,,,,,,,,,,,,,,,
+15.0,Preço 2 de oferta,Preço 2 de oferta do produto,15.0,Number,9.99,,,,,,,,,,,,,,,,,,,
+16.0,Preço 3 de oferta,Preço 3 de oferta do produto,15.0,Number,9.99,,,,,,,,,,,,,,,,,,,
+17.0,Quantidade mínima preço 2,Quantidade mínima para aplicar o preço 2,9.0,String,9.0,,,,,,,,,,,,,,,,,,,
+18.0,Quantidade mínima preço 3,Quantidade mínima para aplicar o preço 3,9.0,String,9.0,,,,,,,,,,,,,,,,,,,
+19.0,Custo reposição,Custo de reposição do produto,13.0,String,9.99,,,,,,,,,,,,,,,,,,,
+20.0,Custo fiscal,Custo fiscal do produto,13.0,String,9.99,,,,,,,,,,,,,,,,,,,
+21.0,Custo médio,Custo médio do produto,13.0,String,9.99,,,,,,,,,,,,,,,,,,,
+22.0,Gênero,Gênero do produto,2.0,Integer,99.0,,,,,,,,,,,,,,,,,,,
+23.0,NCM,NCM do produto,8.0,String,99999999.0,,,,,,,,,,,,,,,,,,,
+,CEST,CEST do produto,7.0,Number,9999.0,,,,,,,,,,,,,,,,,,,
+24.0,Natureza,Natureza do produto,3.0,Integer,999.0,,,,,,,,,,,,,,,,,,,
+25.0,PIS,PIS aplicado ao produto,2.0,String,99.0,,,,,,,,,,,,,,,,,,,
+26.0,COFINS,COFINS aplicado ao produto,2.0,String,99.0,,,,,,,,,,,,,,,,,,,
+,CSLL,,,String,,,,,,,,,,,,,,,,,,,,
+,IRPJ,,,String,,,,,,,,,,,,,,,,,,,,
+,OUTROS,,,String,,,,,,,,,,,,,,,,,,,,
+27.0,Código de fornecedor,Código do fornecedor do produto,4.0,Integer,9.0,,,,,,,,,,,,,,,,,,,
+28.0,Unidade de compra no fornecedor,Unidade de compra do fornecedor do produto,3.0,String,AAA,"CX = Caixa
+FD = Fardo
+GRS = Grosa
+KG = Quilo
+L = Litro
+LT = Lata
+MIL = Milímetros
+PCT = Pacotes
+SC = Saca
+UN = Unidade",,,,,,,,,,,,,,,,,,
+29.0,Itens de unidade de compra do fornecedor,Itens da unidade de compra do fornecedor do produto,15.0,Number,999999999999.99,,,,,,,,,,,,,,,,,,,
+30.0,Código de referencia do fornecedor,Código de referencia do produto no fornecedor,15.0,String,AAAAAAAAAAAA,,,,,,,,,,,,,,,,,,,
+31.0,Nível de referencia do fornecedor,Nível de referencia do fornecedor do produto,1.0,String,A,"P = Principal
+S = Secundário",,,,,,,,,,,,,,,,,,
+32.0,Permite desconto,Define se o produto permite desconto,1.0,String,A,"S = Sim
+N = Não",,,,,,,,,,,,,,,,,,
+33.0,Valor máximo de desconto,Valor máximo de desconto do produto,5.0,Number,99.99,,,,,,,,,,,,,,,,,,,
+34.0,Envia para balança,Define se o produto é enviado ou não para balança Toledo,1.0,String,A,"S = Sim
+N = Não",,,,,,,,,,,,,,,,,,
+35.0,Estoque mínimo,Valor para estoque mínimo,13.0,Number,9999999999.99,,,,,,,,,,,,,,,,,,,
+36.0,Estoque máximo,Valor para estoque máximo,13.0,Number,9999999999.99,,,,,,,,,,,,,,,,,,,
+37.0,Mix Produto,Mis do Produto,5.0,Integer,9.0,,,,,,,,,,,,,,,,,,,
+38.0,Tributação imposto,Código da tributação de imposto estadual – situação fiscal,3.0,String,999.0,,,,,,,,,,,,,,,,,,,
+39.0,Composição,Informa se o produto é composto ou Kit,1.0,String,A,"N = Normal
+C = Composto
+K = Kit",,,,,,,,,,,,,,,,,,
+40.0,Finalidade,Finalidade do produto,1.0,String,1.0,"1 = Comercialização
+2 = Imobilizado
+3 = Matéria-Prima
+4 = Consumo
+5 = Industrializado
+6 = Outros",,,,,,,,,,,,,,,,,,
+"Abaixo, segue um exemplo de um arquivo CSV.
+Lembrando que os dados dos campos devem ser separados por ; (ponto-e-vírgula), os campos que contém String devem estar entre aspas duplas (“ ”), exceto para campos com data.
+Exemplo:
+123456;""PRODUTO1"";""PROD 1"";1;1;1;""UN"";1;""UN"";1;50.00;9.00;;;;;2;;7;7;7;33;33073000;202;""01"";""02"";1;""UN"";1;11;""P"";""S"";99.99;""N"";10;100;1;""F00"";""N"";""1""",,,,,,,,,,,,,,,,,,,,,,,,
+PRODUTO AUXILIAR,,,,,,,,,,,,,,,,,,,,,,,,
+#,NOME,DESCRIÇÃO,TAMANHO,TIPO,FORMATO,VALORES POSSÍVEIS,,,,,,,,,,,,,,,,,,
+1.0,Código do produto,Código do produto,,Integer,9.0,,,,,,,,,,,,,,,,,,,
+2.0,Código auxiliar,Código auxiliar do produto,,String,AAAAAAAAAAAAAAA,,,,,,,,,,,,,,,,,,,
+3.0,Fator de multiplicação,Fator de multiplicação do código auxiliar,,Integer,,,,,,,,,,,,,,,,,,,,
+4.0,Tipo,Tipo do código auxiliar,,String,,"EAN
+LITERAL",,,,,,,,,,,,,,,,,,
+5.0,Ean Tributado,Informa se o EAN é tributado,,String,,"S = Sim
+N = Não",,,,,,,,,,,,,,,,,,
+6.0,Ean Principal,Informa se o EAN tributado é principal ou secundario,,String,,"S = Principal
+N = Secundario",,,,,,,,,,,,,,,,,,
+"Abaixo, segue um exemplo de um arquivo CSV.
+Lembrando que os dados dos campos devem ser separados por ; (ponto-e-vírgula), os campos que contém String devem estar entre aspas duplas (“ ”), exceto para campos com data.
+Exemplo:
+123456;”07898526216400”;1;”EAN”;""S"";""S""
+123456;”07898526204780”;1;”EAN”;""N"";""N""",,,,,,,,,,,,,,,,,,,,,,,,
+IMPOSTOS FEDERAIS,,,,,,,,,,,,,,,,,,,,,,,,
+#,NOME,DESCRIÇÃO,TAMANHO,TIPO,FORMATO,VALORES POSSÍVEIS,,,,,,,,,,,,,,,,,,
+1.0,Simbologia,Código usado para associar o imposto ao produto,2.0,String,99.0,,,,,,,,,,,,,,,,,,,
+2.0,Descrição,Descrição do imposto federal,20.0,String,AAAAAAAAAAAA,,,,,,,,,,,,,,,,,,,
+3.0,Tipo,Tipo do imposto federal,6.0,String,AAAAAA,"PIS
+COFINS
+CSLL
+IRPJ
+OUTROS",,,,,,,,,,,,,,,,,,
+4.0,CST Entrada,CST de entrada do imposto,2.0,String,99.0,50 a 99,,,,,,,,,,,,,,,,,,
+5.0,CST Saída,CST de saída do imposto,2.0,String,99.0,01 a 49,,,,,,,,,,,,,,,,,,
+6.0,Alíquota Entrada,Alíquota de entrada,4.0,String,99.99,,,,,,,,,,,,,,,,,,,
+7.0,Alíquota Saída,Alíquota de saída,4.0,String,99.99,,,,,,,,,,,,,,,,,,,
+"Abaixo, segue um exemplo de um arquivo CSV.
+Lembrando que os dados dos campos devem ser separados por ; (ponto-e-vírgula), os campos que contém String devem estar entre aspas duplas (“ ”), exceto para campos com data.
+Exemplo:
+""01"";""PIS SIMPLES"";""PIS"";""99"";""49"";;
+""02"";""COFINS SIMPLES"";""COFINS"";""99"";""49"";;",,,,,,,,,,,,,,,,,,,,,,,,
+ESPECIE DE DOCUMENTO,,,,,,,,,,,,,,,,,,,,,,,,
+#,NOME,DESCRIÇÃO,TAMANHO,TIPO,FORMATO,VALORES POSSÍVEIS,,,,,,,,,,,,,,,,,,
+1.0,Codigo,Codigo da especie de documento,2.0,Integer,,,,,,,,,,,,,,,,,,,,
+2.0,Descricao,Nome da especie de documento,80.0,String,,,,,,,,,,,,,,,,,,,,
+3.0,Sigla,Sigla da especie de documento,10.0,String,,,,,,,,,,,,,,,,,,,,
+4.0,Genero,Informação se a especie é de pagamento ou recebimento,1.0,String,A,"P = Pagamento
+R = Recebimento",,,,,,,,,,,,,,,,,,
+5.0,Tipo de Juros,Informação sobre o tipo de juros,2.0,String,AA,"S = Simples
+C = Composto",,,,,,,,,,,,,,,,,,
+6.0,Incidencia de Juros,Dias para começara a incorrer juros,2.0,Integer,9.0,,,,,,,,,,,,,,,,,,,
+7.0,Mora diaria,Valor da mora diaria,3.0,Number,9.99,,,,,,,,,,,,,,,,,,,
+8.0,Incidencia de Multa,Dias para começara a incorrer multa,2.0,Integer,9.0,,,,,,,,,,,,,,,,,,,
+9.0,Multa por atraso,Valor da multa,3.0,Number,9.99,,,,,,,,,,,,,,,,,,,
+10.0,Controle de limite,Informa se a especie de documento controla limite de credito,1.0,String,A,"S = Sim
+N = Não",,,,,,,,,,,,,,,,,,
+11.0,Tipo de limite,Informa o tipo de limite,1.0,String,A,"C = Convenio
+A = Avulso",,,,,,,,,,,,,,,,,,
+12.0,Documento NFe,Informa o tipo de documento na NFe,1.0,String,A,"1 = Dinheiro
+2 = Cheque
+3 = Cartão de Credito
+4 = Cartão de Debito
+5 = Credito loja
+6 = Vale Alimentação
+7 = Vale Refeição
+8 = Vale Presente
+9 = Vale Combustivel
+10 = Duplicata Mercantil
+11 = Boleto Bancario
+12 = Sem Pagamento
+13 = Outros",,,,,,,,,,,,,,,,,,
+"Abaixo, segue um exemplo de um arquivo CSV.
+Lembrando que os dados dos campos devem ser separados por ; (ponto-e-vírgula), os campos que contém String devem estar entre aspas duplas (“ ”), exceto para campos com data.
+Exemplo:
+181818;""PRIMEIRA CONTA A RECEBER"";""24545741"";30,90;2016/11/26;2016/12/26;2;""A"";1;12345678910110
+181818;""SEGUNDA CONTA A RECEBER"";""241562584"";40;2016/11/26;2016/12/26;2;""P"";1;12345678910110",,,,,,,,,,,,,,,,,,,,,,,,
+TÍTULOS A PAGAR,,,,,,,,,,,,,,,,,,,,,,,,
+#,NOME,DESCRIÇÃO,TAMANHO,TIPO,FORMATO,VALORES POSSÍVEIS,,,,,,,,,,,,,,,,,,
+1.0,Observação,Campo de observação do título,100.0,String,AAAAAA,,,,,,,,,,,,,,,,,,,
+2.0,Número do documento,Número do documento,20.0,String,999999.0,,,,,,,,,,,,,,,,,,,
+3.0,Data Emissão,Data de emissão do título,10.0,String,AAAA-MM-DD,,,,,,,,,,,,,,,,,,,
+4.0,Valor do Título,Valor do título,15.0,Number,9.99,,,,,,,,,,,,,,,,,,,
+5.0,Data de Vencimento,Data de vencimento do título,10.0,String,AAAA-MM-DD,,,,,,,,,,,,,,,,,,,
+6.0,Código da loja,Código da loja,15.0,Integer,99999.0,,,,,,,,,,,,,,,,,,,
+7.0,Código do fornecedor,Código do fornecedor,15.0,Integer,99999.0,,,,,,,,,,,,,,,,,,,
+8.0,Especie de documento,Tipo de documento onde o titulo foi gerado,2.0,Integer,99.0,,,,,,,,,,,,,,,,,,,
+9.0,Documento,"Principal documento do fornecedor (CPF, CNPJ, Passaporte)",14.0,String,999999.0,,,,,,,,,,,,,,,,,,,
+"Abaixo, segue um exemplo de um arquivo CSV.
+Lembrando que os dados dos campos devem ser separados por ; (ponto-e-vírgula), os campos que contém String devem estar entre aspas duplas (“ ”), exceto para campos com data.
+Exempo:
+""PRIMEIRA CONTA A PAGAR"";""2015458"";2016/11/24;26,90;2016/12/24;2;254;1;12345678910110",,,,,,,,,,,,,,,,,,,,,,,,
+TÍTULOS A RECEBER,,,,,,,,,,,,,,,,,,,,,,,,
+#,NOME,DESCRIÇÃO,TAMANHO,TIPO,FORMATO,VALORES POSSÍVEIS,,,,,,,,,,,,,,,,,,
+1.0,Código do cliente,Código do cliente,15.0,Integer,99999.0,,,,,,,,,,,,,,,,,,,
+2.0,Observação,Observação do título,100.0,String,,,,,,,,,,,,,,,,,,,,
+3.0,Número do documento,Número do documento,20.0,String,,,,,,,,,,,,,,,,,,,,
+4.0,Valor do Título,Valor do título,17.0,Number,9.99,,,,,,,,,,,,,,,,,,,
+5.0,Data de emissão,Data de emissão do título,10.0,String,AAAA/MM/DD,,,,,,,,,,,,,,,,,,,
+6.0,Data de Vencimento,Data de vencimento do título,10.0,String,AAAA/MM/DD,,,,,,,,,,,,,,,,,,,
+7.0,Código da loja,Código da loja,15.0,Integer,99999.0,,,,,,,,,,,,,,,,,,,
+8.0,Status,Status do título,1.0,String,A,"A – Aberto
+P – Parcialmente Liquidado",,,,,,,,,,,,,,,,,,
+9.0,Especie de documento,Tipo de documento onde o titulo foi gerado,2.0,Integer,99.0,,,,,,,,,,,,,,,,,,,
+10.0,Documento,"Principal documento do cliente (CPF, CNPJ, Passaporte)",14.0,String,100000000000000.0,,,,,,,,,,,,,,,,,,,
+"Abaixo, segue um exemplo de um arquivo CSV.
+Lembrando que os dados dos campos devem ser separados por ; (ponto-e-vírgula), os campos que contém String devem estar entre aspas duplas (“ ”), exceto para campos com data.
+Exemplo:
+181818;""PRIMEIRA CONTA A RECEBER"";""24545741"";30,90;2016/11/26;2016/12/26;2;""A"";1;12345678910110
+181818;""SEGUNDA CONTA A RECEBER"";""241562584"";40;2016/11/26;2016/12/26;2;""P"";1;12345678910110",,,,,,,,,,,,,,,,,,,,,,,,
+TÍTULOS A RECEBER - PARCIALMENTE LIQUIDADOS,,,,,,,,,,,,,,,,,,,,,,,,
+#,NOME,DESCRIÇÃO,TAMANHO,TIPO,FORMATO,VALORES POSSÍVEIS,,,,,,,,,,,,,,,,,,
+1.0,Número do documento,Número do documento,36.0,String,A,,,,,,,,,,,,,,,,,,,
+2.0,Valor da multa,Valor da multa diária,17.4,Number,9999-09-01 00:00:00,,,,,,,,,,,,,,,,,,,
+3.0,Valor do juros,Valor do juros,17.0,Number,9.99,,,,,,,,,,,,,,,,,,,
+4.0,Valor do desconto,Valor do desconto,17.0,Number,9.99,,,,,,,,,,,,,,,,,,,
+5.0,Valor pago,Valor pago do título,17.0,Number,9.99,,,,,,,,,,,,,,,,,,,
+6.0,Data do pagamento,Data que foi realizado o pagamento,10.0,String,AAAA/MM/DD,,,,,,,,,,,,,,,,,,,
+"Abaixo, segue um exemplo de um arquivo CSV.
+Lembrando que os dados dos campos devem ser separados por ; (ponto-e-vírgula), os campos que contém String devem estar entre aspas duplas (“ ”), exceto para campos com data.
+
+Exemplo:
+""241562584"";0;0;0;20;2016/11/26",,,,,,,,,,,,,,,,,,,,,,,,
