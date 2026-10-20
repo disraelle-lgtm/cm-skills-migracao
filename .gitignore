@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Saídas de execução do migrador
+migrador_syspdv_varejo/reports/*
+!migrador_syspdv_varejo/reports/.gitkeep
+
+# DLLs do client Firebird 64 bits (baixadas na instalação, não versionadas)
+migrador_syspdv_varejo/windows/firebird_client_x64/*.dll
+migrador_syspdv_varejo/windows/firebird_client_x64/*.manifest
+
+# Pacotes gerados
+*.skill
+*.zip
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini

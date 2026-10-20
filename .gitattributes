@@ -1,0 +1,15 @@
+# Padrão: texto normalizado
+* text=auto
+
+# Código do app: bytes exatamente como estão (sem conversão CRLF/LF).
+# Os .bat/.ps1 precisam de CRLF e os .sh de LF; sem isto, um checkout no Windows
+# com core.autocrlf trocaria as quebras de linha e o empacotador geraria um JSON diferente.
+migrador_syspdv_varejo/** -text
+
+# Conteúdo da skill: idem (.bat de reparo do Firebird e layouts CSV/HTML usam CRLF)
+plugins/migracao-dados-cm/skills/** -text
+
+# Binários
+*.pdf binary
+*.dll binary
+*.zip binary
