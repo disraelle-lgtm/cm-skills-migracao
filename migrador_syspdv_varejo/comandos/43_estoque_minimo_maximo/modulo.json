@@ -1,0 +1,2 @@
+{ "nome": "Estoque mínimo e máximo", "grupo": "Estoque", "chave": ["procod"], "tabela_origem": "PRODUTO",
+  "descricao": "T-MovimentacaoEstoque_mininoemaximo_inicial: PRODUTO -> produto_estoque." }

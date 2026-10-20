@@ -1,0 +1,5 @@
+{
+  "nome": "Tributação do produto",
+  "grupo": "Cadastro de Produto",
+  "descricao": "T-define-sequence-stf-codigo + T-CriaSituacaoFiscalProduto + T-AtualizaSituacaoFiscalProduto + T-ItemTabelaTributaria + T-ItemTabelaTributaria2."
+}

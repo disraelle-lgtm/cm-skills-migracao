@@ -1,0 +1,2 @@
+{ "nome": "Componentes", "chave": ["procod", "cc_procod"], "tabela_origem": "COMPONENTE",
+  "mensagem_validacao": "o produto composto deste componente nao tem composicao no VarejoFacil" }

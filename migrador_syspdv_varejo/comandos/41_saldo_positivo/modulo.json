@@ -1,0 +1,2 @@
+{ "nome": "Saldo positivo", "grupo": "Estoque", "chave": ["procod"], "tabela_origem": "ESTOQUE",
+  "descricao": "T-MovimentacaoEstoque_positivo_inicial: saldo do SysPDV como ajuste de estoque (9002, MIGRACAO)." }

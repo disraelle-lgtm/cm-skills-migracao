@@ -1,0 +1,2 @@
+{ "nome": "Cenário fiscal por produto", "grupo": "Cadastro de Produto",
+  "descricao": "JOB-Cenario_Fiscal_Produto: produtos com classificacao diferente da do NCM -> cenario_fiscal_produto (+ produtos, loja e UF de destino). Usa a classificacao tributaria do Cenario fiscal por NCM." }

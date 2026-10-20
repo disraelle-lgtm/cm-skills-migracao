@@ -1,0 +1,6 @@
+{
+  "nome": "Finalizadora",
+  "grupo": "Cadastro de Pessoas",
+  "descricao": "T-Finalizadora_inicial + SQL VF - update_fzd_Dinheiro: FINALIZADORA -> finalizadora.",
+  "chave": ["fzdcod"]
+}

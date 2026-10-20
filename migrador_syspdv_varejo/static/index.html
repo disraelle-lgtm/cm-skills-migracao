@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Migrador SysPDV -> VarejoFacil</title>
+<style>
+  /* Paleta Casa Magalhães: Pantone 295 C (#002850), Pantone 7488 C (#32F032), branco */
+  :root {
+    --cor-primaria: #002850;
+    --cor-destaque: #32F032;
+    --cor-destaque-texto: #1a7a1a; /* variante mais escura do verde, só para texto legível */
+  }
+  body { font-family: system-ui, sans-serif; max-width: 1180px; margin: 2rem auto; padding: 0 1rem; color: #1b1b1b; background: #fff; }
+  h1 { font-size: 1.4rem; color: var(--cor-primaria); border-bottom: 4px solid var(--cor-destaque); padding-bottom: .6rem; }
+  h2 { color: var(--cor-primaria); }
+  fieldset { margin-bottom: 1.2rem; border: 1px solid #c9d3dd; border-radius: 6px; }
+  legend { font-weight: 600; padding: 0 .4rem; color: var(--cor-primaria); }
+  label { display: block; margin: .5rem 0 .2rem; font-size: .9rem; }
+  input[type=text], input[type=number], input[type=password] { width: 100%; padding: .4rem; box-sizing: border-box; border: 1px solid #c9d3dd; border-radius: 4px; }
+  input[type=text]:focus, input[type=number]:focus, input[type=password]:focus, select:focus {
+    outline: none; border-color: var(--cor-primaria); box-shadow: 0 0 0 2px rgba(0,40,80,.15);
+  }
+  input[type=checkbox] { accent-color: var(--cor-primaria); }
+  .row { display: flex; gap: 1rem; }
+  .row > div { flex: 1; }
+  .row-checks { display: flex; flex-wrap: wrap; gap: .4rem 1.5rem; margin-bottom: .3rem; }
+  .row-checks label { font-weight: normal; white-space: nowrap; }
+  button { padding: .6rem 1.2rem; font-size: 1rem; cursor: pointer; background: var(--cor-primaria); color: #fff; border: none; border-radius: 4px; font-weight: 600; }
+  button:hover:not(:disabled) { background: var(--cor-destaque); color: var(--cor-primaria); }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .tab-bar button { background: #fff; color: var(--cor-primaria); border: 2px solid var(--cor-primaria); }
+  .tab-bar button.tab-ativa { background: var(--cor-primaria); color: #fff; }
+  .tab-bar button.tab-ativa:hover { background: var(--cor-primaria); color: #fff; }
+  table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+  th, td { border: 1px solid #ddd; padding: .4rem .6rem; font-size: .85rem; text-align: left; }
+  th { background: var(--cor-primaria); color: #fff; }
+  .status-ok { color: var(--cor-destaque-texto); }
+  .status-erro { color: #b00020; }
+  .status-pendente { color: #a06a00; }
+  #aviso { color: #b00020; font-size: .85rem; }
+  td.num { text-align: right; }
+  td.destino { font-family: ui-monospace, monospace; font-size: .8rem; color: #444; }
+  #tabelaPreview button { padding: .2rem .5rem; font-size: .8rem; margin-left: .5rem; }
+  #uploadProgressWrap { display: flex; align-items: center; gap: .6rem; margin: .4rem 0; }
+  #uploadProgress { flex: 1; height: 1.1rem; accent-color: var(--cor-destaque); }
+  #uploadProgressText { font-size: .85rem; min-width: 3.2rem; text-align: right; }
+  select { padding: .35rem; border: 1px solid #c9d3dd; border-radius: 4px; }
+  .tab-bar { flex-wrap: wrap; gap: .5rem; }
+  .tab-bar button { flex: 0 0 auto; }
+  .btn-sec { background: #fff; color: var(--cor-primaria); border: 2px solid var(--cor-primaria); padding: .35rem .8rem; font-size: .9rem; }
+  .resultado { background: #f4f7fa; border-left: 4px solid var(--cor-primaria); padding: .6rem .8rem; margin-top: .6rem; font-size: .85rem; white-space: pre-wrap; display: none; }
+  .resultado.ok { border-left-color: var(--cor-destaque); }
+  .resultado.erro { border-left-color: #b00020; color: #b00020; }
+  .linha-caminho { font-size: .85rem; margin: .4rem 0 0; font-family: ui-monospace, monospace; }
+  .radios label { display: inline-block; margin-right: 1.2rem; font-weight: normal; }
+  pre.log { background: var(--cor-primaria); color: var(--cor-destaque); padding: .8rem; border-radius: 6px; height: 260px; overflow-y: auto; font-size: .78rem; }
+  ul.arvore { list-style: none; padding-left: 1.1rem; margin: .2rem 0; }
+  ul.arvore > li { margin: .1rem 0; }
+  #arvorePentaho { max-height: 340px; overflow-y: auto; border: 1px solid #c9d3dd; border-radius: 6px; padding: .4rem; font-size: .85rem; }
+  .no { cursor: pointer; padding: .05rem .3rem; border-radius: 3px; }
+  .no.selecionado { background: #dce8f3; }
+  .no .tipo { font-size: .7rem; color: #666; border: 1px solid #c9d3dd; border-radius: 3px; padding: 0 .25rem; margin-right: .3rem; }
+  .no.rodando { color: #a06a00; font-weight: 600; } .no.ok { color: var(--cor-destaque-texto); } .no.erro, .no.faltando { color: #b00020; }
+  select { padding: .35rem; border: 1px solid #c9d3dd; border-radius: 4px; }
+  .btn-sec { background: #fff; color: var(--cor-primaria); border: 2px solid var(--cor-primaria); padding: .35rem .8rem; font-size: .9rem; }
+  .resultado { background: #f4f7fa; border-left: 4px solid var(--cor-primaria); padding: .6rem .8rem; margin-top: .6rem; font-size: .85rem; white-space: pre-wrap; display: none; }
+  .resultado.ok { border-left-color: var(--cor-destaque); } .resultado.erro { border-left-color: #b00020; color: #b00020; }
+  .linha-caminho { font-size: .85rem; margin: .4rem 0 0; font-family: ui-monospace, monospace; }
+  .radios label { display: inline-block; margin-right: 1.2rem; font-weight: normal; }
+  .duas-colunas { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
+  .duas-colunas > fieldset { margin-bottom: 0; }
+  @media (max-width: 860px) { .duas-colunas { grid-template-columns: 1fr; } }
+  .grupo-itens { margin: .8rem 0 .2rem; font-weight: 600; color: var(--cor-primaria); }
+  .problema-item { color: #b00020; font-size: .82rem; margin: .2rem 0; }
+  .lista-modulos { display: flex; flex-wrap: wrap; gap: .3rem 1.6rem; margin: .2rem 0 .4rem; }
+  .modulo { margin: 0; }
+  .modulo { display: inline-flex; gap: .35rem; align-items: center; font-weight: 600; }
+  pre.log { background: var(--cor-primaria); color: var(--cor-destaque); padding: .8rem; border-radius: 6px; height: 220px; overflow-y: auto; font-size: .78rem; }
+  td.st-concluido { color: var(--cor-destaque-texto); font-weight: 600; } td.st-erro, td.st-concluido_com_erros { color: #b00020; font-weight: 600; }
+  td.st-rodando { color: #a06a00; font-weight: 600; }
+  .abas-so { display: flex; gap: .4rem; margin: 0 0 .8rem; border-bottom: 2px solid var(--cor-primaria); }
+  .abas-so button { background: #e9eef3; color: var(--cor-primaria); border: none; border-radius: 6px 6px 0 0;
+                    padding: .45rem 1.2rem; font-weight: 600; cursor: pointer; }
+  .abas-so button.ativa { background: var(--cor-primaria); color: #fff; }
+  .abas-so .nota { margin-left: auto; align-self: center; font-size: .78rem; color: #666; }
+  .so-windows, .so-ubuntu { display: none; }
+  body.aba-windows .so-windows, body.aba-ubuntu .so-ubuntu { display: block; }
+  body.aba-windows span.so-windows, body.aba-ubuntu span.so-ubuntu { display: inline; }
+  .caminho-linha { display: flex; gap: .4rem; }
+  .caminho-linha input { flex: 1; }
+  .dica { font-size: .78rem; color: #555; margin: .15rem 0 .3rem; }
+  #fundoNavegador { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: none; z-index: 50;
+                    align-items: center; justify-content: center; }
+  #navegador { background: #fff; width: min(720px, 94vw); max-height: 80vh; border-radius: 8px; display: flex;
+               flex-direction: column; box-shadow: 0 8px 30px rgba(0,0,0,.3); }
+  #navegador header { padding: .7rem 1rem; border-bottom: 1px solid #e3e9ef; }
+  #navegador header strong { color: var(--cor-primaria); }
+  #navCaminho { font-family: ui-monospace, monospace; font-size: .82rem; color: #333; word-break: break-all; margin-top: .3rem; }
+  #navLista { overflow-y: auto; padding: .3rem 0; flex: 1; }
+  #navLista div { padding: .35rem 1rem; cursor: pointer; font-size: .9rem; }
+  #navLista div:hover { background: #eef3f8; }
+  #navLista .vazio { color: #888; cursor: default; }
+  #navegador footer { padding: .6rem 1rem; border-top: 1px solid #e3e9ef; text-align: right; }
+  .opcao-item { font-weight: normal; font-size: .85rem; color: #333; margin-right: -.9rem; border-right: 2px solid #c9d3dd; padding-right: .5rem; }
+  td.dif { color: #b00020; font-weight: 600; }
+  .barra { position: relative; height: 26px; background: #e6ebf0; border-radius: 13px; overflow: hidden; margin: .4rem 0 .8rem; display: none; }
+  .barra-preenchida { height: 100%; width: 0%; background: linear-gradient(90deg, #2e9d4a, #3fbf5f); border-radius: 13px;
+                      transition: width .5s ease; }
+  .barra-texto { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+                 font-weight: 700; font-size: .85rem; color: #12331c; }
+  .barra.erro .barra-preenchida { background: linear-gradient(90deg, #c0392b, #e05a4a); }
+</style>
+</head>
+<body>
+<header style="background:var(--cor-primaria); border-radius:8px; padding:1rem 1.4rem; margin-bottom:1.5rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+  <img src="data:image/png;base64,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" alt="Casa Magalhães" style="height:38px; display:block;">
+  <h1 style="color:#fff; border-bottom:none; margin:0; padding:0; font-size:1.15rem;">Migrador de Dados — SysPDV (Firebird) → VarejoFacil (PostgreSQL)</h1>
+</header>
+
+
+<!-- ============================================================== CONEXÕES === -->
+<h2 style="margin-top:0;">1. Conexões</h2>
+<div class="abas-so">
+  <button type="button" data-aba="ubuntu">Linux</button>
+  <button type="button" data-aba="windows">Windows</button>
+  <span class="nota">Configuração do sistema onde o migrador está rodando.</span>
+</div>
+<div class="duas-colunas">
+<fieldset>
+  <legend>Origem — SysPDV</legend>
+  <label for="origemTipo">Banco de origem</label>
+  <select id="origemTipo" class="lembrar" style="width:100%">
+    <option value="firebird">Firebird</option>
+    <option value="sqlserver">SQL Server</option>
+  </select>
+  <div id="camposSql" style="display:none;">
+    <div class="row">
+      <div><label for="sqHost">Host</label><input type="text" id="sqHost" class="lembrar" placeholder="localhost"></div>
+      <div style="flex:0 0 6rem"><label for="sqPorta">Porta</label><input type="number" id="sqPorta" class="lembrar" placeholder="1433"></div>
+    </div>
+    <div class="row">
+      <div><label for="sqInstancia">Instância (opcional)</label><input type="text" id="sqInstancia" class="lembrar" placeholder="ex.: SQLEXPRESS"></div>
+      <div><label for="sqBanco">Banco</label><input type="text" id="sqBanco" class="lembrar" placeholder="banco do SysPDV"></div>
+    </div>
+    <div class="row">
+      <div><label for="sqUser">Usuário</label><input type="text" id="sqUser" class="lembrar" placeholder="sa"></div>
+      <div><label for="sqPass">Senha</label><input type="password" id="sqPass"></div>
+    </div>
+    <label for="sqDriver">Driver ODBC (opcional)</label>
+    <input type="text" id="sqDriver" class="lembrar" placeholder="vazio = escolher sozinho (ODBC Driver 18/17 for SQL Server)">
+    <p class="dica">Com instância, a porta é ignorada. O SQL Server é aberto só para leitura.</p>
+    <button type="button" class="btn-sec" id="btnTestarSq">Testar SQL Server</button>
+    <div id="resSq" class="resultado"></div>
+  </div>
+  <div id="camposFb">
+  <div class="row">
+    <div><label for="fbHost">Host</label><input type="text" id="fbHost" value="localhost" class="lembrar"></div>
+    <div style="flex:0 0 6rem"><label for="fbPorta">Porta</label><input type="number" id="fbPorta" value="3050" class="lembrar"></div>
+  </div>
+  <label for="fbCaminho">Caminho do .FDB (no servidor Firebird)</label>
+  <div class="caminho-linha">
+    <input type="text" id="fbCaminho" class="lembrar">
+    <button type="button" class="btn-sec so-windows" id="btnProcurar">Procurar...</button>
+  </div>
+  <p class="dica so-ubuntu">Firebird em Docker: use o caminho de dentro do container (ex.: /firebird/data/...).</p>
+  <div class="row">
+    <div><label for="fbUser">Usuário</label><input type="text" id="fbUser" value="SYSDBA" class="lembrar"></div>
+    <div><label for="fbPass">Senha</label><input type="password" id="fbPass"></div>
+  </div>
+  <div class="row">
+    <div style="flex:0 0 8rem"><label for="fbCharset">Charset</label>
+      <select id="fbCharset" class="lembrar" style="width:100%"><option>WIN1252</option><option>ISO8859_1</option><option>UTF8</option><option>NONE</option></select></div>
+    <div><label for="fbClient">fbclient (opcional)</label><input type="text" id="fbClient" class="lembrar" placeholder="vazio = localizar sozinho"></div>
+  </div>
+  <p class="dica so-windows">Deixe o fbclient vazio: o migrador usa o client 64 bits da pasta windows\firebird_client_x64.</p>
+  <button type="button" class="btn-sec" id="btnTestarFb">Testar Firebird</button>
+  <div id="resFb" class="resultado"></div>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>Destino — VarejoFacil (PostgreSQL)</legend>
+  <div class="row">
+    <div><label for="pgHost">Host</label><input type="text" id="pgHost" value="localhost" class="lembrar"></div>
+    <div style="flex:0 0 6rem"><label for="pgPort">Porta</label><input type="number" id="pgPort" value="5432" class="lembrar"></div>
+  </div>
+  <label for="pgDb">Banco</label><input type="text" id="pgDb" class="lembrar" placeholder="nome do banco do cliente">
+  <div class="row">
+    <div><label for="pgUser">Usuário</label><input type="text" id="pgUser" value="postgres" class="lembrar"></div>
+    <div><label for="pgPass">Senha</label><input type="password" id="pgPass"></div>
+  </div>
+  <button type="button" class="btn-sec" id="btnTestarPg" style="margin-top:.8rem;">Testar PostgreSQL</button>
+  <div id="resPg" class="resultado"></div>
+</fieldset>
+</div>
+
+<!-- ======================================================= DADOS A MIGRAR === -->
+<h2>2. Dados a serem migrados</h2>
+<button type="button" class="btn-sec" id="btnMarcar">Marcar todos</button>
+<button type="button" class="btn-sec" id="btnDesmarcar">Desmarcar todos</button>
+<button type="button" class="btn-sec" id="btnRecarregar">Recarregar</button>
+<div id="listaModulos"></div>
+
+<fieldset style="margin-top:1rem;">
+  <legend>Opções</legend>
+  <label><input type="checkbox" id="simular" checked> <strong>Simular</strong> — executa tudo e desfaz no final (nada fica
+    gravado). Desmarque para gravar de verdade.</label>
+</fieldset>
+<button type="button" id="btnMigrar">Iniciar migração</button>
+
+<!-- ============================================================== PROGRESSO === -->
+<h2>3. Progresso</h2>
+<div class="barra" id="barra"><div class="barra-preenchida" id="barraPreenchida"></div><div class="barra-texto" id="barraTexto">0%</div></div>
+<p id="statusGeral"></p>
+<table id="tabelaProgresso">
+  <thead><tr><th>Item</th><th>Situação</th><th title="Total de registros da tabela no SysPDV">Na origem</th><th>Lidos</th><th>Inseridos</th><th>Atualizados</th><th>Sem alteração</th><th>Pulados</th><th>Erros</th><th title="Na origem menos (inseridos + atualizados + sem alteração)">Não migrados</th><th>Relatório</th></tr></thead>
+  <tbody><tr><td colspan="11" style="color:#888;">Nenhuma migração executada ainda.</td></tr></tbody>
+</table>
+<pre class="log" id="log"></pre>
+
+<!-- navegador de pastas (botão Procurar) -->
+<div id="fundoNavegador">
+  <div id="navegador">
+    <header><strong>Escolha o banco do SysPDV (.fdb / .gdb)</strong><div id="navCaminho"></div></header>
+    <div id="navLista"></div>
+    <footer><button type="button" class="btn-sec" id="btnFecharNavegador">Cancelar</button></footer>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+/* ------------------------------ campos lembrados por aba (sem senhas) --- */
+const CHAVE = 'migrador_syspdv_varejo';
+const PADRAO_ABA = {
+  ubuntu:  { fbHost: 'localhost', fbPorta: '3050', fbUser: 'SYSDBA', fbCharset: 'WIN1252',
+             pgHost: 'localhost', pgPort: '5432', pgUser: 'postgres',
+             _exemplo: '/firebird/data/cliente/origem/syspdv_srv.fdb' },
+  windows: { fbHost: 'localhost', fbPorta: '3050', fbUser: 'SYSDBA', fbCharset: 'WIN1252',
+             pgHost: 'localhost', pgPort: '5432', pgUser: 'postgres',
+             _exemplo: 'C:\\Bancos para migrar\\cliente\\origem\\syspdv_srv.fdb' },
+};
+let abaAtual = 'ubuntu';
+let salvos = null;   // { aba, modulos, ubuntu: {...campos}, windows: {...campos} }
+
+function lerSalvos() {
+  try { salvos = JSON.parse(localStorage.getItem(CHAVE) || 'null'); } catch (e) { salvos = null; }
+  if (salvos && !salvos.ubuntu && !salvos.windows) {   // formato antigo (uma config só)
+    const antigo = salvos; salvos = { modulos: antigo.modulos };
+    delete antigo.modulos; salvos._antigo = antigo;
+  }
+  salvos = salvos || {};
+}
+function gravar() { try { localStorage.setItem(CHAVE, JSON.stringify(salvos)); } catch (e) {} }
+
+function lembrar() {
+  const d = {};
+  document.querySelectorAll('.lembrar').forEach(el => d[el.id] = el.value);
+  salvos[abaAtual] = d;
+  salvos.aba = abaAtual;
+  if (document.querySelector('.chkModulo'))   // so depois que os checkboxes existem
+    salvos.modulos = [...document.querySelectorAll('.chkModulo:checked')].map(c => c.value);
+  if (document.querySelector('.chkOpcao'))
+    salvos.opcoes = Object.fromEntries([...document.querySelectorAll('.chkOpcao')].map(c => [c.value, c.checked]));
+  gravar();
+}
+function preencher(aba) {
+  const valores = { ...PADRAO_ABA[aba], ...(salvos[aba] || {}) };
+  document.querySelectorAll('.lembrar').forEach(el => {
+    const v = valores[el.id] ?? '';
+    if (el.tagName === 'SELECT' && v && ![...el.options].some(o => o.value === v)) el.add(new Option(v, v));
+    el.value = v;
+  });
+  $('fbCaminho').placeholder = PADRAO_ABA[aba]._exemplo;
+  ['resFb', 'resPg', 'resSq'].forEach(id => $(id).style.display = 'none');
+  if (!$('origemTipo').value) $('origemTipo').value = 'firebird';
+  alternarOrigem();
+}
+function abrirAba(aba, salvarAntes = true) {
+  if (salvarAntes) lembrar();
+  abaAtual = aba;
+  document.body.classList.remove('aba-ubuntu', 'aba-windows');
+  document.body.classList.add('aba-' + aba);
+  document.querySelectorAll('.abas-so button').forEach(b => b.classList.toggle('ativa', b.dataset.aba === aba));
+  preencher(aba);
+  lembrar();
+}
+document.querySelectorAll('.abas-so button').forEach(b => b.addEventListener('click', () => abrirAba(b.dataset.aba)));
+document.querySelectorAll('.lembrar').forEach(el => el.addEventListener('change', lembrar));
+
+async function restaurar() {
+  lerSalvos();
+  let sistema = 'ubuntu';
+  try { const r = await (await fetch('/saude')).json(); if (r.sistema === 'windows') sistema = 'windows'; } catch (e) {}
+  if (salvos._antigo) { salvos[sistema] = salvos._antigo; delete salvos._antigo; }
+  // Mostra SO a aba do sistema em que o migrador esta rodando (Linux ou Windows)
+  document.querySelectorAll('.abas-so button').forEach(b => b.style.display = b.dataset.aba === sistema ? '' : 'none');
+  abrirAba(sistema, false);
+}
+
+/* ------------------------------------------ origem: Firebird ou SQL Server --- */
+function alternarOrigem() {
+  const sql = $('origemTipo').value === 'sqlserver';
+  $('camposSql').style.display = sql ? '' : 'none';
+  $('camposFb').style.display = sql ? 'none' : '';
+}
+$('origemTipo').addEventListener('change', alternarOrigem);
+function sqlserver() {
+  return { host: $('sqHost').value || 'localhost', porta: parseInt($('sqPorta').value, 10) || 1433,
+    instancia: $('sqInstancia').value || null, banco: $('sqBanco').value, usuario: $('sqUser').value || 'sa',
+    senha: $('sqPass').value, driver: $('sqDriver').value || null };
+}
+
+/* -------------------------------------------- navegador de pastas (Windows) --- */
+async function navegar(caminho) {
+  try {
+    const r = await (await fetch('/arquivos?caminho=' + encodeURIComponent(caminho || ''))).json();
+    if (r.detail) throw new Error(r.detail);
+    $('navCaminho').textContent = r.caminho || 'Computador';
+    const lista = $('navLista'); lista.innerHTML = '';
+    if (r.pai !== null && r.pai !== undefined) {
+      const up = document.createElement('div'); up.textContent = '⬆  ..'; up.onclick = () => navegar(r.pai); lista.appendChild(up);
+    }
+    for (const it of r.itens) {
+      const d = document.createElement('div');
+      d.textContent = (it.tipo === 'pasta' ? '📁  ' : '🗄️  ') + it.nome;
+      d.onclick = () => it.tipo === 'pasta' ? navegar(it.caminho) : escolher(it.caminho);
+      lista.appendChild(d);
+    }
+    if (!r.itens.length) { const v = document.createElement('div'); v.className = 'vazio'; v.textContent = '(nenhuma pasta ou arquivo .fdb aqui)'; lista.appendChild(v); }
+  } catch (e) {
+    $('navLista').innerHTML = ''; const v = document.createElement('div'); v.className = 'vazio'; v.textContent = 'Erro: ' + e.message; $('navLista').appendChild(v);
+  }
+}
+function escolher(caminho) {
+  $('fbCaminho').value = caminho; lembrar();
+  $('fundoNavegador').style.display = 'none';
+}
+$('btnProcurar').addEventListener('click', () => {
+  $('fundoNavegador').style.display = 'flex';
+  const atual = $('fbCaminho').value;
+  navegar(atual ? atual.replace(/[\\/][^\\/]*$/, '') : '');
+});
+$('btnFecharNavegador').addEventListener('click', () => $('fundoNavegador').style.display = 'none');
+$('fundoNavegador').addEventListener('click', (e) => { if (e.target.id === 'fundoNavegador') $('fundoNavegador').style.display = 'none'; });
+
+/* ------------------------------------------------------------ conexões --- */
+function firebird() {
+  return { host: $('fbHost').value || 'localhost', porta: parseInt($('fbPorta').value, 10) || 3050,
+    caminho: $('fbCaminho').value, usuario: $('fbUser').value || 'SYSDBA', senha: $('fbPass').value,
+    charset: $('fbCharset').value, fbclient: $('fbClient').value || null, modo: 'local' };
+}
+function postgres() {
+  return { host: $('pgHost').value || 'localhost', port: parseInt($('pgPort').value, 10) || 5432,
+           dbname: $('pgDb').value, user: $('pgUser').value || 'postgres', password: $('pgPass').value };
+}
+async function postar(url, corpo) {
+  const r = await fetch(url, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(corpo) });
+  const t = await r.text(); let d; try { d = JSON.parse(t); } catch (e) { d = t; }
+  if (!r.ok) throw new Error(d && d.detail ? (typeof d.detail === 'string' ? d.detail : JSON.stringify(d.detail)) : t);
+  return d;
+}
+function mostrar(el, ok, texto) { el.className = 'resultado ' + (ok ? 'ok' : 'erro'); el.style.display = 'block'; el.textContent = texto; }
+const avisos = (l) => l && l.length ? '\n\n⚠️ ' + l.join('\n⚠️ ') : '';
+
+$('btnTestarSq').addEventListener('click', async () => {
+  if (!$('sqBanco').value) { mostrar($('resSq'), false, '✖ Erro: informe o banco.'); return; }
+  mostrar($('resSq'), true, 'Conectando...');
+  try { await postar('/conexoes/sqlserver/testar', sqlserver()); mostrar($('resSq'), true, '✔ Conexão com sucesso'); }
+  catch (e) { mostrar($('resSq'), false, '✖ Erro: ' + e.message); }
+});
+$('btnTestarFb').addEventListener('click', async () => {
+  mostrar($('resFb'), true, 'Conectando...');
+  try { await postar('/conexoes/firebird/testar', firebird()); mostrar($('resFb'), true, '✔ Conexão com sucesso'); }
+  catch (e) { mostrar($('resFb'), false, '✖ Erro: ' + e.message); }
+});
+$('btnTestarPg').addEventListener('click', async () => {
+  if (!$('pgDb').value) { mostrar($('resPg'), false, '✖ Erro: informe o nome do banco.'); return; }
+  mostrar($('resPg'), true, 'Conectando...');
+  try { await postar('/conexoes/postgres/testar', postgres()); mostrar($('resPg'), true, '✔ Conexão com sucesso'); }
+  catch (e) { mostrar($('resPg'), false, '✖ Erro: ' + e.message); }
+});
+
+/* ------------------------------------------------------------- módulos --- */
+async function carregarModulos() {
+  const marcadosAntes = new Set(document.querySelectorAll('.chkModulo').length
+    ? [...document.querySelectorAll('.chkModulo:checked')].map(c => c.value)
+    : (salvos && salvos.modulos) || null);
+  const modulos = await (await fetch('/modulos')).json();
+  const caixa = $('listaModulos'); caixa.innerHTML = '';
+  if (!modulos.length) { caixa.innerHTML = '<p class="status-erro">Nenhuma pasta encontrada em comandos/.</p>'; return; }
+  let grupo = null, linha = null;
+  const problemas = [];
+  for (const m of modulos) {
+    if (m.grupo !== grupo) {
+      grupo = m.grupo;
+      const t = document.createElement('p'); t.className = 'grupo-itens'; t.textContent = grupo + ':'; caixa.appendChild(t);
+      linha = document.createElement('div'); linha.className = 'lista-modulos'; caixa.appendChild(linha);
+    }
+    if (m.automatico_com_grupo || m.automatico_sempre) continue;   // roda sozinho (ex.: Ajustes finais de Pessoas)
+    const marcado = marcadosAntes.size ? marcadosAntes.has(m.id) : true;
+    const lb = document.createElement('label'); lb.className = 'modulo';
+    lb.innerHTML = `<input type="checkbox" class="chkModulo" value="${m.id}" ${marcado && !m.problemas.length ? 'checked' : ''}
+        ${m.problemas.length ? 'disabled' : ''}> ${m.nome}`;
+    for (const o of (m.opcoes || [])) {            // ex.: "Incluir produtos fora de linha" (antes do item)
+      const salvo = salvos.opcoes && o.id in salvos.opcoes ? salvos.opcoes[o.id] : o.padrao;
+      const ol = document.createElement('label'); ol.className = 'modulo opcao-item';
+      if (o.dica) ol.title = o.dica;
+      ol.innerHTML = `<input type="checkbox" class="chkOpcao" value="${o.id}" ${salvo ? 'checked' : ''}> ${o.rotulo}`;
+      linha.appendChild(ol);
+    }
+    linha.appendChild(lb);
+    if (m.problemas.length) {
+      const aviso = document.createElement('div'); aviso.className = 'problema-item';
+      aviso.textContent = `⚠️ ${m.nome}: ${m.problemas.join('; ')}`;
+      problemas.push(aviso);
+    }
+  }
+  problemas.forEach(p => caixa.appendChild(p));
+  document.querySelectorAll('.chkModulo, .chkOpcao').forEach(c => c.addEventListener('change', lembrar));
+  lembrar();
+}
+$('btnRecarregar').addEventListener('click', carregarModulos);
+$('btnMarcar').addEventListener('click', () => { document.querySelectorAll('.chkModulo:not(:disabled)').forEach(c => c.checked = true); lembrar(); });
+$('btnDesmarcar').addEventListener('click', () => { document.querySelectorAll('.chkModulo').forEach(c => c.checked = false); lembrar(); });
+
+/* ------------------------------------------------------------ migração --- */
+let execId = null, timer = null, posLog = 0;
+$('btnMigrar').addEventListener('click', async () => {
+  const fb = firebird(), pg = postgres(), simular = $('simular').checked;
+  const modulos = [...document.querySelectorAll('.chkModulo:checked')].map(c => c.value);
+  const origemOk = $('origemTipo').value === 'sqlserver' ? !!$('sqBanco').value : !!fb.caminho;
+  if (!origemOk || !pg.dbname) { alert('Preencha as conexões de origem e destino.'); return; }
+  if (!modulos.length) { alert('Marque ao menos um item em "Dados a serem migrados".'); return; }
+  if (!simular && !confirm(`Gravar DE VERDADE no PostgreSQL ${pg.host}/${pg.dbname}?\n\nUse apenas em base local de migração.`)) return;
+  $('btnMigrar').disabled = true;
+  try {
+    const opcoes = Object.fromEntries([...document.querySelectorAll('.chkOpcao')].map(c => [c.value, c.checked]));
+    const origem_tipo = $('origemTipo').value || 'firebird';
+    const r = await postar('/migrar', { origem_tipo, firebird: origem_tipo === 'firebird' ? fb : null,
+      sqlserver: origem_tipo === 'sqlserver' ? sqlserver() : null, postgres: pg, modulos, simular, opcoes });
+    execId = r.exec_id; posLog = 0; $('log').textContent = ''; mostrarBarra(0, false, false);
+    $('statusGeral').className = ''; $('statusGeral').textContent = simular ? 'Simulando...' : 'Migrando...';
+    clearInterval(timer); timer = setInterval(acompanhar, 800);
+  } catch (e) {
+    $('statusGeral').className = 'status-erro'; $('statusGeral').textContent = e.message; $('btnMigrar').disabled = false;
+  }
+});
+const SITUACAO = { aguardando: 'aguardando', rodando: '▶ rodando', concluido: '✔ concluído',
+                   concluido_com_erros: '✔ concluído com erros', erro: '✖ erro' };
+function percentual(modulos) {
+  // cada item/etapa vale uma parte igual; o que esta rodando avanca pelos lidos / total na origem
+  const lista = Object.values(modulos);
+  if (!lista.length) return 0;
+  let soma = 0;
+  for (const m of lista) {
+    if (['concluido', 'concluido_com_erros', 'erro'].includes(m.status)) soma += 1;
+    else if (m.status === 'rodando') soma += m.total_origem ? Math.min(m.lidos / m.total_origem, 0.99) : 0.5;
+  }
+  return Math.floor(100 * soma / lista.length);
+}
+function mostrarBarra(pct, terminou, comErro) {
+  $('barra').style.display = 'block';
+  const valor = terminou ? 100 : Math.min(pct, 99);
+  $('barraPreenchida').style.width = valor + '%';
+  $('barraTexto').textContent = valor + '%';
+  $('barra').classList.toggle('erro', !!comErro);
+}
+
+async function acompanhar() {
+  const r = await (await fetch(`/status/${execId}?desde=${posLog}`)).json();
+  const terminou = r.status !== 'em_andamento';
+  mostrarBarra(percentual(r.modulos), terminou, terminou && r.status !== 'concluido');
+  if (r.log.length) { $('log').textContent += r.log.join('\n') + '\n'; $('log').scrollTop = $('log').scrollHeight; }
+  posLog = r.total_log;
+  const tbody = document.querySelector('#tabelaProgresso tbody'); tbody.innerHTML = '';
+  for (const [id, m] of Object.entries(r.modulos)) {
+    const tr = document.createElement('tr');
+    const migrados = m.inseridos + m.atualizados + m.sem_alteracao;
+    const temOrigem = m.total_origem !== null && m.total_origem !== undefined;
+    const naoMigrados = temOrigem && m.status !== 'aguardando' && m.status !== 'rodando' ? m.total_origem - migrados : null;
+    tr.innerHTML = `<td>${m.nome}</td><td class="st-${m.status}">${SITUACAO[m.status] || m.status}${m.mensagem ? '<br><small>' + m.mensagem + '</small>' : ''}</td>
+      <td class="num">${temOrigem ? m.total_origem : '-'}</td>
+      <td class="num">${m.lidos}</td><td class="num">${m.inseridos}</td><td class="num">${m.atualizados}</td>
+      <td class="num">${m.sem_alteracao}</td><td class="num">${m.pulados}</td>
+      <td class="num ${m.erros ? 'status-erro' : ''}">${m.erros}</td>
+      <td class="num ${naoMigrados > 0 ? 'dif' : ''}">${naoMigrados === null || naoMigrados < 0 ? '-' : naoMigrados}</td>
+      <td>${m.relatorio ? `<a href="/download/${r.id}/${m.relatorio}">linha a linha</a>` : '-'}</td>`;
+    tbody.appendChild(tr);
+  }
+  if (r.status !== 'em_andamento') {
+    clearInterval(timer); $('btnMigrar').disabled = false;
+    const ok = r.status === 'concluido';
+    $('statusGeral').className = ok ? 'status-ok' : 'status-erro';
+    $('statusGeral').textContent = (ok ? '✔ Concluído' : '✖ Terminou com erro') +
+      (r.simulacao ? ' — SIMULAÇÃO: nada foi gravado.' : ' — dados gravados no PostgreSQL.');
+  }
+}
+
+/* -------------------------------------------------------- inicialização --- */
+restaurar().then(carregarModulos);
+</script>
+</body>
+</html>

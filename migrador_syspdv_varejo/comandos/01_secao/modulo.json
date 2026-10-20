@@ -1,0 +1,6 @@
+{
+  "nome": "Seção",
+  "grupo": "Cadastros Padrão",
+  "descricao": "SECAO (SysPDV) -> secao (VarejoFacil). Regras do T-Secao_inicial do Pentaho.",
+  "chave": ["seccod"]
+}

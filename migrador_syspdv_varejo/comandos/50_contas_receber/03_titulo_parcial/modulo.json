@@ -1,0 +1,2 @@
+{ "nome": "Título parcialmente liquidado", "chave": ["ctr_id"], "tabela_origem": "CONTARECEBER",
+  "mensagem_validacao": "a conta a receber deste titulo nao foi migrada" }

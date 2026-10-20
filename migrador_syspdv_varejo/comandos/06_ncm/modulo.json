@@ -1,0 +1,7 @@
+{
+  "nome": "NCM",
+  "grupo": "Cadastros Padrão",
+  "descricao": "JOB-NCM_inicial: cadastra como INATIVO todo NCM usado nos produtos que ainda nao existe no VarejoFacil.",
+  "chave": ["ncm_codigo"],
+  "contagem_origem": "SELECT COUNT(*) FROM (SELECT DISTINCT PRONCM FROM PRODUTO WHERE PRODES IS NOT NULL AND PROCOD <> '00000000000000') t"
+}

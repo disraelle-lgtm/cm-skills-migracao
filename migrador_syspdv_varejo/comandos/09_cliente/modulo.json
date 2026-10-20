@@ -1,0 +1,6 @@
+{
+  "nome": "Cliente",
+  "grupo": "Cadastro de Pessoas",
+  "descricao": "JOB-Cliente_inicial (sem o limite de credito, que e outro item): CLIENTE -> pessoa + pessoa_cliente.",
+  "chave": ["cli_codigo", "pes_num_documento"]
+}

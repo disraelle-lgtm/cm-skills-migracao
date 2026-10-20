@@ -1,0 +1,6 @@
+{
+  "nome": "Ajustes finais de Produto",
+  "grupo": "Cadastro de Produto",
+  "descricao": "SQLs 'Produto higieniza Loccod', 'Ajusta Produto' e 'Corrigi produtos sem composicao' do JOB-Produto_inicial + 'Cadastro-de-operacoes' (padrao). Sem checkbox: roda sozinho por ultimo quando algum item de Produto for marcado.",
+  "automatico_com_grupo": "Cadastro de Produto"
+}

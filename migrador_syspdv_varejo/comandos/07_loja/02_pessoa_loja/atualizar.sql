@@ -1,0 +1,23 @@
+UPDATE pessoa_loja
+   SET loj_chave_server = %(loj_chave_server)s
+     , loj_versao_server = %(loj_versao_server)s
+     , loj_regime_federal = %(loj_regime_federal)s
+     , loj_crt = %(loj_crt)s
+     , loj_porta = %(loj_porta)s
+     , loj_ip = %(loj_ip)s
+     , loj_matriz = %(loj_matriz)s
+     , loj_preco_aplicado = %(loj_preco_aplicado)s
+     , fig_codigo = %(fig_codigo)s
+     , ret_codigo = %(ret_codigo)s
+     , loj_sigla = %(loj_sigla)s
+     , loj_regime_municipal = %(loj_regime_municipal)s
+     , loj_perfil = %(loj_perfil)s
+     , loj_atividade = %(loj_atividade)s
+     , cfnc_codigo_est_pag = %(cfnc_codigo_est_pag)s
+     , cfnc_codigo_est_receb = %(cfnc_codigo_est_receb)s
+     , cfnc_codigo_pagamentos = %(cfnc_codigo_pagamentos)s
+     , cfnc_codigo_recebimentos = %(cfnc_codigo_recebimentos)s
+     , cfnc_codigo_quebra = %(cfnc_codigo_quebra)s
+     , cfnc_codigo_sobra = %(cfnc_codigo_sobra)s
+     , loj_nome_exibicao = %(loj_nome_exibicao)s
+ WHERE loj_codigo = %(loj_codigo)s

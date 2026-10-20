@@ -1,0 +1,7 @@
+{
+  "nome": "Sub Grupo",
+  "grupo": "Cadastros Padrão",
+  "descricao": "SUBGRUPO (SysPDV) -> subgrupo_produto (VarejoFacil). Regras do T-SubGrupo_inicial do Pentaho.",
+  "chave": ["seccod", "grpcod", "sgpcod"],
+  "mensagem_validacao": "o grupo deste subgrupo nao existe no VarejoFacil (migre o Grupo antes)"
+}

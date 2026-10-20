@@ -1,0 +1,2 @@
+{ "nome": "Pessoa Loja", "chave": ["loj_codigo"],
+  "mensagem_validacao": "a pessoa da loja (CNPJ) nao existe no VarejoFacil - rode a etapa Pessoa antes" }

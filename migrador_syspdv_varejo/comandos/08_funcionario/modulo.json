@@ -1,0 +1,7 @@
+{
+  "nome": "Funcionário",
+  "grupo": "Cadastro de Pessoas",
+  "descricao": "JOB-Funcionario_inicial: FUNCIONARIO -> pessoa + pessoa_funcionario + pessoa_funcionario_loja (loja matriz) + usuario.",
+  "chave": ["funcod"],
+  "mensagem_validacao": "nao ha loja matriz no VarejoFacil (pessoa_loja com loj_matriz = 'S') - migre Dados da Loja antes"
+}

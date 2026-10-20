@@ -1,0 +1,6 @@
+-- Pentaho: FB - TPPGT
+SELECT TPPCOD
+     , TPPDES
+     , TPPVLRMAX
+  FROM TPPGT
+ ORDER BY 1

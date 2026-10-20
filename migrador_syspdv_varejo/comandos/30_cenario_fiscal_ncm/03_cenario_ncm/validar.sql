@@ -1,0 +1,2 @@
+-- Pentaho: Merge Join com o cenario pelo CST + classificacao
+SELECT (SELECT cfn_codigo FROM cenario_fiscal_ncm WHERE cic_codigo = %(cic_codigo)s::varchar AND ct_codigo = %(ct_codigo)s::varchar ORDER BY cfn_codigo LIMIT 1)::text WHERE (SELECT cfn_codigo FROM cenario_fiscal_ncm WHERE cic_codigo = %(cic_codigo)s::varchar AND ct_codigo = %(ct_codigo)s::varchar ORDER BY cfn_codigo LIMIT 1) IS NOT NULL

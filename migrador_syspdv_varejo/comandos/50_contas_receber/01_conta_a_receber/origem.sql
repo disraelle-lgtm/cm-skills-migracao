@@ -1,0 +1,9 @@
+-- Pentaho: FB - CONTARECEBER (T-ContaReceber_inicial - versao nova: categoria 9 fixa e cliente pelo codigo)
+SELECT cr.CTRID, cr.CTROBS, cr.CTRNUM, cr.CTRDATEMI, cr.CTRVLRNOM, cr.CTRDATVNC, cl.CLICOD, p.PRPCOD
+  FROM CONTARECEBER cr
+ INNER JOIN CLIENTE cl ON cr.CLICOD = cl.CLICOD
+ CROSS JOIN PROPRIO p
+ WHERE cr.CTRTIPPAG IN ('A', 'P')
+   AND cl.CLICOD <> '000000000000000'
+   AND cl.CLIDES IS NOT NULL
+ ORDER BY cr.CTRDATVNC

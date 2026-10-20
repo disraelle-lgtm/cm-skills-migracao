@@ -1,0 +1,6 @@
+{
+  "nome": "Fornecedor",
+  "grupo": "Cadastro de Pessoas",
+  "descricao": "JOB-Fornecedor_inicial: FORNECEDOR -> pessoa + pessoa_fornecedor.",
+  "chave": ["pes_num_documento"]
+}

@@ -1,0 +1,9 @@
+-- Pentaho: FB - FORNECEDOR. O job rodava antes "FB - Ajusta CPF/CNPJ em branco" (UPDATE na
+-- origem trocando '' por NULL); aqui o filtro abaixo ja ignora os dois casos, sem alterar o SysPDV.
+SELECT FORCOD, FORDES, FOREND, FORBAI, FORCID, FOREST, FORTEL, FORFAX, FORCEP, FORNUM
+     , FORCMP, FORFAN, FORCGC, FORCGF, FOREMAIL, FORCODIBGE, FORPAIS, FORPFPJ
+     , FORPRZENT, FORTRANS, FOROPTSIM
+  FROM FORNECEDOR
+ WHERE FORCGC IS NOT NULL
+   AND FORCGC <> ''
+ ORDER BY 1

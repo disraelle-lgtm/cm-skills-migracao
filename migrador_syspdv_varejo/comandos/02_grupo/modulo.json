@@ -1,0 +1,7 @@
+{
+  "nome": "Grupo",
+  "grupo": "Cadastros Padrão",
+  "descricao": "GRUPO (SysPDV) -> grupo_produto (VarejoFacil). Regras do T-Grupo_inicial do Pentaho.",
+  "chave": ["seccod", "grpcod"],
+  "mensagem_validacao": "a secao deste grupo nao existe no VarejoFacil (migre a Secao antes)"
+}

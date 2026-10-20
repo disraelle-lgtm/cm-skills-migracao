@@ -1,0 +1,7 @@
+.venv/
+reports/*
+!reports/.gitkeep
+__pycache__/
+*.pyc
+migrador.log
+.migrador.pid

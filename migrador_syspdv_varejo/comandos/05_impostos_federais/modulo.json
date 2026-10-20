@@ -1,0 +1,6 @@
+{
+  "nome": "Impostos Federais",
+  "grupo": "Cadastros Padrão",
+  "descricao": "Passo VF - IMPOSTOS_FEDERAIS do T-TabelasBasicas_inicial + SQL 'VF - Imposto Federal Geral' do JOB-Migracao_inicial-Cadastros.",
+  "chave": ["impfedsim"]
+}

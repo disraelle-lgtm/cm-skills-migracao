@@ -1,0 +1,15 @@
+-- Filtro "(... OR :opcao_fora_de_linha = 1)": opcao "Incluir produtos fora de linha" do Produto
+-- (no Pentaho era "proforlin = 'N'" fixo).
+-- Pentaho: FB - PRODUTO (T-Custo_Dia_inicial)
+SELECT x.PRPCOD, p.PROCOD, p.PROPRCCST
+     , CASE WHEN p.PROPRCCSTFIS = 0 THEN p.PROPRCCST ELSE COALESCE(p.PROPRCCSTFIS, p.PROPRCCST) END AS CUSTO_FISCAL
+     , CASE WHEN p.PROPRCCSTMED = 0 THEN p.PROPRCCST ELSE COALESCE(p.PROPRCCSTMED, p.PROPRCCST) END AS CUSTO_MEDIO
+  FROM PRODUTO p
+ INNER JOIN ESTOQUE e ON p.PROCOD = e.PROCOD
+ CROSS JOIN PROPRIO x
+ WHERE e.ESTATUSDO >= 0
+   AND p.PROPRCCST IS NOT NULL
+   AND p.PRODES IS NOT NULL
+   AND p.PROCOD <> '00000000000000'
+   AND (COALESCE(p.PROFORLIN, 'N') = 'N' OR :opcao_fora_de_linha = 1)
+ ORDER BY 2

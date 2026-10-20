@@ -1,0 +1,5 @@
+-- Pentaho: FB - STATUS
+SELECT STACOD
+     , STADES
+     , STABLQ
+  FROM STATUS

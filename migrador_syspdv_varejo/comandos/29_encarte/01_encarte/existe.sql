@@ -1,0 +1,1 @@
+SELECT encdes, encdatini, encdatfim, encstatus, enc_atualiza_preco_1, enc_atualiza_preco_2, enc_atualiza_preco_3, enc_produto_fora_linha FROM encarte WHERE enccod = %(enccod)s AND loj_codigo = %(loj_codigo)s

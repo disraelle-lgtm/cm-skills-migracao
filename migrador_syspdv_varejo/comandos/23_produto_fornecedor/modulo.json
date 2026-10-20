@@ -1,0 +1,7 @@
+{
+  "nome": "Produto Fornecedor",
+  "grupo": "Cadastro de Produto",
+  "descricao": "JOB-Produto_Fornecedor_inicial: PRODUTO_FORNECEDOR -> produto_fornecedor (referencia do produto no fornecedor).",
+  "chave": ["procod", "forcod", "prfreffor"],
+  "mensagem_validacao": "o fornecedor nao foi migrado (pessoa_fornecedor com este codigo e CNPJ/CPF nao existe no VarejoFacil)"
+}

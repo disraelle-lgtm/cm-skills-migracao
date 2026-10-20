@@ -1,0 +1,6 @@
+{
+  "nome": "Agente Financeiro",
+  "grupo": "Cadastro de Pessoas",
+  "descricao": "JOB-Agente_inicial (T-Agente-Pessoa + T-Agente-Pessoa-Agente_Financeiro): AGENTE -> pessoa + pessoa_agente_financeiro.",
+  "chave": ["agf_codigo", "pes_num_documento"]
+}

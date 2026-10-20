@@ -1,0 +1,2 @@
+{ "nome": "Conta a pagar", "chave": ["ctp_id"], "tabela_origem": "CONTAPAGAR",
+  "mensagem_validacao": "o fornecedor da conta nao foi migrado (pessoa_fornecedor com este codigo e CNPJ/CPF)" }

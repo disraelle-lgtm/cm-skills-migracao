@@ -1,0 +1,5 @@
+{
+  "name": "migracao-dados-cm",
+  "description": "Processo de Migração de Dados da CM (SLA, Pentaho, SGBDs, virada de loja) e o migrador Python SysPDV/VarejoFacil",
+  "author": { "name": "Casa Magalhães — Time de Migração de Dados" }
+}
