@@ -109,6 +109,27 @@
   .barra-texto { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
                  font-weight: 700; font-size: .85rem; color: #12331c; }
   .barra.erro .barra-preenchida { background: linear-gradient(90deg, #c0392b, #e05a4a); }
+  .codigos-res { margin: .6rem 0; width: auto; min-width: 50%; }
+  .codigos-res td.num, .tab-codigos td.num { text-align: right; }
+  .bloco-codigos { margin: 1rem 0 1.4rem; }
+  .bloco-codigos h3 { margin: 0 0 .3rem; color: var(--cor-primaria); font-size: 1.05rem; }
+  .bloco-codigos .resumo { margin: 0 0 .4rem; font-size: .9rem; }
+  .rolagem-codigos { max-height: 340px; overflow: auto; border: 1px solid #ddd; }
+  .rolagem-codigos table { margin-top: 0; }
+  .rolagem-codigos thead th { position: sticky; top: 0; z-index: 1; }
+  td.td-download { white-space: nowrap; width: 1%; }
+  td.td-download a { display: inline-block; background: var(--cor-primaria); color: #fff; border-radius: 4px;
+                     padding: .2rem .6rem; margin-right: .3rem; font-weight: 600; text-decoration: none; font-size: .8rem; }
+  td.td-download a:hover { opacity: .85; }
+  th.th-download { text-align: right; white-space: nowrap; width: 1%; }
+  th.th-download a { display: inline-block; background: #fff; color: var(--cor-primaria); border-radius: 4px;
+                     padding: .15rem .55rem; margin-left: .3rem; font-weight: 600; text-decoration: none; font-size: .8rem; }
+  th.th-download a:hover { background: #dbe7f3; }
+  ul.regras-codigos { margin: .2rem 0 .6rem; padding-left: 1.2rem; font-size: .88rem; }
+  ul.regras-codigos li { margin: .15rem 0; }
+  .codigos-acoes { display: flex; gap: .5rem; margin: .5rem 0; flex-wrap: wrap; }
+  .btn-alerta { background: #b45309; }
+  #codLog { max-height: 180px; }
 </style>
 </head>
 <body>
@@ -213,10 +234,32 @@
 <div class="barra" id="barra"><div class="barra-preenchida" id="barraPreenchida"></div><div class="barra-texto" id="barraTexto">0%</div></div>
 <p id="statusGeral"></p>
 <table id="tabelaProgresso">
-  <thead><tr><th>Item</th><th>Situação</th><th title="Total de registros da tabela no SysPDV">Na origem</th><th>Lidos</th><th>Inseridos</th><th>Atualizados</th><th>Sem alteração</th><th>Pulados</th><th>Erros</th><th title="Na origem menos (inseridos + atualizados + sem alteração)">Não migrados</th><th>Relatório</th></tr></thead>
-  <tbody><tr><td colspan="11" style="color:#888;">Nenhuma migração executada ainda.</td></tr></tbody>
+  <thead><tr><th>Item</th><th>Situação</th><th title="Total de registros da tabela no SysPDV">Na origem</th><th>Lidos</th><th>Inseridos</th><th>Atualizados</th><th>Sem alteração</th><th>Pulados</th><th>Erros</th><th title="Na origem menos (inseridos + atualizados + sem alteração)">Não migrados</th><th title="Tempo para ler a origem e inserir/atualizar esta tabela no VarejoFacil">Tempo</th><th>Relatório</th></tr></thead>
+  <tbody><tr><td colspan="12" style="color:#888;">Nenhuma migração executada ainda.</td></tr></tbody>
 </table>
 <pre class="log" id="log"></pre>
+
+<!-- ======================================================== CONSULTAR CODIGOS === -->
+<h2>4. Consultar códigos</h2>
+<ul class="regras-codigos">
+  <li><b>Clientes:</b> cada código ≥ 999999 recebe o <b>menor código livre</b> (limite de crédito, contas a receber,
+      cobranças e transações acompanham).</li>
+  <li><b>Produtos:</b> cada código ≥ 999999 recebe um código livre de <b>10001 a 999998</b>; o código antigo vira
+      <b>EAN</b> do produto e a troca fica na alteração de produto do SPED. Produtos de <b>balança ficam de fora</b>.</li>
+  <li><b>Consultar</b> mostra os códigos encontrados (nada é alterado). <b>Ajustar códigos</b> pede confirmação, faz a
+      troca e mostra o código novo × antigo. Depois do ajuste, o botão <b>Download</b> no fim de cada linha baixa as
+      planilhas (.csv): todos os códigos e só os alterados.</li>
+</ul>
+<div class="lista-modulos">
+  <label class="modulo"><input type="checkbox" id="codClientes" class="lembrar-cod"> Clientes</label>
+  <label class="modulo"><input type="checkbox" id="codProdutos" class="lembrar-cod"> Produtos</label>
+</div>
+<div class="codigos-acoes">
+  <button type="button" class="btn-sec" id="btnCodConsultar">Consultar</button>
+  <button type="button" class="btn-alerta" id="btnCodAjustar">Ajustar códigos</button>
+</div>
+<div id="codResultado"></div>
+<pre class="log" id="codLog" style="display:none;"></pre>
 
 <!-- navegador de pastas (botão Procurar) -->
 <div id="fundoNavegador">
@@ -392,12 +435,13 @@ async function carregarModulos() {
   let grupo = null, linha = null;
   const problemas = [];
   for (const m of modulos) {
+    if (m.automatico_com_grupo || m.automatico_sempre) continue;   // roda sozinho: sem checkbox nem titulo de grupo
     if (m.grupo !== grupo) {
       grupo = m.grupo;
       const t = document.createElement('p'); t.className = 'grupo-itens'; t.textContent = grupo + ':'; caixa.appendChild(t);
       linha = document.createElement('div'); linha.className = 'lista-modulos'; caixa.appendChild(linha);
     }
-    if (m.automatico_com_grupo || m.automatico_sempre) continue;   // roda sozinho (ex.: Ajustes finais de Pessoas)
+
     const marcado = marcadosAntes.size ? marcadosAntes.has(m.id) : true;
     const lb = document.createElement('label'); lb.className = 'modulo';
     lb.innerHTML = `<input type="checkbox" class="chkModulo" value="${m.id}" ${marcado && !m.problemas.length ? 'checked' : ''}
@@ -467,9 +511,24 @@ function mostrarBarra(pct, terminou, comErro) {
   $('barra').classList.toggle('erro', !!comErro);
 }
 
+function fmtDuracao(seg) {
+  if (seg === null || seg === undefined) return '-';
+  if (seg < 60) return seg.toFixed(1) + 's';
+  const t = Math.round(seg), h = Math.floor(t / 3600), mi = Math.floor((t % 3600) / 60), se = t % 60;
+  const dois = n => String(n).padStart(2, '0');
+  return h ? `${h}h ${dois(mi)}min ${dois(se)}s` : `${mi}min ${dois(se)}s`;
+}
+function duracaoDe(m) {
+  if (m.duracao_s !== null && m.duracao_s !== undefined) return fmtDuracao(m.duracao_s);
+  if (m.status === 'rodando' && m.inicio_ts) return fmtDuracao(Date.now() / 1000 - m.inicio_ts - desvioRelogio) + ' …';
+  return '-';
+}
+let desvioRelogio = 0;   // relógio do navegador − relógio do servidor (segundos)
+
 async function acompanhar() {
   const r = await (await fetch(`/status/${execId}?desde=${posLog}`)).json();
   const terminou = r.status !== 'em_andamento';
+  if (r.agora_ts) desvioRelogio = Date.now() / 1000 - r.agora_ts;
   mostrarBarra(percentual(r.modulos), terminou, terminou && r.status !== 'concluido');
   if (r.log.length) { $('log').textContent += r.log.join('\n') + '\n'; $('log').scrollTop = $('log').scrollHeight; }
   posLog = r.total_log;
@@ -485,6 +544,7 @@ async function acompanhar() {
       <td class="num">${m.sem_alteracao}</td><td class="num">${m.pulados}</td>
       <td class="num ${m.erros ? 'status-erro' : ''}">${m.erros}</td>
       <td class="num ${naoMigrados > 0 ? 'dif' : ''}">${naoMigrados === null || naoMigrados < 0 ? '-' : naoMigrados}</td>
+      <td class="num">${duracaoDe(m)}</td>
       <td>${m.relatorio ? `<a href="/download/${r.id}/${m.relatorio}">linha a linha</a>` : '-'}</td>`;
     tbody.appendChild(tr);
   }
@@ -493,8 +553,91 @@ async function acompanhar() {
     const ok = r.status === 'concluido';
     $('statusGeral').className = ok ? 'status-ok' : 'status-erro';
     $('statusGeral').textContent = (ok ? '✔ Concluído' : '✖ Terminou com erro') +
-      (r.simulacao ? ' — SIMULAÇÃO: nada foi gravado.' : ' — dados gravados no PostgreSQL.');
+      (r.simulacao ? ' — SIMULAÇÃO: nada foi gravado.' : ' — dados gravados no PostgreSQL.') +
+      ` Tempo total: ${fmtDuracao(r.duracao_s)}.`;
   }
+}
+
+/* ---------------------------------------------------- consultar códigos --- */
+const NOMES_COD = { clientes: 'Clientes', produtos: 'Produtos' };
+function corpoCodigos() {
+  return { postgres: postgres(), clientes: $('codClientes').checked, produtos: $('codProdutos').checked };
+}
+function validarCodigos() {
+  if (!$('codClientes').checked && !$('codProdutos').checked) { alert('Marque Clientes e/ou Produtos.'); return false; }
+  if (!$('pgDb').value) { alert('Preencha a conexão de destino (PostgreSQL) na seção 1.'); return false; }
+  return true;
+}
+const NOME_SING = { clientes: 'cliente(s)', produtos: 'produto(s)' };
+function escapar(v) { return String(v ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function tabelaCodigos(res, ajuste) {
+  // Consulta: so quantidade, menor e maior. Depois do ajuste: alterados + botao Download no fim da linha.
+  let t = '<table class="codigos-res"><thead><tr><th></th><th>Código ≥ 999999</th><th>Menor</th><th>Maior</th>' +
+          (ajuste ? '<th>Alterados</th><th>Planilhas</th>' : '') + '</tr></thead><tbody>';
+  for (const [q, r] of Object.entries(res)) {
+    const arquivos = (r.arquivos || []).join('|');
+    const botao = arquivos
+      ? `<a href="#" class="baixar-codigos" data-arquivos="${escapar(arquivos)}" title="${escapar((r.arquivos || []).map(a => a.split('/')[1]).join('  +  '))}">⬇ Download ${NOMES_COD[q].toLowerCase()}</a>`
+      : escapar(r.mensagem || '-');
+    t += `<tr><td><b>${NOMES_COD[q]}</b></td><td class="num">${r.quantidade}</td>` +
+         `<td class="num">${r.quantidade ? r.menor : '-'}</td><td class="num">${r.quantidade ? r.maior : '-'}</td>` +
+         (ajuste ? `<td class="num">${r.alterados}</td><td class="td-download">${botao}</td>` : '') + '</tr>';
+  }
+  return t + '</tbody></table>';
+}
+// um clique baixa os dois arquivos (todos e alterados), um depois do outro
+document.addEventListener('click', ev => {
+  const a = ev.target.closest('a.baixar-codigos');
+  if (!a) return;
+  ev.preventDefault();
+  a.dataset.arquivos.split('|').forEach((caminho, i) => setTimeout(() => {
+    const link = document.createElement('a');
+    link.href = '/codigos/arquivo/' + caminho; link.download = caminho.split('/')[1];
+    document.body.appendChild(link); link.click(); link.remove();
+  }, i * 600));
+});
+$('btnCodConsultar').addEventListener('click', async () => {
+  if (!validarCodigos()) return;
+  $('codResultado').innerHTML = 'Consultando...'; $('codLog').style.display = 'none';
+  try {
+    const r = await postar('/codigos/consultar', corpoCodigos());
+    $('codResultado').innerHTML = tabelaCodigos(r, false);
+  } catch (e) { $('codResultado').innerHTML = `<p class="status-erro">✖ ${e.message}</p>`; }
+});
+let timerCod = null, posCod = 0;
+$('btnCodAjustar').addEventListener('click', async () => {
+  if (!validarCodigos()) return;
+  let previa;
+  try { previa = await postar('/codigos/consultar', corpoCodigos()); }
+  catch (e) { $('codResultado').innerHTML = `<p class="status-erro">✖ ${e.message}</p>`; return; }
+  const total = Object.values(previa).reduce((t, x) => t + x.quantidade, 0);
+  if (!total) { $('codResultado').innerHTML = '<p class="status-ok">✔ Nenhum código ≥ 999999: nada a ajustar.</p>' + tabelaCodigos(previa, false); return; }
+  const texto = Object.entries(previa).filter(([, x]) => x.quantidade)
+    .map(([q, x]) => `${NOMES_COD[q]}: ${x.quantidade} código(s), de ${x.menor} a ${x.maior}`).join('\n');
+  if (!confirm(`Serão alterados no banco ${$('pgDb').value}:\n\n${texto}\n\nConfirmar a alteração?`)) return;
+  $('btnCodAjustar').disabled = true; $('btnCodConsultar').disabled = true;
+  $('codResultado').innerHTML = '<p>⏳ Ajustando os códigos... acompanhe abaixo.</p>';
+  $('codLog').textContent = ''; $('codLog').style.display = 'block'; posCod = 0;
+  try {
+    const r = await postar('/codigos/ajustar', corpoCodigos());
+    timerCod = setInterval(() => acompanharCodigos(r.ajuste_id), 700);
+  } catch (e) {
+    $('codResultado').innerHTML = `<p class="status-erro">✖ ${e.message}</p>`;
+    $('btnCodAjustar').disabled = false; $('btnCodConsultar').disabled = false;
+  }
+});
+async function acompanharCodigos(id) {
+  let r;
+  try { r = await (await fetch(`/codigos/status/${id}?desde=${posCod}`)).json(); } catch (e) { return; }
+  if (r.log && r.log.length) { $('codLog').textContent += r.log.join('\n') + '\n'; $('codLog').scrollTop = $('codLog').scrollHeight; }
+  posCod = r.total_log;
+  if (r.status === 'em_andamento') return;
+  clearInterval(timerCod); timerCod = null;
+  $('btnCodAjustar').disabled = false; $('btnCodConsultar').disabled = false;
+  if (r.status === 'concluido')
+    $('codResultado').innerHTML = '<p class="status-ok">✔ Códigos ajustados. O botão Download no fim de cada linha baixa as duas planilhas (todos e alterados).</p>' + tabelaCodigos(r.resultado, true);
+  else
+    $('codResultado').innerHTML = `<p class="status-erro">✖ ${escapar(r.erro)}</p>`;
 }
 
 /* -------------------------------------------------------- inicialização --- */
