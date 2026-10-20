@@ -41,7 +41,8 @@ Pentaho**, com as mesmas regras do migrador Pentaho oficial
 ```
 migrador_syspdv_varejo/
 ├── app/                motor.py, main.py, ajudantes.py, firebird_conexao.py, sqlserver_conexao.py,
-│                       docker_firebird.py, verificar_fbclient.py
+│                       senha_postgres.py, docker_firebird.py, verificar_fbclient.py,
+│                       codigos/ (ajuste.py + ajusta_cliente.sql/ajusta_produto.sql do kit)
 ├── comandos/           uma pasta por item (ver seção 4) + _modelo/ + COMO_ADICIONAR.md
 ├── static/index.html   a tela
 ├── reports/            relatório "linha a linha" (CSV) de cada execução
@@ -124,6 +125,39 @@ Ajudantes: `inteiro()`, `texto(maiusculo, vazio, tamanho)`, `numero()`, `so_digi
   link do relatório "linha a linha" (status + mensagem + linha de origem).
 - Servidor sobe com `--reload --reload-dir app` (recarrega ao mudar código); `/saude` devolve
   app, pasta, versão e sistema — usado pelos iniciar-app para derrubar servidor antigo.
+- Ordem das seções: **1. Conexões · 2. Dados a serem migrados · 3. Progresso · 4. Consultar
+  códigos**. Grupo que só tem item automático (ex.: "Finalização") não aparece na lista.
+- **Senha do PostgreSQL sempre validada** (`app/senha_postgres.py`, usado em todo `_pg()`): senha
+  vazia é recusada antes de conectar; se o servidor não usou a senha (`con.pgconn.used_password`
+  falso = `pg_hba.conf` em `trust`, que aceita qualquer senha), a senha informada é conferida contra
+  a senha gravada em `pg_authid` (SCRAM-SHA-256: PBKDF2 + ClientKey/StoredKey; ou MD5). Mensagens:
+  "Informe a senha", "Usuário ou senha incorretos", "Senha do PostgreSQL incorreta", "O usuário 'x'
+  não existe" (antes do "banco não existe": o texto de erro do PostgreSQL é parecido).
+
+### 4. Consultar códigos (seção 4 da tela, depois da migração)
+
+Tirado do **kit-migracao** do time (`3-menu-migracao/app/correcao`: "Ajustar Código de Cliente /
+Produto"). Os scripts `app/codigos/ajusta_cliente.sql` e `ajusta_produto.sql` são os do kit, **sem
+alteração**; `app/codigos/ajuste.py` os roda pelo psycopg (linhas `\echo`/`\set` do psql ignoradas).
+- Tópicos na tela (só estes três, pedido do usuário): regra de Clientes, regra de Produtos, e
+  Consultar × Ajustar.
+- ☐ Clientes ☐ Produtos · **Consultar** = tabela-resumo (cabeçalho azul): Código ≥ 999999, Menor,
+  Maior — nada é alterado e **nenhuma planilha** é gerada.
+- **Ajustar códigos** = prévia + `confirm()` → roda em **segundo plano** (`/codigos/ajustar` devolve
+  `ajuste_id`; a tela consulta `/codigos/status/{id}?desde=N`) com o **registro ao vivo** (RAISE
+  NOTICE "CODIGO ANTIGO: X, CODIGO NOVO: Y" / "AJUSTANDO PRODUTO DE X - Y" chegam enquanto o script
+  roda — testado). Tudo numa **transação só** (script + planilhas + DROP da coluna auxiliar): erro
+  = nada gravado (testado). Não roda com migração ou outro ajuste em andamento.
+- Regras do kit: clientes ≥ 999999 → menor código livre (limite de crédito, conta a receber,
+  cobrança, transações acompanham); produtos ≥ 999999 e `proenvbal = 'N'` → código livre de 10001 a
+  999998 (`descobre_proximo_codigo`), o antigo vira EAN em `produtoaux` e vai para
+  `alteracao_produto_sped`; o script desliga/religa trigger da produto, remove/recria constraints e a
+  `estoque_movimentacao_trigger`.
+- Depois do ajuste, cada linha ganha **um botão** "⬇ Download clientes/produtos" que baixa **dois
+  arquivos** (um clique, dois downloads — o navegador pode pedir permissão para vários arquivos):
+  `cod_novo_cod_antigo_<cliente|produto>_todos_<banco>.csv` e
+  `cod_novo_cod_antigo_<cliente|produto>_alterados_<banco>.csv` (`;`, cabeçalho
+  `CODIGO NOVO;CODIGO ANTIGO;NOME CLIENTE|DESCRICAO`, UTF-8 com BOM), em `reports/codigos/ajuste_*/`.
 
 ## 4. Itens prontos (regras tiradas dos .ktr oficiais)
 
@@ -351,6 +385,8 @@ porque usa Jaybird/Java, sem fbclient.)
 | Migração parou com erro no meio da parte de produto | o `finalizar.sql` religa as triggers da `produto` — conferir no log "finalizar.sql executado" |
 | "Nenhum driver ODBC do SQL Server instalado" | Linux: `msodbcsql18` (passo a passo no `linux/LEIA-ME.md`); Windows: ODBC Driver 18 (o "SQL Server" do Windows também serve) |
 | SQL Server: não conecta | TCP/IP habilitado no SQL Server Configuration Manager; porta 1433 ou instância (com instância a porta é ignorada) |
+| PostgreSQL aceita senha vazia/errada | `pg_hba.conf` em `trust`: o migrador já recusa (confere contra `pg_authid`); para o servidor também conferir, trocar para `scram-sha-256` |
+| Download do ajuste baixou só um arquivo | o navegador bloqueou "vários downloads": permitir para 127.0.0.1:8020 |
 | Item roda duas vezes após atualização | pasta renomeada que ficou da versão anterior (ex.: `11_ajustes_pessoas` → `19_ajustes_pessoas`): apagar a antiga |
 
 ## 9. Próximos passos
@@ -359,6 +395,8 @@ O fluxo do `Migrador_Inicial.kjb` está completo: Cadastros Padrão, Pessoas, Pr
 cenários fiscais), Estoque, Financeiro e a fila do Panamá — testado pelo usuário em Linux e Windows,
 origem Firebird e SQL Server. Pendentes/possíveis:
 - "Relatório padrão" do `Migrador_Inicial.kjb` (não pedido).
+- Outros módulos do kit-migracao (relatórios de validação .docx, backup, AWS, servidores Firebird)
+  ainda não estão na tela; a "Correção" (ajuste de códigos) já está (seção 4 da tela).
 - Juros e multa do Contas a Receber: o usuário vai tratar à parte (particular de cada cliente).
 - Instalação no EC2 da AWS (onde ficam os bancos do VarejoFacil): destino `localhost`, tela só por
   túnel SSH/SSM (não abrir a 8020), lista de bancos na tela, backup antes de gravar, horário de
@@ -391,15 +429,20 @@ Depois: Linux `bash linux/instalar.sh` + `bash linux/iniciar-app.sh`; Windows `w
 - Tentativas anteriores, substituídas por esta: `migrador_auto` (Tkinter, API/Postgres) e
   `migrador-syspdv-varejofacil` (web multi-origem + execução do Pentaho via Kitchen). Decisão
   do usuário: Python puro com pastas de comandos, uma tela só, sem abas além da do sistema.
-- Versão atual do app: `VERSAO = "2026.10.25"` em `app/main.py` (porta 8020).
-- 2026.10.25 (pedido do usuário em 19/10/2026): tempos no log de execução. `app/motor.py`:
-  `duracao()` formata `0,8s` / `42,3s` / `3min 07s` / `1h 02min 05s`; cada etapa loga
-  "início às HH:MM:SS" e "fim em <duração>: lidos ..." (no erro: "ERRO após <duração>") e guarda
-  `tempo` (segundos) no status da etapa. `app/main.py`: "Migração iniciada em dd/mm/aaaa HH:MM:SS"
-  e, no fim, "Migração concluída|terminou com erro em ... — tempo total: <duração>"
-  (`estado["duracao"]`). A linha do tempo total entra no log ANTES de mudar o status, porque a
-  tela para de ler o log quando o status deixa de ser `em_andamento`. Tela inalterada (possível
-  próximo passo: coluna "Tempo" na tabela de progresso usando `tempo`).
+- Versão atual do app: `VERSAO = "2026.10.27"` em `app/main.py` (porta 8020).
+- 2026.10.27 (pedido do usuário em 20/10/2026): tempo de cada etapa (tabela) e tempo total.
+  `app/motor.py`: `formatar_duracao()` (`0.8s` / `42.3s` / `3min 07s` / `1h 02min 05s`); cada etapa
+  guarda `inicio_ts`, `fim_ts` e `duracao_s` no status e loga "início às HH:MM:SS" e "fim em
+  <duração>: lidos ..." (no erro: "ERRO após <duração>"); o estado da execução guarda o início/fim/
+  `duracao_s` totais. No fim (inclusive com erro, depois dos `finalizar.sql`) o log traz "Tempo por
+  etapa" e "Migração terminada em ... — TEMPO TOTAL DA MIGRAÇÃO: <duração>" (antes de o status mudar,
+  porque a tela para de ler o log quando o status deixa de ser `em_andamento`), e grava
+  `reports/<id>/tempos.csv` (etapa;duracao_segundos;duracao + linha TOTAL). `app/main.py`: `/status`
+  devolve `agora_ts` (relógio do servidor, para a tela corrigir diferença de relógio). Tela: coluna
+  **Tempo** na tabela de progresso (etapa em andamento mostra o tempo corrente com "…") e "Tempo total"
+  na mensagem de conclusão. Substitui a versão 2026.10.25 do repositório (só log, `duracao()` e
+  `tempo`); o repositório estava sem as mudanças da 2026.10.26 (Consultar códigos e validação de
+  senha do PostgreSQL), que entram nesta versão.
 - Ambientes validados pelo usuário: Linux (Ubuntu 24.04, Firebird 2.5 em Docker, PostgreSQL 15)
   e Windows (Firebird 2.5.1 32 bits, PostgreSQL 15.19, pgAdmin 4 9.18, Python 3.12 64 bits);
   origem SQL Server validada pelo usuário.

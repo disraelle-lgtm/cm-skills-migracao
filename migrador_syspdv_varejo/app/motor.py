@@ -53,11 +53,11 @@ com "_" (ex.: _modelo) sao ignoradas.
 from __future__ import annotations
 
 import csv
+import time
 import re
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 import json
-import time
 import traceback
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -206,17 +206,8 @@ def descobrir(pasta: Path = PASTA_COMANDOS) -> list[Modulo]:
 # ------------------------------------------------------------- execucao ---
 def _vazio(nome: str) -> dict:
     return {"nome": nome, "status": "aguardando", "total_origem": None, "lidos": 0, "inseridos": 0, "atualizados": 0,
-            "sem_alteracao": 0, "pulados": 0, "erros": 0, "relatorio": None, "mensagem": None, "tempo": None}
-
-
-def duracao(segundos: float) -> str:
-    """Tempo legivel para o log: 0,8s / 42,3s / 3min 07s / 1h 02min 05s."""
-    if segundos < 60:
-        return f"{segundos:.1f}s".replace(".", ",")
-    total = int(round(segundos))
-    h, resto = divmod(total, 3600)
-    m, s = divmod(resto, 60)
-    return f"{h}h {m:02d}min {s:02d}s" if h else f"{m}min {s:02d}s"
+            "sem_alteracao": 0, "pulados": 0, "erros": 0, "relatorio": None, "mensagem": None,
+            "inicio_ts": None, "fim_ts": None, "duracao_s": None}
 
 
 def valores_opcoes(modulos: list[Modulo], escolhidas: dict | None) -> dict[str, bool]:
@@ -236,6 +227,8 @@ def executar(modulos: list[Modulo], con_fb, con_pg, simular: bool, estado: dict,
     pasta_exec = PASTA_RELATORIOS / estado["id"]
     pasta_exec.mkdir(parents=True, exist_ok=True)
     fila = []
+    estado["inicio_ts"] = time.time()
+    log(f"Migração iniciada em {datetime.now():%d/%m/%Y %H:%M:%S}")
     for m in modulos:
         for e in m.etapas:
             nome = m.nome if len(m.etapas) == 1 else f"{m.nome} › {e.nome}"
@@ -250,22 +243,23 @@ def executar(modulos: list[Modulo], con_fb, con_pg, simular: bool, estado: dict,
                 log(f"[{nome}] não executado: {r['mensagem']}")
                 raise _Parar()
             r["status"] = "rodando"
+            r["inicio_ts"] = time.time()
             log(f"[{nome}] início às {datetime.now():%H:%M:%S} ({e.pasta.relative_to(RAIZ)})")
-            t_etapa = time.monotonic()
             try:
                 detalhes = _executar_modulo(e, con_fb, con_pg, r, log, nome, opcoes or {}, dialeto)
             except Exception as erro:
                 con_pg.rollback()
-                r.update(status="erro", mensagem=mensagem(erro), tempo=round(time.monotonic() - t_etapa, 1))
-                log(f"[{nome}] ERRO após {duracao(r['tempo'])}, migração interrompida: {r['mensagem']}")
+                _fechar_tempo(r)
+                r.update(status="erro", mensagem=mensagem(erro))
+                log(f"[{nome}] ERRO após {formatar_duracao(r['duracao_s'])}, migração interrompida: {r['mensagem']}")
                 log(traceback.format_exc(limit=2))
                 raise _Parar()
             if not simular:
                 con_pg.commit()
             r["relatorio"] = _relatorio(pasta_exec, e, detalhes)
             r["status"] = "concluido_com_erros" if r["erros"] else "concluido"
-            r["tempo"] = round(time.monotonic() - t_etapa, 1)
-            log(f"[{nome}] fim em {duracao(r['tempo'])}: lidos {r['lidos']}, inseridos {r['inseridos']}, atualizados "
+            _fechar_tempo(r)
+            log(f"[{nome}] fim em {formatar_duracao(r['duracao_s'])}: lidos {r['lidos']}, inseridos {r['inseridos']}, atualizados "
                 f"{r['atualizados']}, sem alteração {r['sem_alteracao']}, pulados {r['pulados']}, "
                 f"erros {r['erros']}")
     except _Parar:
@@ -275,6 +269,43 @@ def executar(modulos: list[Modulo], con_fb, con_pg, simular: bool, estado: dict,
             con_pg.rollback()
             log("SIMULAÇÃO: tudo desfeito, nada foi gravado no PostgreSQL.")
         _finalizar(fila, con_pg, log)
+        estado["fim_ts"] = time.time()
+        estado["duracao_s"] = estado["fim_ts"] - estado["inicio_ts"]
+        _resumo_tempos(estado, log)
+
+
+def formatar_duracao(seg: float | None) -> str:
+    if seg is None:
+        return "-"
+    if seg < 60:
+        return f"{seg:.1f}s"
+    h, resto = divmod(int(round(seg)), 3600)
+    mi, se = divmod(resto, 60)
+    return f"{h}h {mi:02d}min {se:02d}s" if h else f"{mi}min {se:02d}s"
+
+
+def _fechar_tempo(r: dict) -> None:
+    r["fim_ts"] = time.time()
+    r["duracao_s"] = r["fim_ts"] - (r["inicio_ts"] or r["fim_ts"])
+
+
+def _resumo_tempos(estado: dict, log) -> None:
+    """Tempo de cada etapa (tabela) e o tempo total do processo, no log e em tempos.csv."""
+    linhas = [(r["nome"], r["duracao_s"]) for r in estado["modulos"].values() if r["duracao_s"] is not None]
+    log("---- Tempo por etapa ----")
+    for nome, seg in linhas:
+        log(f"  {nome}: {formatar_duracao(seg)}")
+    log(f"Migração terminada em {datetime.now():%d/%m/%Y %H:%M:%S} — TEMPO TOTAL DA MIGRAÇÃO: "
+        f"{formatar_duracao(estado['duracao_s'])}")
+    try:
+        with (PASTA_RELATORIOS / estado["id"] / "tempos.csv").open("w", newline="", encoding="utf-8-sig") as f:
+            w = csv.writer(f, delimiter=";")
+            w.writerow(["etapa", "duracao_segundos", "duracao"])
+            for nome, seg in linhas:
+                w.writerow([nome, f"{seg:.2f}", formatar_duracao(seg)])
+            w.writerow(["TOTAL", f"{estado['duracao_s']:.2f}", formatar_duracao(estado["duracao_s"])])
+    except OSError:
+        pass
 
 
 def _finalizar(fila, con_pg, log) -> None:

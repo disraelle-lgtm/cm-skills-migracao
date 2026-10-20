@@ -8,10 +8,9 @@ cada requisicao.
 from __future__ import annotations
 
 import os
+import time
 import string
 import threading
-import time
-from datetime import datetime
 from pathlib import Path
 
 import psycopg
@@ -24,7 +23,7 @@ from .firebird_conexao import (ConexaoServidor, aviso_permissao, conectar_servid
                                localizar_fbclient, mensagem_amigavel)
 
 RAIZ = Path(__file__).resolve().parent.parent
-VERSAO = "2026.10.25"
+VERSAO = "2026.10.27"
 app = FastAPI(title="Migrador SysPDV -> VarejoFacil")
 EXECUCOES: dict[str, dict] = {}
 
@@ -51,19 +50,32 @@ class Postgres(BaseModel):
 
 
 def _pg(c: Postgres):
+    from app import senha_postgres
+    if not c.password:
+        raise HTTPException(400, "Informe a senha do PostgreSQL.")
     try:
-        return psycopg.connect(host=c.host, port=c.port, dbname=c.dbname, user=c.user,
-                               password=c.password, connect_timeout=10,
-                               application_name="migrador_syspdv_varejo")
+        con = psycopg.connect(host=c.host, port=c.port, dbname=c.dbname, user=c.user,
+                              password=c.password, connect_timeout=10,
+                              application_name="migrador_syspdv_varejo")
     except Exception as e:
         t = str(e)
         if "password authentication failed" in t:
-            t = "PostgreSQL recusou usuário ou senha."
+            t = "Usuário ou senha do PostgreSQL incorretos."
+        elif "no password supplied" in t:
+            t = "Informe a senha do PostgreSQL."
+        elif "role" in t and "does not exist" in t:
+            t = f"O usuário '{c.user}' não existe no PostgreSQL."
         elif "does not exist" in t:
             t = f"O banco '{c.dbname}' não existe no PostgreSQL."
         elif "Connection refused" in t:
             t = f"Não consegui conectar no PostgreSQL em {c.host}:{c.port}. O serviço está rodando?"
         raise HTTPException(400, t)
+    try:
+        senha_postgres.validar(con, c.user, c.password)   # confere a senha mesmo com pg_hba em "trust"
+    except senha_postgres.SenhaInvalida as e:
+        con.close()
+        raise HTTPException(400, str(e))
+    return con
 
 
 @app.get("/saude")
@@ -269,10 +281,6 @@ def migrar(req: MigrarIn):
     EXECUCOES[exec_id] = estado
 
     def rodar():
-        inicio = datetime.now()
-        t0 = time.monotonic()
-        estado["log"].append(f"Migração iniciada em {inicio:%d/%m/%Y %H:%M:%S}")
-        final, erro = "erro", None
         try:
             opcoes = motor.valores_opcoes(lista, req.opcoes)   # padrao vem de todos os itens
             estado["log"].append(f"Origem: {'SQL Server' if dialeto == 'sqlserver' else 'Firebird'}")
@@ -280,23 +288,96 @@ def migrar(req: MigrarIn):
                 estado["log"].append("Opções: " + ", ".join(f"{k}={'sim' if v else 'não'}" for k, v in opcoes.items()))
             motor.executar(selecionados, con_fb, con_pg, req.simular, estado, opcoes, dialeto)
             falhou = any(r["status"] == "erro" for r in estado["modulos"].values())
-            final = "erro" if falhou else "concluido"
+            estado["status"] = "erro" if falhou else "concluido"
         except Exception as e:
-            erro = str(e)
+            estado.update(status="erro", erro=str(e))
             estado["log"].append(f"ERRO: {e}")
         finally:
             con_fb.close()
             con_pg.close()
-            # tempo total vai para o log ANTES de mudar o status: a tela para de consultar
-            # o log assim que o status deixa de ser "em_andamento"
-            estado["duracao"] = round(time.monotonic() - t0, 1)
-            situacao = "concluída" if final == "concluido" else "terminou com erro"
-            estado["log"].append(f"Migração {situacao} em {datetime.now():%d/%m/%Y %H:%M:%S} — tempo total: "
-                                 f"{motor.duracao(estado['duracao'])}")
-            estado.update(status=final, erro=erro)
 
     threading.Thread(target=rodar, daemon=True).start()
     return {"exec_id": exec_id}
+
+
+# ------------------------------------------------- consultar / ajustar codigos ---
+class CodigosIn(BaseModel):
+    postgres: Postgres
+    clientes: bool = False
+    produtos: bool = False
+
+
+def _quais(req: CodigosIn) -> list[str]:
+    quais = [q for q, marcado in (("clientes", req.clientes), ("produtos", req.produtos)) if marcado]
+    if not quais:
+        raise HTTPException(400, "Marque Clientes e/ou Produtos.")
+    return quais
+
+
+@app.post("/codigos/consultar")
+def consultar_codigos(req: CodigosIn):
+    """Previa: quantos clientes/produtos tem codigo >= 999999 (nada e alterado)."""
+    from app.codigos import ajuste
+    quais = _quais(req)
+    con = _pg(req.postgres)
+    try:
+        return ajuste.consultar(con, quais)
+    except Exception as e:
+        raise HTTPException(400, f"Erro ao consultar: {e}")
+    finally:
+        con.close()
+
+
+AJUSTES: dict[str, dict] = {}
+
+
+@app.post("/codigos/ajustar")
+def ajustar_codigos(req: CodigosIn):
+    """Roda os scripts do kit-migracao (ajusta_cliente.sql / ajusta_produto.sql) em segundo plano,
+    numa transacao so, e gera as planilhas. A tela acompanha o log ao vivo por /codigos/status."""
+    from app.codigos import ajuste
+    if any(e["status"] == "em_andamento" for e in EXECUCOES.values()):
+        raise HTTPException(409, "Há uma migração em andamento: espere terminar para ajustar os códigos.")
+    if any(a["status"] == "em_andamento" for a in AJUSTES.values()):
+        raise HTTPException(409, "Já há um ajuste de códigos em andamento.")
+    quais = _quais(req)
+    con = _pg(req.postgres)
+    aj_id = motor.novo_id()
+    estado = {"status": "em_andamento", "log": [], "resultado": None, "erro": None}
+    AJUSTES[aj_id] = estado
+
+    def rodar():
+        try:
+            estado["resultado"] = ajuste.ajustar(con, quais, req.postgres.dbname, estado["log"].append)
+            estado["status"] = "concluido"
+        except Exception as e:
+            estado["erro"] = ("O ajuste falhou e foi DESFEITO por inteiro (o banco ficou como estava). "
+                              f"Motivo: {str(e).splitlines()[0]}")
+            estado["log"].append("ERRO: " + estado["erro"])
+            estado["status"] = "erro"
+        finally:
+            con.close()
+
+    threading.Thread(target=rodar, daemon=True).start()
+    return {"ajuste_id": aj_id}
+
+
+@app.get("/codigos/status/{aj_id}")
+def status_ajuste(aj_id: str, desde: int = 0):
+    estado = AJUSTES.get(aj_id)
+    if not estado:
+        raise HTTPException(404, "Ajuste não encontrado.")
+    return {"status": estado["status"], "log": estado["log"][desde:], "total_log": len(estado["log"]),
+            "resultado": estado["resultado"], "erro": estado["erro"]}
+
+
+@app.get("/codigos/arquivo/{pasta}/{arquivo}")
+def baixar_codigos(pasta: str, arquivo: str):
+    from app.codigos import ajuste
+    caminho = (ajuste.PASTA_ARQUIVOS / pasta / arquivo).resolve()
+    if ajuste.PASTA_ARQUIVOS.resolve() not in caminho.parents or not caminho.exists():
+        raise HTTPException(404, "Arquivo não encontrado.")
+    return FileResponse(caminho, filename=arquivo, media_type="text/csv")
 
 
 @app.get("/status/{exec_id}")
@@ -304,7 +385,7 @@ def status(exec_id: str, desde: int = 0):
     estado = EXECUCOES.get(exec_id)
     if estado is None:
         raise HTTPException(404, "execução não encontrada")
-    return {**{k: v for k, v in estado.items() if k != "log"},
+    return {**{k: v for k, v in estado.items() if k != "log"}, "agora_ts": time.time(),
             "log": estado["log"][desde:], "total_log": len(estado["log"])}
 
 

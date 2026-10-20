@@ -34,7 +34,7 @@ Antes de responder qualquer pergunta sobre o processo, consulte:
 | `references/modelo_tributacao_composicao.md` | Exemplo genérico de estruturação tributária de produto composto (insumo → produto composto → produto de venda) | Ao explicar como modelar produtos compostos/kits para fins tributários |
 | `scripts/ferramentas/migrador-cli.sh` e `migrador-cli-v2.sh` | Duas versões do CLI interno real usado no dia a dia (AWS SSO, Pentaho, operações Postgres/Firebird, preparação de ambiente de cliente, atualização/parada do VarejoFacil via Docker) | Ao explicar o fluxo operacional passo a passo de uma migração |
 | `references/migrador_python_syspdv_varejo.md` | Migrador Python SysPDV → VarejoFacil (sem Pentaho): estrutura, contrato das pastas de comandos, itens prontos e suas regras, diferenças propositais vs. Pentaho, sobras de outros clientes achadas nos .ktr, instalação Linux/Windows (client Firebird 64 bits), método .ktr → pasta, problemas comuns e próximos passos (Produto) | **Sempre** que o assunto for o migrador Python, criar/corrigir um item de `comandos/`, ou continuar a conversão do Pentaho (Produto, Estoque, Financeiro) |
-| `assets/migrador_syspdv_varejo.json` + `scripts/recriar_migrador.py` | Cópia completa do código do migrador Python (versão 2026.10.25) num arquivo só (o pacote da skill não aceita muitos arquivos nem zip), sem as DLLs do client Firebird | Ponto de partida para alterar o migrador ou gerar uma versão nova: `python3 scripts/recriar_migrador.py /tmp` recria a pasta — não reescrever do zero |
+| `assets/migrador_syspdv_varejo.json` + `scripts/recriar_migrador.py` | Cópia completa do código do migrador Python (versão 2026.10.27) num arquivo só (o pacote da skill não aceita muitos arquivos nem zip), sem as DLLs do client Firebird | Ponto de partida para alterar o migrador ou gerar uma versão nova: `python3 scripts/recriar_migrador.py /tmp` recria a pasta — não reescrever do zero |
 
 **Fonte oficial:** a skill e o código do migrador ficam no repositório Git `cm-skills-migracao` (plugin sincronizado com a organização). Alteração no app → editar `migrador_syspdv_varejo/` no repositório, subir a `VERSAO` em `app/main.py`, rodar `python tools/empacotar_migrador.py` (regenera este JSON) e `python tools/verificar.py`, atualizar a seção 11 da referência e o `CHANGELOG.md`, e abrir um pull request. Ao entregar uma alteração gerada aqui fora do repositório, avisar o usuário desses passos. Não distribuir `.skill` manual.
 
@@ -180,13 +180,17 @@ Regras fixas combinadas com o usuário:
   negativo, Mínimo e máximo, Movimentação de custo); **sem o "Zerar estoque"**: saldo = apagar os
   movimentos MIGRACAO só do produto e relançar + recalcular `estoque_resumo` (LEFT JOIN);
   Cadastro de operações automático com os ajustes de produto; Tabelas Relacionais fora;
-  origem **Firebird ou SQL Server** na tela; barra de progresso verde 0–100%; log de execução com
-  horário de início e duração de cada tabela/etapa ("fim em 3min 07s") e tempo total da migração; Movimentação de
+  origem **Firebird ou SQL Server** na tela; barra de progresso verde 0–100%; **tempo de cada etapa/tabela**
+  (coluna Tempo, log "fim em 3min 07s", `tempos.csv`) e **tempo total da migração**; Movimentação de
   custo igual ao Pentaho (`moc_custo_medio` = custo fiscal, confirmado); **Financeiro**: Contas a
   receber com o `T-ContaReceber` novo (cliente pelo código, `cfnc_codigo = 9` fixo, sem o script
   de juros e multa) e Contas a pagar com `cfnc_codigo = 32` fixo; "Insert Item Configuração
   Lançamento Financeiro" automático no fim do grupo; **sem** os "Insert Panama" do Pentaho — no fim
   de TODA migração roda o `InsertFilaPanama.sql` do usuário (`99_fila_panama`, automático sempre).
+  Seção **4. Consultar códigos** (depois do Progresso): consulta/ajuste de códigos ≥ 999999 de
+  clientes e produtos com os scripts do kit-migracao, registro ao vivo, botão único de download por
+  linha só depois do ajuste (`cod_novo_cod_antigo_<cliente|produto>_todos|alterados_<banco>.csv`);
+  **senha do PostgreSQL sempre validada**, inclusive com `pg_hba.conf` em `trust`.
 - **Windows**: Python 64 bits obrigatório (psycopg-binary) → client Firebird 2.5.9 64 bits
   oficial em `windows\firebird_client_x64`; instaladores dos programas vêm do Drive interno
   para a pasta Downloads (o `instalar.bat` instala um por um só o que faltar).

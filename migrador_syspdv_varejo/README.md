@@ -49,6 +49,7 @@ migrador_syspdv_varejo/
 │   ├── 59_fim_financeiro/     só SQL, sem checkbox: Insert Item Configuração Lançamento Financeiro
 │   └── 99_fila_panama/        só SQL, sem checkbox, em TODA migração (por último): InsertFilaPanama.sql
 ├── app/                       motor e tela (não precisa mexer para adicionar itens)
+│   ├── codigos/               consultar/ajustar códigos ≥ 999999 (scripts do kit-migracao)
 │   ├── motor.py               lê as pastas de comandos/ e executa
 │   ├── ajudantes.py           inteiro(), texto(), numero(), so_digitos(), Pular
 │   ├── firebird_conexao.py    conexão Firebird local/Docker, fbclient, charset
@@ -98,6 +99,31 @@ atualizado ou mantido, sem duplicar.
 
 Observação: a simulação desfaz os dados, mas as sequences do PostgreSQL não voltam
 (é assim no PostgreSQL). Os IDs da gravação real podem começar alguns números à frente.
+
+## Consultar códigos (seção 4 da tela, depois da migração)
+
+Clientes e produtos com código **≥ 999999** quebram o VarejoFácil. Na seção **4. Consultar códigos**
+(depois do Progresso: a troca é feita depois da migração), marque **Clientes** e/ou **Produtos**:
+
+- **Consultar**: mostra, para Clientes e Produtos, quantos códigos ≥ 999999 existem, o menor e o maior.
+  Nada é alterado e nenhuma planilha é gerada.
+- **Ajustar códigos**: mostra a prévia, pede confirmação e roda os scripts do **kit-migracao**
+  (`app/codigos/ajusta_cliente.sql` e `ajusta_produto.sql`, sem alteração):
+  - clientes: código ≥ 999999 recebe o menor código livre (limite de crédito, contas a receber,
+    cobrança e transações acompanham);
+  - produtos (exceto balança): recebem um código livre de 10001 a 999998; o código antigo vira EAN
+    do produto e vai para a `alteracao_produto_sped`;
+  - o registro das trocas aparece ao vivo enquanto altera; no fim, cada linha da tabela ganha o botão
+    **Download clientes** / **Download produtos**, que baixa os dois arquivos:
+    `cod_novo_cod_antigo_<cliente|produto>_todos_<banco>.csv` (todos) e
+    `cod_novo_cod_antigo_<cliente|produto>_alterados_<banco>.csv` (só os alterados), guardados em `reports/codigos/`.
+
+Usa a conexão de destino da seção 1. Tudo numa transação só (script + planilhas + remoção da coluna
+auxiliar): se algo falhar, o banco fica como estava. Não roda enquanto houver migração em andamento.
+
+**Senha do PostgreSQL**: o migrador sempre confere usuário e senha. Se o servidor estiver em modo
+`trust` no `pg_hba.conf` (aceita conexão sem senha), a senha informada é conferida contra a senha
+gravada do usuário no PostgreSQL (SCRAM-SHA-256 ou MD5): senha vazia ou errada é recusada.
 
 ## Itens prontos
 
