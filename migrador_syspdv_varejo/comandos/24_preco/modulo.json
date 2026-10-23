@@ -2,6 +2,12 @@
   "nome": "Preço",
   "grupo": "Cadastro de Produto",
   "descricao": "T-ProdutoPreco_inicial + T-Corrige-PrecosZerados_inicial: PRODUTO -> preco (loja = PRPCOD do PROPRIO).",
-  "chave": ["lojcod", "procod"],
-  "tabela_origem": "PRODUTO"
+  "chave": [
+    "lojcod",
+    "procod"
+  ],
+  "tabela_origem": "PRODUTO",
+  "depara": {
+    "procod": "produto"
+  }
 }

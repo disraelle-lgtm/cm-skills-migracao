@@ -1,0 +1,6 @@
+{
+  "nome": "Códigos de produto da virada",
+  "grupo": "Cadastro de Produto",
+  "descricao": "So na Migracao Virada, sem checkbox: depois do Produto, o codigo antigo (EAN) dos produtos que ganharam codigo novo vira codigo de barras (como no ajuste de codigos do kit) e as trocas novas entram na alteracao de produto do SPED com a data de exportacao de hoje, mantendo as anteriores (mesmo padrao do ajuste de codigos do kit). So faz algo se o arquivo de codigos de produtos foi anexado.",
+  "automatico_com_grupo": "Cadastro de Produto"
+}

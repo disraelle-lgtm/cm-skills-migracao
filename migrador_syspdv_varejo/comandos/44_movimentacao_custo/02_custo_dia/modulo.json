@@ -1,1 +1,10 @@
-{ "nome": "Custo do dia", "chave": ["procod"], "tabela_origem": "PRODUTO" }
+{
+  "nome": "Custo do dia",
+  "chave": [
+    "procod"
+  ],
+  "tabela_origem": "PRODUTO",
+  "depara": {
+    "procod": "produto"
+  }
+}

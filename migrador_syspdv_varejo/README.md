@@ -55,6 +55,7 @@ migrador_syspdv_varejo/
 │   ├── firebird_conexao.py    conexão Firebird local/Docker, fbclient, charset
 │   ├── docker_firebird.py     detecção de container do Firebird
 │   └── main.py                servidor web
+├── comandos_virada/           só o que é exclusivo da virada (ver comandos_virada/LEIA-ME.md)
 ├── static/index.html          a tela (mostra a aba Linux ou Windows, conforme o sistema)
 ├── reports/                   relatório "linha a linha" de cada execução
 ├── requirements.txt
@@ -86,13 +87,17 @@ Os dois abrem a tela em http://127.0.0.1:8020. O servidor recarrega sozinho quan
 
 1. **Conexões**: a tela mostra só a aba do sistema em uso (**Linux** ou **Windows**); no
    Windows, o botão **Procurar...** navega pelas pastas e mostra os bancos .fdb. Preencha o Firebird e o PostgreSQL e teste cada um. Os campos, menos as senhas, ficam lembrados.
-2. **Dados a serem migrados**: marque os itens. Os comandos de cada item ficam na pasta
+2. **Dados a serem migrados**: escolha a aba **Migração Inicial** ou **Migração Virada** (os mesmos
+   itens, com o de-para de códigos: anexe as planilhas de códigos de clientes e/ou produtos geradas na
+   seção 4 — ver `comandos_virada/LEIA-ME.md`). As duas abas abrem com tudo desmarcado. Os comandos de cada item ficam na pasta
    `comandos/` (ex.: `comandos/01_secao/origem.sql`).
-3. Deixe **Simular** marcado na primeira vez: roda tudo e desfaz no final.
-4. **Iniciar migração** → barra verde de 0% a 100% e acompanhamento por item (com **Na origem** = total da tabela no SysPDV e
+3. **Iniciar migração** (a tela pede confirmação com o banco de destino e a quantidade de itens: a
+   migração grava de verdade — use uma base de migração, não a de produção em uso) → barra verde com o tempo decorrido; cada item mostra o **tempo** de leitura e
+   gravação da sua tabela (coluna Tempo, também no log) e, no fim, o **tempo total da migração**.
+   A barra vai de 0% a 100% e o acompanhamento é por item (com **Na origem** = total da tabela no SysPDV e
    **Não migrados**, para bater os números) e baixe o relatório "linha a linha"
-   (inserido / atualizado com antes→depois / sem_alteracao / pulado / erro).
-5. Conferido, desmarque Simular e rode de novo para gravar.
+   (inserido / atualizado com antes→depois / sem_alteracao / pulado / erro). Rodar de novo é seguro:
+   o que já foi gravado fica "sem alteração" (não duplica).
 
 Rodar de novo é seguro: com `existe.sql` + `atualizar.sql`, o que já existe é
 atualizado ou mantido, sem duplicar.
@@ -210,7 +215,7 @@ por último, qualquer que seja o item marcado): roda o script `InsertFilaPanama.
 apaga `fila_sincronizacao` e `fila_sincronizacao_panama` e coloca na fila do Panamá todas as
 finalizadoras, holding, lojas, funcionários, acesso, clientes, seções, grupos, subgrupos, produtos,
 EAN e títulos a pagar/receber. Os "VF - Insert Panama" do Pentaho (receber e pagar) não rodam mais.
-Em Simular, é desfeito como o resto.
+Roda em toda migração.
 
 **Origem Firebird ou SQL Server**: na tela, "Banco de origem". Os mesmos `origem.sql` servem para os
 dois (SQL comum); onde precisa, a pasta tem `origem.sqlserver.sql`. SQL Server via ODBC (`pyodbc`):

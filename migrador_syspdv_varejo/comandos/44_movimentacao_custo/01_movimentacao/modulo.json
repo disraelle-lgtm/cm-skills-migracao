@@ -1,1 +1,10 @@
-{ "nome": "Movimentação de custo", "chave": ["procod"], "tabela_origem": "PRODUTO" }
+{
+  "nome": "Movimentação de custo",
+  "chave": [
+    "procod"
+  ],
+  "tabela_origem": "PRODUTO",
+  "depara": {
+    "procod": "produto"
+  }
+}

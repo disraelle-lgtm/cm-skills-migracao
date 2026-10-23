@@ -2,5 +2,13 @@
   "nome": "Cliente",
   "grupo": "Cadastro de Pessoas",
   "descricao": "JOB-Cliente_inicial (sem o limite de credito, que e outro item): CLIENTE -> pessoa + pessoa_cliente.",
-  "chave": ["cli_codigo", "pes_num_documento"]
+  "chave": [
+    "cli_codigo",
+    "pes_num_documento"
+  ],
+  "depara_gera": {
+    "campo": "cli_codigo",
+    "tipo": "cliente",
+    "reaproveitar": "SELECT pc.cli_codigo FROM pessoa_cliente pc JOIN pessoa p ON p.pes_codigo = pc.pes_codigo WHERE %(pes_num_documento)s::text IS NOT NULL AND p.pes_num_documento = %(pes_num_documento)s::text ORDER BY pc.cli_codigo"
+  }
 }

@@ -1,1 +1,10 @@
-{ "nome": "Auditoria de custo", "chave": ["procod"], "tabela_origem": "PRODUTO" }
+{
+  "nome": "Auditoria de custo",
+  "chave": [
+    "procod"
+  ],
+  "tabela_origem": "PRODUTO",
+  "depara": {
+    "procod": "produto"
+  }
+}

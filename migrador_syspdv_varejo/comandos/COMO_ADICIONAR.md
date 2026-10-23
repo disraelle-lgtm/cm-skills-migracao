@@ -94,9 +94,9 @@ raise Pular("cliente sem CPF")              # não migra a linha (fica "pulado")
 5. **Escreva o `inserir.sql`**, e o `existe.sql` + `atualizar.sql` se quiser que rodar
    de novo atualize em vez de duplicar.
 6. **Apague os arquivos opcionais que não usar** (ex.: `validar.sql`, `antes.sql`).
-7. Na tela: **Recarregar**, marque só o item novo, deixe **Simular** marcado e clique em
-   Iniciar. Confira o relatório "linha a linha". Se estiver certo, desmarque Simular e
-   rode de novo.
+7. Na tela: **Recarregar**, marque só o item novo e clique em Iniciar, numa **base de teste**
+   (a migração grava de verdade). Confira o relatório "linha a linha"; rodar de novo é seguro
+   (atualiza em vez de duplicar).
 
 ## 4. Traduzindo uma transformação do Pentaho para uma pasta
 
@@ -207,8 +207,8 @@ SELECT 1 FROM secao WHERE seccod = %(seccod)s
 ```
 
 Se não encontrar, a linha vira erro com a mensagem do `mensagem_validacao` do
-`modulo.json`. Em **Simular**, os itens rodam numa transação só: o Grupo enxerga as
-Seções que a simulação "inseriu" antes dele, então dá para simular tudo de uma vez.
+`modulo.json`. Os itens rodam na ordem das pastas: o Grupo enxerga as Seções gravadas
+antes dele, então dá para migrar tudo de uma vez.
 
 ## 9. Problemas comuns
 

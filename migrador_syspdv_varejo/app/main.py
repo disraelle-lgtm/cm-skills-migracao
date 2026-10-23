@@ -8,9 +8,9 @@ cada requisicao.
 from __future__ import annotations
 
 import os
-import time
 import string
 import threading
+import time
 from pathlib import Path
 
 import psycopg
@@ -23,7 +23,7 @@ from .firebird_conexao import (ConexaoServidor, aviso_permissao, conectar_servid
                                localizar_fbclient, mensagem_amigavel)
 
 RAIZ = Path(__file__).resolve().parent.parent
-VERSAO = "2026.10.27"
+VERSAO = "2026.10.31"
 app = FastAPI(title="Migrador SysPDV -> VarejoFacil")
 EXECUCOES: dict[str, dict] = {}
 
@@ -200,8 +200,12 @@ def testar_postgres(req: Postgres):
 
 # ---------------------------------------------------------------- modulos ---
 @app.get("/modulos")
-def listar_modulos():
-    return [m.para_dict() for m in motor.descobrir()]
+def listar_modulos(conjunto: str = "inicial"):
+    """Itens da aba "Migracao Inicial" (comandos/) ou "Migracao Virada" (comandos_virada/)."""
+    try:
+        return [m.para_dict() for m in motor.descobrir_conjunto(conjunto)]
+    except ValueError as e:
+        raise HTTPException(400, str(e))
 
 
 # --------------------------------------------------------------- migracao ---
@@ -236,6 +240,9 @@ def testar_sqlserver(req: SqlServer):
 
 class MigrarIn(BaseModel):
     origem_tipo: str = "firebird"            # "firebird" ou "sqlserver"
+    conjunto: str = "inicial"                # aba: "inicial" ou "virada"
+    depara_clientes: str | None = None       # virada: conteudo do arquivo de codigos de clientes (CSV)
+    depara_produtos: str | None = None       # virada: conteudo do arquivo de codigos de produtos (CSV)
     firebird: Firebird | None = None
     sqlserver: SqlServer | None = None
     postgres: Postgres
@@ -248,7 +255,22 @@ class MigrarIn(BaseModel):
 def migrar(req: MigrarIn):
     if any(e["status"] == "em_andamento" for e in EXECUCOES.values()):
         raise HTTPException(409, "Já existe uma migração em andamento.")
-    lista = motor.descobrir()
+    try:
+        lista = motor.descobrir_conjunto(req.conjunto)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    depara = None
+    if req.conjunto == "virada" and (req.depara_clientes or req.depara_produtos):
+        from app import virada
+        try:
+            mapas = {}
+            if req.depara_clientes:
+                mapas["cliente"] = virada.ler_arquivo(req.depara_clientes, "cliente")
+            if req.depara_produtos:
+                mapas["produto"] = virada.ler_arquivo(req.depara_produtos, "produto")
+        except virada.ArquivoInvalido as e:
+            raise HTTPException(400, str(e))
+        depara = virada.Depara(mapas)
     todos = {m.id: m for m in lista}
     faltando = [i for i in req.modulos if i not in todos or todos[i].automatico_com_grupo or todos[i].automatico_sempre]
     if faltando or not req.modulos:
@@ -277,16 +299,20 @@ def migrar(req: MigrarIn):
 
     exec_id = motor.novo_id()
     estado = {"id": exec_id, "status": "em_andamento", "simulacao": req.simular, "log": [],
-              "modulos": {}, "erro": None}
+              "modulos": {}, "erro": None, "inicio_ts": time.time(), "duracao_total": None,
+              "banco": req.postgres.dbname, "arquivos_virada": []}
     EXECUCOES[exec_id] = estado
 
     def rodar():
         try:
             opcoes = motor.valores_opcoes(lista, req.opcoes)   # padrao vem de todos os itens
-            estado["log"].append(f"Origem: {'SQL Server' if dialeto == 'sqlserver' else 'Firebird'}")
+            estado["log"].append(f"Migração {'VIRADA' if req.conjunto == 'virada' else 'INICIAL'} | "
+                                 f"origem: {'SQL Server' if dialeto == 'sqlserver' else 'Firebird'}")
             if opcoes:
                 estado["log"].append("Opções: " + ", ".join(f"{k}={'sim' if v else 'não'}" for k, v in opcoes.items()))
-            motor.executar(selecionados, con_fb, con_pg, req.simular, estado, opcoes, dialeto)
+            if req.conjunto == "virada" and depara is None:
+                estado["log"].append("Virada SEM arquivo de codigos: os itens rodam como na migracao inicial.")
+            motor.executar(selecionados, con_fb, con_pg, req.simular, estado, opcoes, dialeto, depara)
             falhou = any(r["status"] == "erro" for r in estado["modulos"].values())
             estado["status"] = "erro" if falhou else "concluido"
         except Exception as e:
@@ -295,6 +321,8 @@ def migrar(req: MigrarIn):
         finally:
             con_fb.close()
             con_pg.close()
+            estado["duracao_total"] = round(time.time() - estado["inicio_ts"], 1)
+            estado["log"].append(f"Tempo total da migração: {motor.formatar_duracao(estado['duracao_total'])}")
 
     threading.Thread(target=rodar, daemon=True).start()
     return {"exec_id": exec_id}
@@ -385,8 +413,18 @@ def status(exec_id: str, desde: int = 0):
     estado = EXECUCOES.get(exec_id)
     if estado is None:
         raise HTTPException(404, "execução não encontrada")
-    return {**{k: v for k, v in estado.items() if k != "log"}, "agora_ts": time.time(),
-            "log": estado["log"][desde:], "total_log": len(estado["log"])}
+    agora = time.time()
+    modulos = {}
+    for k, m in estado["modulos"].items():          # o item rodando mostra o tempo decorrido ate agora
+        m = dict(m)
+        if m["status"] == "rodando" and m.get("inicio_ts"):
+            m["duracao"] = round(agora - m["inicio_ts"], 1)
+        modulos[k] = m
+    total = estado["duracao_total"]
+    if total is None:
+        total = round(agora - estado["inicio_ts"], 1)
+    return {**{k: v for k, v in estado.items() if k not in ("log", "modulos")}, "modulos": modulos,
+            "tempo_total": total, "log": estado["log"][desde:], "total_log": len(estado["log"])}
 
 
 @app.get("/download/{exec_id}/{arquivo}")

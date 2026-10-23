@@ -2,5 +2,10 @@
   "nome": "Produto Auxiliar (EAN)",
   "grupo": "Cadastro de Produto",
   "descricao": "T-ProdutoAuxiliar_inicial + T-ProdutoAuxiliar_limpeza_inicial: PRODUTOAUX -> produtoaux (EAN ou LITERAL).",
-  "chave": ["procodaux"]
+  "chave": [
+    "procodaux"
+  ],
+  "depara": {
+    "procod": "produto"
+  }
 }

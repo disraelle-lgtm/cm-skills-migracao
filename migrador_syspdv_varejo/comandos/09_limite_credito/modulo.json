@@ -2,6 +2,11 @@
   "nome": "Limite de Crédito",
   "grupo": "Cadastro de Pessoas",
   "descricao": "T-Cliente-LimiteCredito_inicial: CLIENTE.CLILIMCRE -> limite_de_credito. Precisa do Cliente migrado.",
-  "chave": ["cli_codigo"],
-  "mensagem_validacao": "o cliente nao existe no VarejoFacil (migre o Cliente antes)"
+  "chave": [
+    "cli_codigo"
+  ],
+  "mensagem_validacao": "o cliente nao existe no VarejoFacil (migre o Cliente antes)",
+  "depara": {
+    "cli_codigo": "cliente"
+  }
 }
