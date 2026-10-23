@@ -2,10 +2,21 @@
   "nome": "Produto",
   "grupo": "Cadastro de Produto",
   "descricao": "T-Produto_inicial: PRODUTO -> produto (com os ajustes FB - Ajuste Secao/Unidade e FB - Ajustes campos estourados aplicados na leitura).",
-  "chave": ["procod"],
+  "chave": [
+    "procod"
+  ],
   "tabela_origem": "PRODUTO",
   "opcoes": [
-    {"id": "fora_de_linha", "rotulo": "Incluir produtos fora de linha", "padrao": true,
-     "dica": "Marcado: migra todos os produtos (PROFORLIN S e N). Desmarcado: so os em linha (PROFORLIN = 'N')."}
-  ]
+    {
+      "id": "fora_de_linha",
+      "rotulo": "Incluir produtos fora de linha",
+      "padrao": true,
+      "dica": "Marcado: migra todos os produtos (PROFORLIN S e N). Desmarcado: so os em linha (PROFORLIN = 'N')."
+    }
+  ],
+  "depara_gera": {
+    "campo": "procod",
+    "tipo": "produto",
+    "balanca": "proenvbal"
+  }
 }

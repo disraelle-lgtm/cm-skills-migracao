@@ -53,11 +53,11 @@ com "_" (ex.: _modelo) sao ignoradas.
 from __future__ import annotations
 
 import csv
-import time
 import re
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 import json
+import time
 import traceback
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -67,6 +67,24 @@ from .ajudantes import Pular
 
 RAIZ = Path(__file__).resolve().parent.parent
 PASTA_COMANDOS = RAIZ / "comandos"
+# Abas da tela "2. Dados a serem migrados": cada uma tem a sua pasta de comandos (mesma estrutura)
+CONJUNTOS = {"inicial": PASTA_COMANDOS, "virada": RAIZ / "comandos_virada"}
+
+
+def descobrir_conjunto(conjunto: str) -> list["Modulo"]:
+    """Inicial: comandos/. Virada: os MESMOS itens de comandos/ + os itens so da virada
+    (comandos_virada/, ex.: EAN e SPED dos codigos trocados), na ordem das pastas."""
+    if conjunto == "inicial":
+        return descobrir(PASTA_COMANDOS)
+    if conjunto == "virada":
+        return sorted(descobrir(PASTA_COMANDOS) + descobrir(CONJUNTOS["virada"]), key=lambda m: m.id)
+    raise ValueError(f"Conjunto de comandos desconhecido: {conjunto}")
+
+
+def pasta_do_conjunto(conjunto: str) -> Path:
+    if conjunto not in CONJUNTOS:
+        raise ValueError(f"Conjunto de comandos desconhecido: {conjunto}")
+    return CONJUNTOS[conjunto]
 PASTA_RELATORIOS = RAIZ / "reports"
 
 ARQUIVOS = ["modulo.json", "origem.sql", "origem.sqlserver.sql", "transformar.py", "validar.sql", "existe.sql",
@@ -89,6 +107,10 @@ class Etapa:
     problemas: list[str] = field(default_factory=list)
     tabela_origem: str | None = None      # para a contagem na origem (padrao: 1a tabela do FROM)
     contagem_origem: str | None = None    # ou um SELECT COUNT(...) proprio
+    # Migracao VIRADA: campos que sao codigo de cliente/produto ({"procod": "produto"}) e, no item
+    # principal, o campo que ganha codigo novo ({"campo": "procod", "tipo": "produto", "balanca": "proenvbal"})
+    depara: dict = field(default_factory=dict)
+    depara_gera: dict = field(default_factory=dict)
 
     def sql(self, nome: str) -> str | None:
         """Conteudo do .sql SEM as linhas de comentario (--). Arquivo ausente ou so com
@@ -156,7 +178,8 @@ def _etapa(pasta: Path, id_: str) -> Etapa:
     meta = _ler_meta(pasta)
     e = Etapa(id=id_, pasta=pasta, nome=meta.get("nome", pasta.name), chave=meta.get("chave", []),
               mensagem_validacao=meta.get("mensagem_validacao", Etapa.mensagem_validacao),
-              tabela_origem=meta.get("tabela_origem"), contagem_origem=meta.get("contagem_origem"))
+              tabela_origem=meta.get("tabela_origem"), contagem_origem=meta.get("contagem_origem"),
+              depara=meta.get("depara", {}), depara_gera=meta.get("depara_gera", {}))
     if "problema" in meta:
         e.problemas.append(meta["problema"])
     if not _so_sql(pasta):
@@ -204,10 +227,25 @@ def descobrir(pasta: Path = PASTA_COMANDOS) -> list[Modulo]:
 
 
 # ------------------------------------------------------------- execucao ---
+def formatar_duracao(segundos: float | None) -> str:
+    """0,8s / 45s / 2min 05s / 1h 02min 05s"""
+    if segundos is None:
+        return "-"
+    if segundos < 10:
+        return f"{segundos:.1f}s".replace(".", ",")
+    s = int(round(segundos))
+    h, resto = divmod(s, 3600)
+    m, s = divmod(resto, 60)
+    if h:
+        return f"{h}h {m:02d}min {s:02d}s"
+    if m:
+        return f"{m}min {s:02d}s"
+    return f"{s}s"
+
+
 def _vazio(nome: str) -> dict:
-    return {"nome": nome, "status": "aguardando", "total_origem": None, "lidos": 0, "inseridos": 0, "atualizados": 0,
-            "sem_alteracao": 0, "pulados": 0, "erros": 0, "relatorio": None, "mensagem": None,
-            "inicio_ts": None, "fim_ts": None, "duracao_s": None}
+    return {"nome": nome, "status": "aguardando", "total_origem": None, "inicio_ts": None, "duracao": None, "lidos": 0, "inseridos": 0, "atualizados": 0,
+            "sem_alteracao": 0, "pulados": 0, "erros": 0, "relatorio": None, "mensagem": None}
 
 
 def valores_opcoes(modulos: list[Modulo], escolhidas: dict | None) -> dict[str, bool]:
@@ -219,7 +257,7 @@ def valores_opcoes(modulos: list[Modulo], escolhidas: dict | None) -> dict[str, 
 
 
 def executar(modulos: list[Modulo], con_fb, con_pg, simular: bool, estado: dict,
-             opcoes: dict[str, bool] | None = None, dialeto: str = "firebird") -> None:
+             opcoes: dict[str, bool] | None = None, dialeto: str = "firebird", depara=None) -> None:
     """Roda os itens e suas etapas em ordem. Real: commit ao fim de cada etapa.
     Simulacao: tudo numa transacao so, desfeita no final (as etapas seguintes enxergam
     o que as anteriores 'gravariam', ex.: o grupo ve as secoes novas)."""
@@ -227,13 +265,13 @@ def executar(modulos: list[Modulo], con_fb, con_pg, simular: bool, estado: dict,
     pasta_exec = PASTA_RELATORIOS / estado["id"]
     pasta_exec.mkdir(parents=True, exist_ok=True)
     fila = []
-    estado["inicio_ts"] = time.time()
-    log(f"Migração iniciada em {datetime.now():%d/%m/%Y %H:%M:%S}")
     for m in modulos:
         for e in m.etapas:
             nome = m.nome if len(m.etapas) == 1 else f"{m.nome} › {e.nome}"
             estado["modulos"][e.id] = _vazio(nome)
             fila.append((m, e, nome))
+    if depara is not None:                     # migracao VIRADA com arquivo(s) de codigos
+        depara.preparar(con_pg, log)
     try:
         for m, e, nome in fila:
             r = estado["modulos"][e.id]
@@ -244,68 +282,38 @@ def executar(modulos: list[Modulo], con_fb, con_pg, simular: bool, estado: dict,
                 raise _Parar()
             r["status"] = "rodando"
             r["inicio_ts"] = time.time()
-            log(f"[{nome}] início às {datetime.now():%H:%M:%S} ({e.pasta.relative_to(RAIZ)})")
+            relogio = time.monotonic()
+            log(f"[{nome}] início ({e.pasta.relative_to(RAIZ)})")
             try:
-                detalhes = _executar_modulo(e, con_fb, con_pg, r, log, nome, opcoes or {}, dialeto)
+                detalhes = _executar_modulo(e, con_fb, con_pg, r, log, nome, opcoes or {}, dialeto, depara)
             except Exception as erro:
                 con_pg.rollback()
-                _fechar_tempo(r)
-                r.update(status="erro", mensagem=mensagem(erro))
-                log(f"[{nome}] ERRO após {formatar_duracao(r['duracao_s'])}, migração interrompida: {r['mensagem']}")
+                r.update(status="erro", mensagem=mensagem(erro), duracao=round(time.monotonic() - relogio, 1))
+                log(f"[{nome}] ERRO, migração interrompida (após {formatar_duracao(r['duracao'])}): {r['mensagem']}")
                 log(traceback.format_exc(limit=2))
                 raise _Parar()
             if not simular:
                 con_pg.commit()
             r["relatorio"] = _relatorio(pasta_exec, e, detalhes)
+            r["duracao"] = round(time.monotonic() - relogio, 1)    # leitura + gravacao + commit da etapa
             r["status"] = "concluido_com_erros" if r["erros"] else "concluido"
-            _fechar_tempo(r)
-            log(f"[{nome}] fim em {formatar_duracao(r['duracao_s'])}: lidos {r['lidos']}, inseridos {r['inseridos']}, atualizados "
+            log(f"[{nome}] fim: lidos {r['lidos']}, inseridos {r['inseridos']}, atualizados "
                 f"{r['atualizados']}, sem alteração {r['sem_alteracao']}, pulados {r['pulados']}, "
-                f"erros {r['erros']}")
+                f"erros {r['erros']} — concluído em {formatar_duracao(r['duracao'])}")
     except _Parar:
         pass
     finally:
+        if depara is not None:                 # planilhas finais da virada (antes de desfazer a simulacao)
+            try:
+                estado["arquivos_virada"] = depara.planilhas(con_pg, pasta_exec, estado.get("banco", "banco"))
+                log("Planilhas de codigos da virada geradas: " + ", ".join(estado["arquivos_virada"]))
+            except Exception as erro:
+                con_pg.rollback()
+                log(f"ERRO ao gerar as planilhas de codigos da virada: {mensagem(erro)}")
         if simular:
             con_pg.rollback()
             log("SIMULAÇÃO: tudo desfeito, nada foi gravado no PostgreSQL.")
         _finalizar(fila, con_pg, log)
-        estado["fim_ts"] = time.time()
-        estado["duracao_s"] = estado["fim_ts"] - estado["inicio_ts"]
-        _resumo_tempos(estado, log)
-
-
-def formatar_duracao(seg: float | None) -> str:
-    if seg is None:
-        return "-"
-    if seg < 60:
-        return f"{seg:.1f}s"
-    h, resto = divmod(int(round(seg)), 3600)
-    mi, se = divmod(resto, 60)
-    return f"{h}h {mi:02d}min {se:02d}s" if h else f"{mi}min {se:02d}s"
-
-
-def _fechar_tempo(r: dict) -> None:
-    r["fim_ts"] = time.time()
-    r["duracao_s"] = r["fim_ts"] - (r["inicio_ts"] or r["fim_ts"])
-
-
-def _resumo_tempos(estado: dict, log) -> None:
-    """Tempo de cada etapa (tabela) e o tempo total do processo, no log e em tempos.csv."""
-    linhas = [(r["nome"], r["duracao_s"]) for r in estado["modulos"].values() if r["duracao_s"] is not None]
-    log("---- Tempo por etapa ----")
-    for nome, seg in linhas:
-        log(f"  {nome}: {formatar_duracao(seg)}")
-    log(f"Migração terminada em {datetime.now():%d/%m/%Y %H:%M:%S} — TEMPO TOTAL DA MIGRAÇÃO: "
-        f"{formatar_duracao(estado['duracao_s'])}")
-    try:
-        with (PASTA_RELATORIOS / estado["id"] / "tempos.csv").open("w", newline="", encoding="utf-8-sig") as f:
-            w = csv.writer(f, delimiter=";")
-            w.writerow(["etapa", "duracao_segundos", "duracao"])
-            for nome, seg in linhas:
-                w.writerow([nome, f"{seg:.2f}", formatar_duracao(seg)])
-            w.writerow(["TOTAL", f"{estado['duracao_s']:.2f}", formatar_duracao(estado["duracao_s"])])
-    except OSError:
-        pass
 
 
 def _finalizar(fila, con_pg, log) -> None:
@@ -382,7 +390,7 @@ def _contar_origem(m: Etapa, con_fb, sql_origem: str):
 
 
 def _executar_modulo(m: Etapa, con_fb, con_pg, r: dict, log, nome: str,
-                     opcoes: dict[str, bool] | None = None, dialeto: str = "firebird") -> list[dict]:
+                     opcoes: dict[str, bool] | None = None, dialeto: str = "firebird", depara=None) -> list[dict]:
     opcoes = opcoes or {}
     params_pg = {f"opcao_{k}": v for k, v in opcoes.items()}
     transformar = m.carregar_transformar()
@@ -417,6 +425,8 @@ def _executar_modulo(m: Etapa, con_fb, con_pg, r: dict, log, nome: str,
             try:
                 dados = transformar(dict(linha)) if transformar else linha
                 aviso = dados.pop("_aviso", None) if isinstance(dados, dict) else None
+                if depara is not None and isinstance(dados, dict):
+                    aviso = _aplicar_depara(m, dados, depara, aviso)
                 if params_pg and isinstance(dados, dict):
                     dados = {**params_pg, **dados}      # %(opcao_x)s nos .sql do Postgres
                 item["chave"] = "|".join(str(dados.get(c)) for c in m.chave) if m.chave else ""
@@ -481,6 +491,27 @@ def _iguais(banco, novo) -> bool:
     if isinstance(banco, str) and isinstance(novo, str):
         return banco.rstrip() == novo.rstrip()
     return False
+
+
+def _aplicar_depara(m: Etapa, dados: dict, depara, aviso):
+    """Virada: troca codigo do SysPDV (antigo) pelo do VarejoFacil (novo) nos campos declarados."""
+    for campo, tipo in m.depara.items():
+        if campo in dados and dados[campo] is not None:
+            dados[campo] = depara.traduzir(tipo, dados[campo])
+    g = m.depara_gera
+    if g and g.get("campo") in dados and dados[g["campo"]] is not None:
+        antigo = dados[g["campo"]]
+        balanca = bool(g.get("balanca")) and str(dados.get(g["balanca"]) or "").strip() == "S"
+        candidatos = ()
+        if g.get("reaproveitar") and depara.con is not None:   # registro que ja existe (ex.: mesmo CPF/CNPJ)
+            with depara.con.transaction():
+                candidatos = [r[0] for r in depara.con.execute(g["reaproveitar"], dados).fetchall()]
+        novo = depara.traduzir(g["tipo"], antigo, gerar=True, manter=balanca, candidatos=candidatos)
+        dados[g["campo"]] = novo
+        if novo != antigo:
+            texto = f"codigo SysPDV {antigo} -> VarejoFacil {novo}"
+            aviso = f"{aviso}; {texto}" if aviso else texto
+    return aviso
 
 
 def _relatorio(pasta: Path, m: Etapa, detalhes: list[dict]) -> str:

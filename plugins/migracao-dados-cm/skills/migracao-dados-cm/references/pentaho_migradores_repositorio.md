@@ -151,3 +151,9 @@ Encontrados ao converter os `.ktr`/`.kjb` para o migrador Python
 | JOBs de título → "VF - Ajusta Sequence" / "Atualiza Sequence" | documento vazio = id preenchido depois de gravar | uma 2ª execução não acha a conta pelo documento e duplica |
 | "VF - Insert Panama" (receber e pagar) | enfileira os títulos a cada execução | substituído pelo `InsertFilaPanama.sql` do usuário no fim da migração |
 | `T-CriaEspecieDocumentoPadrao_TituloPagar_inicial` | SQL todo comentado | não faz nada |
+| `Migrador_virada.kjb` (CSV Input em ~15 .ktr) | caminhos fixos dos CSV de códigos, misturando pastas de dois técnicos e dois clientes (`/home/[TECNICO]/.../[CLIENTE]/`) no mesmo job | cada virada exige editar vários .ktr; um esquecido lê os códigos de outro cliente |
+| `T-Produto_virada.ktr` → "New PROCOD" | produto novo recebe código de uma Sequence local que começa em 38221340 | código acima de 999999 quebra o VarejoFácil; vale até para produto novo com código pequeno |
+| `T-Produto_virada.ktr` | `PROFORLIN = 'N'` fixo | fora de linha nunca entra |
+| `JOB-TituloReceber_virada.kjb` | não está ligado ao `Migrador_virada.kjb` | contas a receber da virada precisa ser rodado à parte |
+| `Migrador_virada` em geral | produto novo sempre ganha novo número | rodar a virada de novo duplica os produtos novos |
+| `JOB-Produto_virada` → "Insert SPED" | `DELETE FROM alteracao_produto_sped` e reinsere tudo sem `aps_data_exportacao` | perde as datas de exportação das trocas da primeira migração e renumera os `aps_codigo` |

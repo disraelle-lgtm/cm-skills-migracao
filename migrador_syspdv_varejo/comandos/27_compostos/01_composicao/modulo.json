@@ -1,1 +1,10 @@
-{ "nome": "Composição", "chave": ["comp_procod"], "tabela_origem": "COMPOSTO" }
+{
+  "nome": "Composição",
+  "chave": [
+    "comp_procod"
+  ],
+  "tabela_origem": "COMPOSTO",
+  "depara": {
+    "comp_procod": "produto"
+  }
+}

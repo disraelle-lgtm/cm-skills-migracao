@@ -2,5 +2,11 @@
   "nome": "Impostos federais do produto",
   "grupo": "Cadastro de Produto",
   "descricao": "T-ImpostoFederal-Produto_inicial: IMPOSTOS_FEDERAIS_PRODUTO -> impostos_federais_produto (Pis/Cofins por produto).",
-  "chave": ["procod", "impfedsim"]
+  "chave": [
+    "procod",
+    "impfedsim"
+  ],
+  "depara": {
+    "procod": "produto"
+  }
 }

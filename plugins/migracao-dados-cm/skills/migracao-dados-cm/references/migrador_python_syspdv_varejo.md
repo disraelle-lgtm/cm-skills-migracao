@@ -24,7 +24,9 @@ Pentaho**, com as mesmas regras do migrador Pentaho oficial
 
 - Uma tela web local (FastAPI, http://127.0.0.1:8020): **conexões** no topo (só a aba do
   sistema em uso — Linux ou Windows, detectado sozinho) e, abaixo, **checkboxes** dos dados a
-  migrar. Opção **Simular** (marcada por padrão): roda tudo e desfaz no final.
+  migrar. **Sem opção Simular na tela** (retirada a pedido do usuário, v2026.10.31): a tela sempre
+  grava, depois de um `confirm()` com a aba (inicial/virada), a quantidade de itens, o banco de
+  destino e os arquivos de códigos anexados. Rodar de novo é seguro ("sem alteração").
 - **Origem Firebird ou SQL Server** ("Banco de origem" na tela, nos dois sistemas); destino sempre
   PostgreSQL. SQL Server via ODBC (`pyodbc`, carregado só quando escolhido): driver escolhido
   sozinho (ODBC Driver 18 → 17 → Native Client 11 → "SQL Server" do Windows); campos host, porta
@@ -41,9 +43,10 @@ Pentaho**, com as mesmas regras do migrador Pentaho oficial
 ```
 migrador_syspdv_varejo/
 ├── app/                motor.py, main.py, ajudantes.py, firebird_conexao.py, sqlserver_conexao.py,
-│                       senha_postgres.py, docker_firebird.py, verificar_fbclient.py,
+│                       senha_postgres.py, virada.py, docker_firebird.py, verificar_fbclient.py,
 │                       codigos/ (ajuste.py + ajusta_cliente.sql/ajusta_produto.sql do kit)
 ├── comandos/           uma pasta por item (ver seção 4) + _modelo/ + COMO_ADICIONAR.md
+├── comandos_virada/    só o exclusivo da virada (20_virada_codigos_produto) + LEIA-ME.md
 ├── static/index.html   a tela
 ├── reports/            relatório "linha a linha" (CSV) de cada execução
 ├── requirements.txt    fastapi, uvicorn, fdb, psycopg[binary], pyodbc
@@ -109,7 +112,8 @@ tipos diferentes dá `inconsistent types deduced for parameter` → declarar o t
 PostgreSQL pode calcular constantes antes) — converta no `transformar.py`. Comentário `--` no FIM de
 uma linha do `origem.sql` comenta o resto dela (um `)` depois dele some): comentários sempre em
 linha própria. Ordem de execução = nome da pasta
-(`01_`, `02_`...; pastas com `_` no início são ignoradas). Simulação = uma transação só,
+(`01_`, `02_`...; pastas com `_` no início são ignoradas). Simulação (só pela API, campo
+`simular` do `/migrar`, útil em testes de desenvolvimento; a tela não oferece) = uma transação só,
 desfeita no final (as sequences do Postgres NÃO voltam). Execução real = commit por etapa.
 Ajudantes: `inteiro()`, `texto(maiusculo, vazio, tamanho)`, `numero()`, `so_digitos()`, `Pular`.
 
@@ -133,6 +137,50 @@ Ajudantes: `inteiro()`, `texto(maiusculo, vazio, tamanho)`, `numero()`, `so_digi
   a senha gravada em `pg_authid` (SCRAM-SHA-256: PBKDF2 + ClientKey/StoredKey; ou MD5). Mensagens:
   "Informe a senha", "Usuário ou senha incorretos", "Senha do PostgreSQL incorreta", "O usuário 'x'
   não existe" (antes do "banco não existe": o texto de erro do PostgreSQL é parecido).
+
+### Tempo de cada etapa e tempo total
+
+Coluna **Tempo** no Progresso (leitura + gravação + commit da tabela; o item rodando conta ao vivo,
+em laranja), "— concluído em X" na linha de fim de cada etapa no log, tempo decorrido dentro da
+barra ("74% · 12min 05s") e "⏱ Tempo total da migração" no status e na última linha do log (também
+quando termina com erro). Formato: 0,8s / 45s / 2min 05s / 1h 02min 05s (`motor.formatar_duracao`
+e `formatarDuracao` na tela). `/status` devolve `duracao` por item e `tempo_total`.
+
+### Abas "Migração Inicial" e "Migração Virada" (seção 2 da tela)
+
+- As duas abas abrem **sempre com tudo desmarcado** (inclusive ao trocar de aba); não troca de aba
+  com migração em andamento. As abas Linux/Windows usam a classe `abas-sistema` (não confundir).
+- **Inicial** = itens de `comandos/`. **Virada** = os MESMOS itens de `comandos/` + os exclusivos de
+  `comandos_virada/` (`motor.descobrir_conjunto`). `/modulos?conjunto=` e `/migrar` com `conjunto`.
+- **De-para de códigos** (`app/virada.py`): na aba Virada, anexar as planilhas
+  `cod_novo_cod_antigo_<cliente|produto>_todos_<banco>.csv` da seção 4 (aceita também o formato do
+  Pentaho: `codigo_novo`, `codigo_antigo`/`Cod_Antigo`; separador `;` ou `,`; BOM). Sem arquivo, o
+  item roda como na inicial (só produtos mudaram → anexa só o de produtos).
+  - `modulo.json` declara os campos: `"depara": {"procod": "produto"}` (21 etapas: limite de
+    crédito, contas a receber, impostos, EAN, fornecedor, preço, família, compostos, kit, encarte,
+    cenário por produto, saldos, mín/máx, custo) e, no item principal, `"depara_gera"` (Cliente:
+    `cli_codigo` + `"reaproveitar"` = SQL pelo CPF/CNPJ; Produto: `procod` + `"balanca": "proenvbal"`).
+  - Registro FORA da planilha (cadastrado no SysPDV depois da inicial): balança mantém; código válido
+    (1..999998) que não é destino de outro registro na planilha mantém; EAN (≥ 999999) ou código de
+    outro → **próximo código vago e válido** (produto a partir de 10001, cliente a partir de 1) —
+    pedido do usuário: "sempre o último código vago e válido, sem ser o EAN".
+  - Rodar de novo não duplica: produto reaproveita a troca anterior (lida de
+    `alteracao_produto_sped` no início), cliente reaproveita pelo mesmo CPF/CNPJ. Testado 3 rodadas.
+  - Relação numa **tabela temporária** `mapa_codigos` (tipo, antigo, novo, novo_na_virada) da conexão
+    — some no fim; nada permanente na base.
+  - `comandos_virada/20_virada_codigos_produto` (automático, logo depois do Produto): EAN antigo dos
+    produtos novos vira código de barras (mesma regra do kit: LPAD 14, tributado e principal) e a
+    `alteracao_produto_sped` segue o **padrão do kit** (`ajusta_produto.sql`, etapas 10–11): MANTÉM as
+    alterações anteriores com as datas delas, insere só as trocas que faltam (NOT EXISTS procod +
+    aps_procod_anterior; loja matriz) e grava `aps_data_exportacao = CURRENT_DATE` num UPDATE
+    **depois** do INSERT, só nas linhas desta virada ainda sem data (dentro do INSERT a data não
+    fica gravada — comentário do kit). Correção da v2026.10.30: a versão anterior apagava a tabela
+    (como o "Insert SPED" do Pentaho) e perdia as datas da primeira migração.
+  - No fim: planilhas `virada_cod_novo_cod_antigo_<tipo>_todos|alterados_<banco>.csv` para download.
+  - Relatório do item principal mostra "codigo SysPDV X -> VarejoFacil Y".
+  - Texto da aba Virada em tópicos (pedido do usuário): **Clientes** (se houve troca de códigos de
+    clientes na inicial, anexar `cod_novo_cod_antigo_cliente_todos_…csv`), **Produtos** (idem com o de
+    produtos) e **Sem arquivo** (roda como na inicial).
 
 ### 4. Consultar códigos (seção 4 da tela, depois da migração)
 
@@ -289,6 +337,14 @@ Todas para poder **rodar de novo sem duplicar/quebrar** ou para **não alterar a
 - **Cadastro de operações**: INSERTs diretos (2ª execução = chave duplicada) → só insere o que falta.
 - **Movimentação de custo / custo do dia**: chave = sequence (duplicava a cada execução) → chave
   loja + produto.
+- **Migrador de virada do Pentaho** (`Migrador_virada.kjb`): caminhos dos CSV fixos nos .ktr,
+  misturando pastas de dois técnicos e dois clientes no mesmo job → arquivo anexado na tela;
+  produto novo recebia código de um contador fixo (Sequence local `start_at` 38221340, acima de
+  999999 — quebra o VarejoFácil) → próximo código vago e válido; `proforlin = 'N'` fixo → opção;
+  `JOB-TituloReceber_virada` não ligado ao fluxo → item normal com de-para; regeração de CSV no meio
+  do job ("Nova listagem") → tabela temporária; virada repetida duplicava produtos novos → reaproveita;
+  "Insert SPED" apagava a `alteracao_produto_sped` inteira (perdia a `aps_data_exportacao` e renumerava
+  as trocas da primeira migração) → mantém as anteriores e só insere as novas, com a data de hoje.
 - **Financeiro**: o `T-ContaReceber` novo trocou a chave do Merge Join para o código do cliente mas
   os Sort rows continuaram ordenando pelo documento (Merge Join exige a mesma ordenação: perde
   títulos) → busca direta pelo código; título parcial ligado pelo **número do documento** (marcava
@@ -360,7 +416,7 @@ porque usa Jaybird/Java, sem fbclient.)
    tabela; `<value><name>`=coluna e `<rename>`=campo do fluxo; tabela em `lookup/table`.
    Value Mapper sem default mantém o valor original; string vazia no Kettle = nulo.
 4. Procurar sobras de outro cliente (códigos fixos, comentários "no caso em questão...").
-5. Testar: simulação → gravação → 2ª rodada (tudo "sem alteração", salvo conflitos reais) e
+5. Testar (base de teste): gravação → 2ª rodada (tudo "sem alteração", salvo conflitos reais) e
    conferir cada regra no banco. Casos difíceis de propósito (nulos, documento formatado,
    duplicados, órfãos).
 6. Nunca inventar nome de tabela/coluna/sequence: confirmar no `.ktr`, nos scripts SQL do time
@@ -387,6 +443,9 @@ porque usa Jaybird/Java, sem fbclient.)
 | SQL Server: não conecta | TCP/IP habilitado no SQL Server Configuration Manager; porta 1433 ou instância (com instância a porta é ignorada) |
 | PostgreSQL aceita senha vazia/errada | `pg_hba.conf` em `trust`: o migrador já recusa (confere contra `pg_authid`); para o servidor também conferir, trocar para `scram-sha-256` |
 | Download do ajuste baixou só um arquivo | o navegador bloqueou "vários downloads": permitir para 127.0.0.1:8020 |
+| Virada: "precisa das colunas CODIGO NOVO e CODIGO ANTIGO" | anexar a planilha `..._todos_...csv` da seção 4 (Download), não outra |
+| Virada: produto novo ganhou código diferente do esperado | só mantém código válido (1..999998) que não seja destino de outro registro na planilha; EAN ganha o próximo vago |
+| `alteracao_produto_sped` sem `aps_data_exportacao` depois de uma virada da v2026.10.29 | a v2026.10.29 apagava a tabela: atualizar para a 2026.10.30; recuperar as datas com `UPDATE ... SET aps_data_exportacao = CURRENT_DATE WHERE aps_procod_anterior = <EAN novo da virada>` e depois `SET aps_data_exportacao = DATE '<data da 1a migração>', aps_data_final = DATE '<idem>' WHERE aps_data_exportacao IS NULL` |
 | Item roda duas vezes após atualização | pasta renomeada que ficou da versão anterior (ex.: `11_ajustes_pessoas` → `19_ajustes_pessoas`): apagar a antiga |
 
 ## 9. Próximos passos
@@ -429,20 +488,7 @@ Depois: Linux `bash linux/instalar.sh` + `bash linux/iniciar-app.sh`; Windows `w
 - Tentativas anteriores, substituídas por esta: `migrador_auto` (Tkinter, API/Postgres) e
   `migrador-syspdv-varejofacil` (web multi-origem + execução do Pentaho via Kitchen). Decisão
   do usuário: Python puro com pastas de comandos, uma tela só, sem abas além da do sistema.
-- Versão atual do app: `VERSAO = "2026.10.27"` em `app/main.py` (porta 8020).
-- 2026.10.27 (pedido do usuário em 20/10/2026): tempo de cada etapa (tabela) e tempo total.
-  `app/motor.py`: `formatar_duracao()` (`0.8s` / `42.3s` / `3min 07s` / `1h 02min 05s`); cada etapa
-  guarda `inicio_ts`, `fim_ts` e `duracao_s` no status e loga "início às HH:MM:SS" e "fim em
-  <duração>: lidos ..." (no erro: "ERRO após <duração>"); o estado da execução guarda o início/fim/
-  `duracao_s` totais. No fim (inclusive com erro, depois dos `finalizar.sql`) o log traz "Tempo por
-  etapa" e "Migração terminada em ... — TEMPO TOTAL DA MIGRAÇÃO: <duração>" (antes de o status mudar,
-  porque a tela para de ler o log quando o status deixa de ser `em_andamento`), e grava
-  `reports/<id>/tempos.csv` (etapa;duracao_segundos;duracao + linha TOTAL). `app/main.py`: `/status`
-  devolve `agora_ts` (relógio do servidor, para a tela corrigir diferença de relógio). Tela: coluna
-  **Tempo** na tabela de progresso (etapa em andamento mostra o tempo corrente com "…") e "Tempo total"
-  na mensagem de conclusão. Substitui a versão 2026.10.25 do repositório (só log, `duracao()` e
-  `tempo`); o repositório estava sem as mudanças da 2026.10.26 (Consultar códigos e validação de
-  senha do PostgreSQL), que entram nesta versão.
+- Versão atual do app: `VERSAO = "2026.10.31"` em `app/main.py` (porta 8020).
 - Ambientes validados pelo usuário: Linux (Ubuntu 24.04, Firebird 2.5 em Docker, PostgreSQL 15)
   e Windows (Firebird 2.5.1 32 bits, PostgreSQL 15.19, pgAdmin 4 9.18, Python 3.12 64 bits);
   origem SQL Server validada pelo usuário.

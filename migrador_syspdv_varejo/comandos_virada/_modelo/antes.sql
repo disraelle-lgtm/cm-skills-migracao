@@ -1,0 +1,1 @@
+-- OPCIONAL. Roda 1 vez no PostgreSQL antes do modulo (ex.: SET session_replication_role = replica;)

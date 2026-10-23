@@ -1,0 +1,7 @@
+{
+  "nome": "Nome que aparece no checkbox",
+  "grupo": "Cadastros Padrão",
+  "descricao": "TABELA_SYSPDV -> tabela_varejofacil",
+  "chave": ["codigo"],
+  "mensagem_validacao": "mensagem de erro quando o validar.sql nao encontrar nada"
+}
