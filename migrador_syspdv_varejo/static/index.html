@@ -130,6 +130,22 @@
   .codigos-acoes { display: flex; gap: .5rem; margin: .5rem 0; flex-wrap: wrap; }
   .btn-alerta { background: #b45309; }
   #codLog { max-height: 180px; }
+  td.tempo { white-space: nowrap; }
+  td.tempo-rodando { color: #b45309; font-weight: 600; }
+  .abas-migracao { margin-top: .4rem; }
+  .vazio-conjunto { color: #555; font-size: .9rem; background: #f4f6f8; border: 1px dashed #c9d3dd;
+                    padding: .7rem 1rem; border-radius: 6px; margin: .6rem 0; }
+  .anexos-virada { background: #f4f6f8; border: 1px solid #d5dde5; border-radius: 6px; padding: .6rem 1rem; margin: .6rem 0 .8rem; }
+  .anexos-virada p { margin: 0 0 .5rem; font-size: .86rem; }
+  .anexo { display: flex; align-items: center; gap: .7rem; margin: .35rem 0; flex-wrap: wrap; }
+  .anexo label { min-width: 11rem; font-weight: 600; margin: 0; }
+  .anexo-info { font-size: .82rem; color: #555; }
+  .anexo-info.ok { color: #1e7b34; font-weight: 600; }
+  .arquivos-virada { margin: .3rem 0 .6rem; }
+  .arquivos-virada a { display: inline-block; background: var(--cor-primaria); color: #fff; border-radius: 4px; padding: .2rem .6rem;
+                       margin: .2rem .3rem .2rem 0; font-size: .8rem; font-weight: 600; text-decoration: none; }
+  ul.regras-virada { margin: .2rem 0 .6rem; padding-left: 1.2rem; font-size: .86rem; }
+  ul.regras-virada li { margin: .2rem 0; }
 </style>
 </head>
 <body>
@@ -141,7 +157,7 @@
 
 <!-- ============================================================== CONEXÕES === -->
 <h2 style="margin-top:0;">1. Conexões</h2>
-<div class="abas-so">
+<div class="abas-so abas-sistema">
   <button type="button" data-aba="ubuntu">Linux</button>
   <button type="button" data-aba="windows">Windows</button>
   <span class="nota">Configuração do sistema onde o migrador está rodando.</span>
@@ -217,24 +233,50 @@
 
 <!-- ======================================================= DADOS A MIGRAR === -->
 <h2>2. Dados a serem migrados</h2>
+<div class="abas-so abas-migracao">
+  <button type="button" data-conjunto="inicial" class="ativa">Migração Inicial</button>
+  <button type="button" data-conjunto="virada">Migração Virada</button>
+  <span class="nota" id="notaConjunto">Itens da pasta comandos/</span>
+</div>
+<div id="anexosVirada" class="anexos-virada" style="display:none;">
+  <p><b>Arquivos de troca de códigos</b> — use as planilhas <b>…_todos_…csv</b> baixadas na seção
+     <b>4. Consultar códigos</b> (botão Download), depois do ajuste de códigos da migração inicial.</p>
+  <ul class="regras-virada">
+    <li><b>Clientes:</b> se na migração inicial houve troca de códigos de clientes, anexe o arquivo
+        <code>cod_novo_cod_antigo_cliente_todos_…csv</code>. Cliente, limite de crédito e contas a receber passam a
+        ser gravados pelo código novo. Cliente novo com código ≥ 999999 ganha o próximo código vago.</li>
+    <li><b>Produtos:</b> se na migração inicial houve troca de códigos de produtos, anexe o arquivo
+        <code>cod_novo_cod_antigo_produto_todos_…csv</code>. Produto, preço, EAN, estoque e os demais itens de
+        produto passam a ser gravados pelo código novo. Produto novo com código EAN ganha o próximo código vago e
+        válido, e o EAN vira código de barras; produto de balança mantém o código.</li>
+    <li><b>Sem arquivo:</b> o item roda como na migração inicial (ex.: só os produtos tiveram troca? anexe só o
+        arquivo de produtos).</li>
+  </ul>
+  <div class="anexo">
+    <label for="arqClientes">Códigos de clientes</label>
+    <input type="file" id="arqClientes" accept=".csv,text/csv">
+    <span class="anexo-info" id="infoClientes">nenhum arquivo (clientes como na inicial)</span>
+  </div>
+  <div class="anexo">
+    <label for="arqProdutos">Códigos de produtos</label>
+    <input type="file" id="arqProdutos" accept=".csv,text/csv">
+    <span class="anexo-info" id="infoProdutos">nenhum arquivo (produtos como na inicial)</span>
+  </div>
+</div>
 <button type="button" class="btn-sec" id="btnMarcar">Marcar todos</button>
 <button type="button" class="btn-sec" id="btnDesmarcar">Desmarcar todos</button>
 <button type="button" class="btn-sec" id="btnRecarregar">Recarregar</button>
 <div id="listaModulos"></div>
 
-<fieldset style="margin-top:1rem;">
-  <legend>Opções</legend>
-  <label><input type="checkbox" id="simular" checked> <strong>Simular</strong> — executa tudo e desfaz no final (nada fica
-    gravado). Desmarque para gravar de verdade.</label>
-</fieldset>
 <button type="button" id="btnMigrar">Iniciar migração</button>
 
 <!-- ============================================================== PROGRESSO === -->
 <h2>3. Progresso</h2>
 <div class="barra" id="barra"><div class="barra-preenchida" id="barraPreenchida"></div><div class="barra-texto" id="barraTexto">0%</div></div>
 <p id="statusGeral"></p>
+<div id="arquivosVirada" class="arquivos-virada"></div>
 <table id="tabelaProgresso">
-  <thead><tr><th>Item</th><th>Situação</th><th title="Total de registros da tabela no SysPDV">Na origem</th><th>Lidos</th><th>Inseridos</th><th>Atualizados</th><th>Sem alteração</th><th>Pulados</th><th>Erros</th><th title="Na origem menos (inseridos + atualizados + sem alteração)">Não migrados</th><th title="Tempo para ler a origem e inserir/atualizar esta tabela no VarejoFacil">Tempo</th><th>Relatório</th></tr></thead>
+  <thead><tr><th>Item</th><th>Situação</th><th title="Total de registros da tabela no SysPDV">Na origem</th><th>Lidos</th><th>Inseridos</th><th>Atualizados</th><th>Sem alteração</th><th>Pulados</th><th>Erros</th><th title="Na origem menos (inseridos + atualizados + sem alteração)">Não migrados</th><th title="Tempo de leitura e gravação da tabela">Tempo</th><th>Relatório</th></tr></thead>
   <tbody><tr><td colspan="12" style="color:#888;">Nenhuma migração executada ainda.</td></tr></tbody>
 </table>
 <pre class="log" id="log"></pre>
@@ -324,11 +366,11 @@ function abrirAba(aba, salvarAntes = true) {
   abaAtual = aba;
   document.body.classList.remove('aba-ubuntu', 'aba-windows');
   document.body.classList.add('aba-' + aba);
-  document.querySelectorAll('.abas-so button').forEach(b => b.classList.toggle('ativa', b.dataset.aba === aba));
+  document.querySelectorAll('.abas-sistema button').forEach(b => b.classList.toggle('ativa', b.dataset.aba === aba));
   preencher(aba);
   lembrar();
 }
-document.querySelectorAll('.abas-so button').forEach(b => b.addEventListener('click', () => abrirAba(b.dataset.aba)));
+document.querySelectorAll('.abas-sistema button').forEach(b => b.addEventListener('click', () => abrirAba(b.dataset.aba)));
 document.querySelectorAll('.lembrar').forEach(el => el.addEventListener('change', lembrar));
 
 async function restaurar() {
@@ -337,7 +379,7 @@ async function restaurar() {
   try { const r = await (await fetch('/saude')).json(); if (r.sistema === 'windows') sistema = 'windows'; } catch (e) {}
   if (salvos._antigo) { salvos[sistema] = salvos._antigo; delete salvos._antigo; }
   // Mostra SO a aba do sistema em que o migrador esta rodando (Linux ou Windows)
-  document.querySelectorAll('.abas-so button').forEach(b => b.style.display = b.dataset.aba === sistema ? '' : 'none');
+  document.querySelectorAll('.abas-sistema button').forEach(b => b.style.display = b.dataset.aba === sistema ? '' : 'none');
   abrirAba(sistema, false);
 }
 
@@ -425,13 +467,21 @@ $('btnTestarPg').addEventListener('click', async () => {
 });
 
 /* ------------------------------------------------------------- módulos --- */
+let conjuntoAtual = 'inicial';
+const PASTA_CONJUNTO = { inicial: 'comandos/', virada: 'comandos_virada/' };
 async function carregarModulos() {
   const marcadosAntes = new Set(document.querySelectorAll('.chkModulo').length
     ? [...document.querySelectorAll('.chkModulo:checked')].map(c => c.value)
     : (salvos && salvos.modulos) || null);
-  const modulos = await (await fetch('/modulos')).json();
+  const modulos = await (await fetch('/modulos?conjunto=' + conjuntoAtual)).json();
   const caixa = $('listaModulos'); caixa.innerHTML = '';
-  if (!modulos.length) { caixa.innerHTML = '<p class="status-erro">Nenhuma pasta encontrada em comandos/.</p>'; return; }
+  if (!modulos.length) {
+    caixa.innerHTML = conjuntoAtual === 'virada'
+      ? '<div class="vazio-conjunto">A <b>Migração Virada</b> ainda não tem itens. Os comandos dela ficam na pasta ' +
+        '<code>comandos_virada/</code>, com a mesma estrutura da migração inicial (uma pasta por item).</div>'
+      : '<p class="status-erro">Nenhuma pasta encontrada em comandos/.</p>';
+    return;
+  }
   let grupo = null, linha = null;
   const problemas = [];
   for (const m of modulos) {
@@ -442,7 +492,7 @@ async function carregarModulos() {
       linha = document.createElement('div'); linha.className = 'lista-modulos'; caixa.appendChild(linha);
     }
 
-    const marcado = marcadosAntes.size ? marcadosAntes.has(m.id) : true;
+    const marcado = false;   // as duas abas sempre abrem com tudo desmarcado
     const lb = document.createElement('label'); lb.className = 'modulo';
     lb.innerHTML = `<input type="checkbox" class="chkModulo" value="${m.id}" ${marcado && !m.problemas.length ? 'checked' : ''}
         ${m.problemas.length ? 'disabled' : ''}> ${m.nome}`;
@@ -465,24 +515,49 @@ async function carregarModulos() {
   lembrar();
 }
 $('btnRecarregar').addEventListener('click', carregarModulos);
+for (const [inp, info, tipo] of [['arqClientes', 'infoClientes', 'clientes'], ['arqProdutos', 'infoProdutos', 'produtos']]) {
+  $(inp).addEventListener('change', async () => {
+    const f = $(inp).files[0];
+    if (!f) { $(info).textContent = `nenhum arquivo (${tipo} como na inicial)`; $(info).classList.remove('ok'); return; }
+    const linhas = (await f.text()).split(/\r?\n/).filter(l => l.trim()).length - 1;
+    $(info).textContent = `✔ ${f.name} — ${linhas} código(s)`; $(info).classList.add('ok');
+  });
+}
+document.querySelectorAll('.abas-migracao button').forEach(b => b.addEventListener('click', () => {
+  if ($('btnMigrar').disabled) return;          // nao troca de aba com migracao em andamento
+  conjuntoAtual = b.dataset.conjunto;
+  document.querySelectorAll('.abas-migracao button').forEach(x => x.classList.toggle('ativa', x === b));
+  $('notaConjunto').textContent = conjuntoAtual === 'virada'
+    ? 'Mesmos itens da migração inicial + de-para de códigos' : 'Itens da pasta comandos/';
+  $('anexosVirada').style.display = conjuntoAtual === 'virada' ? '' : 'none';
+  carregarModulos();
+}));
 $('btnMarcar').addEventListener('click', () => { document.querySelectorAll('.chkModulo:not(:disabled)').forEach(c => c.checked = true); lembrar(); });
 $('btnDesmarcar').addEventListener('click', () => { document.querySelectorAll('.chkModulo').forEach(c => c.checked = false); lembrar(); });
 
 /* ------------------------------------------------------------ migração --- */
 let execId = null, timer = null, posLog = 0;
 $('btnMigrar').addEventListener('click', async () => {
-  const fb = firebird(), pg = postgres(), simular = $('simular').checked;
+  const fb = firebird(), pg = postgres(), simular = false;   // a opcao Simular foi retirada: sempre grava
   const modulos = [...document.querySelectorAll('.chkModulo:checked')].map(c => c.value);
   const origemOk = $('origemTipo').value === 'sqlserver' ? !!$('sqBanco').value : !!fb.caminho;
   if (!origemOk || !pg.dbname) { alert('Preencha as conexões de origem e destino.'); return; }
   if (!modulos.length) { alert('Marque ao menos um item em "Dados a serem migrados".'); return; }
-  if (!simular && !confirm(`Gravar DE VERDADE no PostgreSQL ${pg.host}/${pg.dbname}?\n\nUse apenas em base local de migração.`)) return;
+  const anexos = conjuntoAtual === 'virada'
+    ? '\n\nArquivos de códigos: clientes ' + ($('arqClientes').files[0] ? $('arqClientes').files[0].name : '(nenhum)') +
+      ' | produtos ' + ($('arqProdutos').files[0] ? $('arqProdutos').files[0].name : '(nenhum)') : '';
+  if (!confirm(`${conjuntoAtual === 'virada' ? 'MIGRAÇÃO VIRADA' : 'MIGRAÇÃO INICIAL'}: gravar ${modulos.length} item(ns) ` +
+               `no PostgreSQL ${pg.host}/${pg.dbname}?${anexos}\n\nOs dados serão gravados de verdade.`)) return;
   $('btnMigrar').disabled = true;
   try {
     const opcoes = Object.fromEntries([...document.querySelectorAll('.chkOpcao')].map(c => [c.value, c.checked]));
     const origem_tipo = $('origemTipo').value || 'firebird';
-    const r = await postar('/migrar', { origem_tipo, firebird: origem_tipo === 'firebird' ? fb : null,
-      sqlserver: origem_tipo === 'sqlserver' ? sqlserver() : null, postgres: pg, modulos, simular, opcoes });
+    const lerArq = async id => (conjuntoAtual === 'virada' && $(id).files[0]) ? await $(id).files[0].text() : null;
+    const depara_clientes = await lerArq('arqClientes'), depara_produtos = await lerArq('arqProdutos');
+    $('arquivosVirada').innerHTML = '';
+    const r = await postar('/migrar', { depara_clientes, depara_produtos, origem_tipo, firebird: origem_tipo === 'firebird' ? fb : null,
+      sqlserver: origem_tipo === 'sqlserver' ? sqlserver() : null, postgres: pg, modulos, simular, opcoes,
+      conjunto: conjuntoAtual });
     execId = r.exec_id; posLog = 0; $('log').textContent = ''; mostrarBarra(0, false, false);
     $('statusGeral').className = ''; $('statusGeral').textContent = simular ? 'Simulando...' : 'Migrando...';
     clearInterval(timer); timer = setInterval(acompanhar, 800);
@@ -503,33 +578,28 @@ function percentual(modulos) {
   }
   return Math.floor(100 * soma / lista.length);
 }
-function mostrarBarra(pct, terminou, comErro) {
+function formatarDuracao(seg) {
+  // 0,8s / 45s / 2min 05s / 1h 02min 05s (igual ao log do servidor)
+  if (seg === null || seg === undefined) return '-';
+  if (seg < 10) return seg.toFixed(1).replace('.', ',') + 's';
+  let s = Math.round(seg); const h = Math.floor(s / 3600); s -= h * 3600; const m = Math.floor(s / 60); s -= m * 60;
+  const dd = n => String(n).padStart(2, '0');
+  if (h) return `${h}h ${dd(m)}min ${dd(s)}s`;
+  if (m) return `${m}min ${dd(s)}s`;
+  return `${s}s`;
+}
+function mostrarBarra(pct, terminou, comErro, tempo) {
   $('barra').style.display = 'block';
   const valor = terminou ? 100 : Math.min(pct, 99);
   $('barraPreenchida').style.width = valor + '%';
-  $('barraTexto').textContent = valor + '%';
+  $('barraTexto').textContent = valor + '%' + (tempo !== undefined && tempo !== null ? '  ·  ' + formatarDuracao(tempo) : '');
   $('barra').classList.toggle('erro', !!comErro);
 }
-
-function fmtDuracao(seg) {
-  if (seg === null || seg === undefined) return '-';
-  if (seg < 60) return seg.toFixed(1) + 's';
-  const t = Math.round(seg), h = Math.floor(t / 3600), mi = Math.floor((t % 3600) / 60), se = t % 60;
-  const dois = n => String(n).padStart(2, '0');
-  return h ? `${h}h ${dois(mi)}min ${dois(se)}s` : `${mi}min ${dois(se)}s`;
-}
-function duracaoDe(m) {
-  if (m.duracao_s !== null && m.duracao_s !== undefined) return fmtDuracao(m.duracao_s);
-  if (m.status === 'rodando' && m.inicio_ts) return fmtDuracao(Date.now() / 1000 - m.inicio_ts - desvioRelogio) + ' …';
-  return '-';
-}
-let desvioRelogio = 0;   // relógio do navegador − relógio do servidor (segundos)
 
 async function acompanhar() {
   const r = await (await fetch(`/status/${execId}?desde=${posLog}`)).json();
   const terminou = r.status !== 'em_andamento';
-  if (r.agora_ts) desvioRelogio = Date.now() / 1000 - r.agora_ts;
-  mostrarBarra(percentual(r.modulos), terminou, terminou && r.status !== 'concluido');
+  mostrarBarra(percentual(r.modulos), terminou, terminou && r.status !== 'concluido', r.tempo_total);
   if (r.log.length) { $('log').textContent += r.log.join('\n') + '\n'; $('log').scrollTop = $('log').scrollHeight; }
   posLog = r.total_log;
   const tbody = document.querySelector('#tabelaProgresso tbody'); tbody.innerHTML = '';
@@ -544,7 +614,7 @@ async function acompanhar() {
       <td class="num">${m.sem_alteracao}</td><td class="num">${m.pulados}</td>
       <td class="num ${m.erros ? 'status-erro' : ''}">${m.erros}</td>
       <td class="num ${naoMigrados > 0 ? 'dif' : ''}">${naoMigrados === null || naoMigrados < 0 ? '-' : naoMigrados}</td>
-      <td class="num">${duracaoDe(m)}</td>
+      <td class="num tempo ${m.status === 'rodando' ? 'tempo-rodando' : ''}">${formatarDuracao(m.duracao)}</td>
       <td>${m.relatorio ? `<a href="/download/${r.id}/${m.relatorio}">linha a linha</a>` : '-'}</td>`;
     tbody.appendChild(tr);
   }
@@ -554,7 +624,10 @@ async function acompanhar() {
     $('statusGeral').className = ok ? 'status-ok' : 'status-erro';
     $('statusGeral').textContent = (ok ? '✔ Concluído' : '✖ Terminou com erro') +
       (r.simulacao ? ' — SIMULAÇÃO: nada foi gravado.' : ' — dados gravados no PostgreSQL.') +
-      ` Tempo total: ${fmtDuracao(r.duracao_s)}.`;
+      `  ⏱ Tempo total da migração: ${formatarDuracao(r.tempo_total)}`;
+    if (r.arquivos_virada && r.arquivos_virada.length)
+      $('arquivosVirada').innerHTML = '<b>Planilhas de códigos da virada:</b> ' +
+        r.arquivos_virada.map(a => `<a href="/download/${r.id}/${a}">⬇ ${a}</a>`).join('');
   }
 }
 
