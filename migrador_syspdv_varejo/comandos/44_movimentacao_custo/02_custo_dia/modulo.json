@@ -1,0 +1,12 @@
+{
+  "nome": "Custo do dia",
+  "chave": [
+    "procod"
+  ],
+  "depara": {
+    "procod": "produto"
+  },
+  "exige_produto": [
+    "procod"
+  ]
+}

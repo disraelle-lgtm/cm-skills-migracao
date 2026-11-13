@@ -1,0 +1,1 @@
+SELECT ncm_codigo FROM cenario_fiscal_ncm_ncm WHERE cfn_codigo = (SELECT cfn_codigo FROM cenario_fiscal_ncm WHERE cic_codigo = %(cic_codigo)s::varchar AND ct_codigo = %(ct_codigo)s::varchar ORDER BY cfn_codigo LIMIT 1) AND ncm_codigo = %(ncm_codigo)s

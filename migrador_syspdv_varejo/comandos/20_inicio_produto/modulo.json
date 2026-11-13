@@ -1,0 +1,6 @@
+{
+  "nome": "Desligar triggers do produto",
+  "grupo": "Cadastro de Produto",
+  "descricao": "Sem checkbox: roda sozinho ANTES dos itens de Produto (ALTER TABLE produto DISABLE TRIGGER ALL). O religamento fica nos Ajustes finais de Produto e, por garantia, no finalizar.sql (roda mesmo se a migracao parar no meio).",
+  "automatico_com_grupo": "Cadastro de Produto"
+}

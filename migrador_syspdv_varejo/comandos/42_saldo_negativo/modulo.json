@@ -1,0 +1,14 @@
+{
+  "nome": "Saldo negativo",
+  "grupo": "Estoque",
+  "chave": [
+    "procod"
+  ],
+  "descricao": "T-MovimentacaoEstoque_negativo_inicial: saldo do SysPDV como ajuste de estoque (9002, MIGRACAO).",
+  "depara": {
+    "procod": "produto"
+  },
+  "exige_produto": [
+    "procod"
+  ]
+}

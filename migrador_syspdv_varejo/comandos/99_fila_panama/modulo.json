@@ -1,0 +1,6 @@
+{
+  "nome": "Fila de sincronização do Panamá",
+  "grupo": "Finalização",
+  "descricao": "Sem checkbox: roda sozinho no FIM DE TODA migracao (qualquer item marcado). Script InsertFilaPanama.sql do usuario: apaga fila_sincronizacao e fila_sincronizacao_panama e coloca na fila do Panama todas as finalizadoras, holding, lojas, funcionarios, acesso, clientes, secoes, grupos, subgrupos, produtos, EAN e titulos a pagar/receber.",
+  "automatico_sempre": true
+}

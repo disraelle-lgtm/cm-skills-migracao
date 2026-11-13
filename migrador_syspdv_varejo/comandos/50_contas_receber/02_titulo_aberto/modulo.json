@@ -1,0 +1,7 @@
+{
+  "nome": "Título aberto",
+  "chave": [
+    "ctr_id"
+  ],
+  "mensagem_validacao": "a conta a receber deste titulo nao foi migrada"
+}

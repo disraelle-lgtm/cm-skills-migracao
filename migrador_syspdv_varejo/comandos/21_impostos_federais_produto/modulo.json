@@ -1,0 +1,16 @@
+{
+  "nome": "Impostos federais do produto",
+  "grupo": "Cadastro de Produto",
+  "descricao": "T-ImpostoFederal-Produto_inicial: IMPOSTOS_FEDERAIS_PRODUTO -> impostos_federais_produto. UM imposto por tipo (PIS/COFINS/IRPJ/CSLL/OUTROS) por produto - o VarejoFacil so aceita 1 de cada: com mais de um do mesmo tipo no SysPDV fica o de menor codigo (preferindo os migrados); os descartados aparecem no cartao. Rodar de novo corrige duplicidades ja gravadas.",
+  "chave": [
+    "procod",
+    "impfedsim"
+  ],
+  "depara": {
+    "procod": "produto"
+  },
+  "contagem_origem": "SELECT COUNT(*) FROM IMPOSTOS_FEDERAIS_PRODUTO i WHERE i.PROCOD IN (SELECT p.PROCOD FROM PRODUTO p\n                     WHERE p.PRODES IS NOT NULL\n                       AND REPLACE(p.PROCOD, '0', '') <> ''\n                       AND (COALESCE(p.PROFORLIN, 'N') = 'N' OR :opcao_fora_de_linha = 1))",
+  "exige_produto": [
+    "procod"
+  ]
+}

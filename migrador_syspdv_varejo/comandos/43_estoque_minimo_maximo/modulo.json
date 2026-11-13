@@ -1,0 +1,14 @@
+{
+  "nome": "Estoque mínimo e máximo",
+  "grupo": "Estoque",
+  "chave": [
+    "procod"
+  ],
+  "descricao": "T-MovimentacaoEstoque_mininoemaximo_inicial: PRODUTO -> produto_estoque.",
+  "depara": {
+    "procod": "produto"
+  },
+  "exige_produto": [
+    "procod"
+  ]
+}

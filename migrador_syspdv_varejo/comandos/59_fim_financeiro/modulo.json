@@ -1,0 +1,3 @@
+{ "nome": "Finalizar financeiro", "grupo": "Financeiro",
+  "descricao": "Sem checkbox: roda sozinho depois de Contas a receber / Contas a pagar - 'Insert Item Configuracao Lancamento Financeiro' do Migrador_Inicial.",
+  "automatico_com_grupo": "Financeiro" }

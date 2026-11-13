@@ -1,0 +1,6 @@
+{
+  "nome": "Conta Corrente",
+  "grupo": "Cadastro de Pessoas",
+  "descricao": "T-ContaCorrente_inicial: CONTA_CORRENTE -> conta_corrente (loja = PRPCOD do PROPRIO).",
+  "chave": ["cct_codigo"]
+}

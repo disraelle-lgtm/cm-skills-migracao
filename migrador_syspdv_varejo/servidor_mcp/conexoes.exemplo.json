@@ -1,0 +1,55 @@
+{
+  "limite_linhas_padrao": 200,
+  "limite_linhas_maximo": 1000,
+  "timeout_segundos": 30,
+  "mascarar_colunas": ["SENHA", "PASSWORD", "PWD", "TOKEN", "SECRET", "CHAVE_API"],
+  "app_url": "http://127.0.0.1:8020",
+  "aprovacao_validade_minutos": 15,
+  "max_itens_por_aprovacao": 1,
+  "conexoes": {
+    "origem_firebird": {
+      "tipo": "firebird",
+      "uso": "leitura",
+      "descricao": "SysPDV do cliente X (origem). Usuário SÓ de leitura.",
+      "host": "localhost",
+      "porta": 3050,
+      "banco": "C:\\dados\\EMPRESA.FDB",
+      "usuario": "LEITURA_MCP",
+      "senha_env": "MCP_FB_ORIGEM_SENHA",
+      "charset": "WIN1252",
+      "fbclient": "C:\\migrador_syspdv_varejo\\windows\\firebird_client_x64\\fbclient.dll"
+    },
+    "origem_sqlserver": {
+      "tipo": "sqlserver",
+      "uso": "leitura",
+      "descricao": "ERP do cliente Y (origem). Usuário SÓ de leitura.",
+      "host": "localhost",
+      "porta": 1433,
+      "banco": "ERP",
+      "usuario": "leitura_mcp",
+      "senha_env": "MCP_SQL_ORIGEM_SENHA",
+      "driver": "ODBC Driver 17 for SQL Server",
+      "confiar_certificado": true
+    },
+    "vf_leitura": {
+      "tipo": "postgres",
+      "uso": "leitura",
+      "descricao": "VarejoFacil (destino) só para CONFERIR dados. Usuário SÓ de leitura.",
+      "host": "localhost",
+      "porta": 5432,
+      "banco": "varejofacil",
+      "usuario": "leitura_mcp",
+      "senha_env": "MCP_PG_LEITURA_SENHA"
+    },
+    "vf_destino": {
+      "tipo": "postgres",
+      "uso": "migracao",
+      "descricao": "VarejoFacil (destino) para MIGRAR. Usuário com escrita: NUNCA é usado em consultas.",
+      "host": "localhost",
+      "porta": 5432,
+      "banco": "varejofacil",
+      "usuario": "postgres",
+      "senha_env": "MCP_PG_DESTINO_SENHA"
+    }
+  }
+}

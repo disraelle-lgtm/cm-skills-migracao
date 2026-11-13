@@ -1,0 +1,15 @@
+{
+  "nome": "Zerar saldo já lançado",
+  "chave": [
+    "procod"
+  ],
+  "sem_contagem_origem": true,
+  "mensagem_validacao": "sem saldo lançado antes: recebe o movimento zero no lançamento em lote",
+  "depara": {
+    "procod": "produto"
+  },
+  "validar_pula": true,
+  "exige_produto": [
+    "procod"
+  ]
+}

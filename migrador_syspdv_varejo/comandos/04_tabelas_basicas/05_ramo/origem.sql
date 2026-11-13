@@ -1,0 +1,4 @@
+-- Pentaho: FB - RAMO
+SELECT RAMCOD
+     , RAMDES
+  FROM RAMO

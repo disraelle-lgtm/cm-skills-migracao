@@ -1,0 +1,12 @@
+{
+  "nome": "Movimentação de custo",
+  "chave": [
+    "procod"
+  ],
+  "depara": {
+    "procod": "produto"
+  },
+  "exige_produto": [
+    "procod"
+  ]
+}

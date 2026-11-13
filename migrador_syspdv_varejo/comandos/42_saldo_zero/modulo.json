@@ -1,0 +1,9 @@
+{
+  "nome": "Saldo zero",
+  "grupo": "Estoque",
+  "descricao": "Sem checkbox: roda sozinho quando Saldo positivo ou Saldo negativo e marcado. 1) zera o saldo ja lancado pela migracao dos produtos que hoje estao com saldo ZERO no SysPDV (virada / rodar de novo); 2) lanca em LOTE (um INSERT so) o movimento zerado de todos os produtos sem movimento na loja matriz / local 1 (script do usuario).",
+  "automatico_com_itens": [
+    "41_saldo_positivo",
+    "42_saldo_negativo"
+  ]
+}

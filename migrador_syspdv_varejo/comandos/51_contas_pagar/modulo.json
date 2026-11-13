@@ -1,0 +1,2 @@
+{ "nome": "Contas a pagar", "grupo": "Financeiro",
+  "descricao": "JOB-TituloPagar_inicial (o 1o passo 'Cria Especie de Documento Padrao' esta todo comentado no Pentaho e nao entra): conta, titulo, movimentacao de inclusao, categoria/centro de custo/configuracao de lancamento e fila Panama." }

@@ -1,0 +1,6 @@
+{
+  "nome": "Ajustes finais de Pessoas",
+  "grupo": "Cadastro de Pessoas",
+  "descricao": "SQLs do fim do JOB-Pessoas_inicial. Nao e checkbox: roda sozinho no fim quando algum item de Cadastro de Pessoas for marcado.",
+  "automatico_com_grupo": "Cadastro de Pessoas"
+}

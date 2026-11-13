@@ -1,0 +1,21 @@
+Client do Firebird 2.5.9 de 64 bits usado pelo migrador no Windows.
+
+Por que existe: o Python do migrador e 64 bits (o driver do PostgreSQL so existe em 64 bits
+no Windows) e nao consegue carregar o fbclient.dll de 32 bits do Firebird 2.5 do SysPDV.
+Este client 64 bits conversa normalmente com o servidor Firebird 2.5 de 32 bits.
+
+Origem: pacote oficial Firebird-2.5.9.27139-0_x64.zip
+https://github.com/FirebirdSQL/firebird/releases/tag/R2_5_9
+SHA-256 do pacote: 707e05bae8994b06cec60815a292078db82d8e75616f4dd514b7e417a3ee2137
+
+Arquivos: fbclient.dll e as DLLs que ele precisa ao lado (Visual C++ 2005: msvcr80.dll,
+msvcp80.dll e Microsoft.VC80.CRT.manifest; ICU: icudt30/icuin30/icuuc30).
+Licencas do Firebird: IPLicense.txt e IDPLicense.txt.
+
+O Firebird instalado no computador nao e alterado. Nao e preciso informar este arquivo no
+campo "fbclient" da tela: o migrador encontra sozinho.
+
+NOTA (copia guardada na skill migracao-dados-cm): as DLLs NAO foram incluidas aqui.
+Para montar o pacote, extraia de bin/ do Firebird-2.5.9.27139-0_x64.zip oficial (link e
+SHA-256 acima): fbclient.dll, msvcr80.dll, msvcp80.dll, Microsoft.VC80.CRT.manifest,
+icudt30.dll, icuin30.dll, icuuc30.dll.

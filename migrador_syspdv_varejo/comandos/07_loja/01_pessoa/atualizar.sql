@@ -1,0 +1,19 @@
+-- Campos com Update = Y no Pentaho
+UPDATE pessoa
+   SET pes_num_identificacao = %(pes_num_identificacao)s
+     , pes_nome = %(pes_nome)s
+     , pes_fantasia = %(pes_fantasia)s
+     , pes_cep = %(pes_cep)s
+     , pes_uf = %(pes_uf)s
+     , pes_logradouro = %(pes_logradouro)s
+     , pes_numero = %(pes_numero)s
+     , pes_bairro = %(pes_bairro)s
+     , pes_complemento = %(pes_complemento)s
+     , pes_descricao_cidade = %(pes_descricao_cidade)s
+     , pes_telefone1 = %(pes_telefone1)s
+     , pes_fax = %(pes_fax)s
+     , pes_email = %(pes_email)s
+     , pes_insc_municipal = %(pes_insc_municipal)s
+     , mcp_codigo_ibge = %(mcp_codigo_ibge)s
+     , pes_pais = %(pes_pais)s
+ WHERE pes_num_documento = %(pes_num_documento)s

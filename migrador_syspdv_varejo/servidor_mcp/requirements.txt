@@ -1,0 +1,2 @@
+# Instaladas junto com o migrador (../requirements.txt): fdb, pyodbc, psycopg.
+mcp>=1.9

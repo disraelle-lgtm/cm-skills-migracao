@@ -1,0 +1,29 @@
+{
+  "nome": "Produto",
+  "grupo": "Cadastro de Produto",
+  "descricao": "T-Produto_inicial: PRODUTO -> produto (com os ajustes FB - Ajuste Secao/Unidade e FB - Ajustes campos estourados aplicados na leitura).",
+  "chave": [
+    "procod"
+  ],
+  "opcoes": [
+    {
+      "id": "fora_de_linha",
+      "rotulo": "Incluir produtos fora de linha",
+      "padrao": true,
+      "dica": "Marcado: migra todos os produtos (PROFORLIN S e N). Desmarcado: so os em linha (PROFORLIN = 'N')."
+    },
+    {
+      "id": "movimentacao",
+      "rotulo": "Só com movimentação desde",
+      "padrao": false,
+      "tipo": "data",
+      "dica": "Somente produtos com venda, nota fiscal, movimento de estoque ou cadastro a partir desta data (vale para todos os itens de produto e de estoque)"
+    }
+  ],
+  "depara_gera": {
+    "campo": "procod",
+    "tipo": "produto",
+    "balanca": "proenvbal"
+  },
+  "contagem_origem": "SELECT COUNT(*) FROM PRODUTO WHERE REPLACE(PROCOD, '0', '') <> ''"
+}

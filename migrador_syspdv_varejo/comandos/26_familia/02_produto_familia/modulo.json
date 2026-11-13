@@ -1,0 +1,12 @@
+{
+  "nome": "Produto na família",
+  "chave": [
+    "codigo_produto"
+  ],
+  "depara": {
+    "codigo_produto": "produto"
+  },
+  "exige_produto": [
+    "codigo_produto"
+  ]
+}

@@ -1,0 +1,2 @@
+{ "nome": "Família (produtos similares)", "grupo": "Cadastro de Produto",
+  "descricao": "T-Familia_Produto_inicial + T-Produto-Familia_inicial: SIMILARES -> familia_produto; ITEM_SIMILARES -> produto_familia." }

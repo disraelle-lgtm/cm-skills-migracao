@@ -1,0 +1,13 @@
+{
+  "nome": "Produtos do encarte",
+  "chave": [
+    "enccod",
+    "procod"
+  ],
+  "depara": {
+    "procod": "produto"
+  },
+  "exige_produto": [
+    "procod"
+  ]
+}

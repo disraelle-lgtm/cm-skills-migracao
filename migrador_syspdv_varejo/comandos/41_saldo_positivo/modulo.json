@@ -1,0 +1,14 @@
+{
+  "nome": "Saldo positivo",
+  "grupo": "Estoque",
+  "chave": [
+    "procod"
+  ],
+  "descricao": "T-MovimentacaoEstoque_positivo_inicial: saldo do SysPDV como ajuste de estoque (9002, MIGRACAO). So saldo > 0: o zero e lancado em lote pelo 42_saldo_zero (automatico).",
+  "depara": {
+    "procod": "produto"
+  },
+  "exige_produto": [
+    "procod"
+  ]
+}

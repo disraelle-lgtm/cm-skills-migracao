@@ -1,0 +1,7 @@
+conexoes.json
+auditoria.log
+aprovacoes/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/

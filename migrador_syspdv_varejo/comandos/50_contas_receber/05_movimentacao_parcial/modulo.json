@@ -1,0 +1,8 @@
+{
+  "nome": "Movimentação das liquidações parciais",
+  "chave": [
+    "ctr_id",
+    "mov_data"
+  ],
+  "mensagem_validacao": "o titulo parcialmente liquidado desta liquidacao nao foi migrado"
+}

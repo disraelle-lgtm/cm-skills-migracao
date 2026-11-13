@@ -1,0 +1,8 @@
+{
+  "nome": "NCM",
+  "grupo": "Cadastros Padrão",
+  "descricao": "JOB-NCM_inicial: cadastra como INATIVO todo NCM usado nos produtos que ainda nao existe no VarejoFacil.",
+  "chave": [
+    "ncm_codigo"
+  ]
+}

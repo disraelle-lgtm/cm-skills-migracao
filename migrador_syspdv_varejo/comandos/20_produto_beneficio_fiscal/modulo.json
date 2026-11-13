@@ -1,0 +1,18 @@
+{
+  "nome": "Código de benefício fiscal do produto",
+  "grupo": "Cadastro de Produto",
+  "descricao": "T-Produto_Codigo_Beneficio_fiscal_inicial / _virada: PRODUTO.PROBENFIS -> cbenef_produto_loja. Sem checkbox: roda sozinho logo depois do Produto (antes dos Impostos federais do produto), na migracao inicial e na virada (com o arquivo de codigos de produtos, grava pelo codigo novo). SysPDV sem a coluna PROBENFIS: aviso e segue o fluxo.",
+  "chave": [
+    "procod",
+    "loj_codigo"
+  ],
+  "automatico_com_grupo": "Cadastro de Produto",
+  "ignorar_se_origem_falhar": true,
+  "mensagem_validacao": "o produto nao foi migrado (nao existe no VarejoFacil)",
+  "depara": {
+    "procod": "produto"
+  },
+  "exige_produto": [
+    "procod"
+  ]
+}

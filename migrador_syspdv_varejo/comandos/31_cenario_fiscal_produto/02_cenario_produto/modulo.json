@@ -1,0 +1,13 @@
+{
+  "nome": "Produtos do cenário",
+  "chave": [
+    "cfp_codigo",
+    "procod"
+  ],
+  "depara": {
+    "procod": "produto"
+  },
+  "exige_produto": [
+    "procod"
+  ]
+}

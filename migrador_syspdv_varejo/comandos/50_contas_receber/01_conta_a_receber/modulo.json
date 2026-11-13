@@ -1,0 +1,11 @@
+{
+  "nome": "Conta a receber",
+  "chave": [
+    "ctr_id",
+    "cli_codigo"
+  ],
+  "mensagem_validacao": "o cliente da conta nao foi migrado (pessoa_cliente)",
+  "depara": {
+    "cli_codigo": "cliente"
+  }
+}

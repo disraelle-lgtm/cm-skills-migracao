@@ -1,0 +1,16 @@
+{
+  "nome": "Componentes",
+  "chave": [
+    "procod",
+    "cc_procod"
+  ],
+  "mensagem_validacao": "o kit deste componente nao tem composicao no VarejoFacil",
+  "depara": {
+    "procod": "produto",
+    "cc_procod": "produto"
+  },
+  "exige_produto": [
+    "cc_procod",
+    "procod"
+  ]
+}
