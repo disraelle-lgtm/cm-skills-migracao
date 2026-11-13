@@ -34,10 +34,7 @@ Antes de responder qualquer pergunta sobre o processo, consulte:
 | `references/modelo_tributacao_composicao.md` | Exemplo genérico de estruturação tributária de produto composto (insumo → produto composto → produto de venda) | Ao explicar como modelar produtos compostos/kits para fins tributários |
 | `scripts/ferramentas/migrador-cli.sh` e `migrador-cli-v2.sh` | Duas versões do CLI interno real usado no dia a dia (AWS SSO, Pentaho, operações Postgres/Firebird, preparação de ambiente de cliente, atualização/parada do VarejoFacil via Docker) | Ao explicar o fluxo operacional passo a passo de uma migração |
 | `references/migrador_python_syspdv_varejo.md` | Migrador Python SysPDV → VarejoFacil (sem Pentaho): estrutura, contrato das pastas de comandos, itens prontos e suas regras, diferenças propositais vs. Pentaho, sobras de outros clientes achadas nos .ktr, instalação Linux/Windows (client Firebird 64 bits), método .ktr → pasta, problemas comuns e próximos passos (Produto) | **Sempre** que o assunto for o migrador Python, criar/corrigir um item de `comandos/`, ou continuar a conversão do Pentaho (Produto, Estoque, Financeiro) |
-| `assets/migrador_syspdv_varejo.json` + `scripts/recriar_migrador.py` | Cópia completa do código do migrador Python (versão 2026.10.31) num arquivo só (o pacote da skill não aceita muitos arquivos nem zip), sem as DLLs do client Firebird | Ponto de partida para alterar o migrador ou gerar uma versão nova: `python3 scripts/recriar_migrador.py /tmp` recria a pasta — não reescrever do zero |
-
-**Fonte oficial:** a skill e o código do migrador ficam no repositório Git `cm-skills-migracao` (plugin sincronizado com a organização). Alteração no app → editar `migrador_syspdv_varejo/` no repositório, subir a `VERSAO` em `app/main.py`, rodar `python tools/empacotar_migrador.py` (regenera este JSON) e `python tools/verificar.py`, atualizar a seção 11 da referência e o `CHANGELOG.md`, e abrir um pull request. Ao entregar uma alteração gerada aqui fora do repositório, avisar o usuário desses passos. Não distribuir `.skill` manual.
-
+| `assets/migrador_syspdv_varejo.json` + `scripts/recriar_migrador.py` | Cópia completa do código do migrador Python (versão 2026.11.41) num arquivo só (o pacote da skill não aceita muitos arquivos nem zip), sem as DLLs do client Firebird | Ponto de partida para alterar o migrador ou gerar uma versão nova: `python3 scripts/recriar_migrador.py /tmp` recria a pasta — não reescrever do zero |
 | `scripts/ferramentas/conectar-aws.bat` e `reparar-banco-firebird.bat` | Variantes Windows (.bat) das mesmas operações do CLI: menu de conexão AWS/Pentaho/Firebird/Postgres, e reparo de banco Firebird via `gfix`/`gbak` | Ao explicar o fluxo operacional em ambiente Windows |
 
 > ⚠️ **DOGMA DA FONTE ÚNICA**: Nunca invente prazos de SLA, etapas do processo, nomes
@@ -160,7 +157,43 @@ Regras fixas combinadas com o usuário:
 
 - **Uma lógica, duas instalações**: `app/`, `comandos/` e `static/` são únicos (uma mudança
   vale para Linux e Windows); só `linux/` e `windows/` são separados, cada um com `LEIA-ME.md`.
-  A tela mostra só a aba do sistema em uso. Uma tela só: conexões no topo, checkboxes abaixo.
+  A tela mostra só a aba do sistema em uso. **Menu lateral** no padrão do Portal de Revendas
+  (Página Inicial, Conexões, Migração › Inicial/Virada, Progresso, Códigos; recolhível), progresso em
+  cartões que se recolhem e **pop-up** no fim. **Servidor MCP** (`servidor_mcp/`): Claude consulta os
+  bancos só para leitura e migra só com aprovação do usuário num terminal (seção 9b da referência).
+  **Validação de Integridade** (no menu depois de Conexões — servidor configurado uma vez em Conexões, a validação só
+  escolhe o arquivo; Firebird .FDB/.GDB ou backup .GBK/.FBK, que é restaurado e validado; botão "Usar este banco na
+  migração"; Firebird local/Docker e SQL Server
+  banco/.bak/MDF+LDF; nada é gravado; só o botão Validar — o reparo do Firebird existe no servidor mas está
+  sem botão a pedido do usuário). Ajustes de Produto recarregam as tabelas de carga (item_carga) depois de
+  religar as triggers.
+  SQL Server no Linux: o `instalar.sh` instala o driver ODBC (`msodbcsql18`) — o servidor SQL Server instalado
+  não basta; no Windows o driver "SQL Server" já vem com o sistema (recomendado: ODBC Driver 18).
+  Saldo: positivo só > 0, negativo < 0 e o **zero em lote automático** (`42_saldo_zero`). Erros de cada tabela listados
+  no cartão do Progresso (registro × motivo em português) + `<etapa>_erros.csv`. Desempenho: EXISTS em vez de
+  `IN (SELECT ...)` nas consultas por linha e `ANALYZE` antes de comandos em lote.
+  Produto: os "Não migrados" que a seleção deixa de fora aparecem no cartão com o motivo (`nao_lidos.sql`).
+  Ajuste de códigos de produtos: depois da troca, limpeza dos códigos auxiliares (`limpeza_ean.sql`): EAN igual ao
+  código apagado, inválido vira LITERAL, todo produto com EAN fica com pelo menos um tributado e o principal definido.
+  **Relatórios** (aparece depois da migração inicial): formulário de validação em Word (modelo da Casa Magalhães) com
+  Origem SysPDV × Destino VarejoFácil por tabela. "Na origem" = o que a seleção lê (Não migrados só = erro/pulado);
+  código zerado não é lido; produto sempre com `loccod = 0`; funcionário na loja matriz com `pfl_principal = true`.
+  Impostos federais do produto: 1 por tipo (PIS/COFINS/IRPJ/CSLL/OUTROS), o de menor código; rodar de novo corrige duplicidades.
+  "Se já existe, passa": o existe.sql procura pela chave única do VarejoFácil (tabela tributária, programação do encarte,
+  funcionário pelo CPF) — registro já cadastrado por outro código fica "sem alteração", sem erro de duplicidade.
+  Limite de crédito sempre BOLETO RECEBER (procurado pelo nome). Opção "Só com movimentação desde [data]" (venda,
+  nota, movimento de estoque ou cadastro) em todos os itens de produto e estoque. Quadro "Regras da migração" na tela.
+  SQL do migrador: UM tipo por parâmetro (o comando é preparado a partir da 6ª linha) — testar com prepare=True; nas
+  seleções do SysPDV, montar a lista uma vez (subconsulta DISTINCT + JOIN) em vez de `IN (SELECT … FROM PRODUTO)` por
+  coluna sem índice.
+  Relatórios: formulário baixado como "<Cliente> (<CNPJ>) - Validação de Migração.docx" e o relatório padrão do
+  kit-migração (3 listagens CSV do VarejoFácil: preço zero, NCM inativo, unidade de medida errada).
+  Página Migração: grupos um abaixo do outro — Exceção (fora de linha, movimentação desde), Cadastros Padrão, Pessoas,
+  Produto, Estoque, Financeiro.
+  Impostos federais com CST de entrada/saída vazio no SysPDV também migram (campo vazio, corrigir na aplicação).
+  Saldo de estoque: ajuste pela diferença, sem apagar movimentos (inventários intactos). Produto não migrado é ignorado
+  ("pulado") nas demais tabelas. Caracteres de controle invisíveis do SysPDV são removidos.
+  Ajustar códigos: barra de progresso real (geral e por tipo) e ajuste de clientes corrigido (FKs deferidas).
 - **Cada item = uma pasta em `comandos/`**, regras tiradas do `.ktr` correspondente (método
   na seção 7 da referência). Nunca inventar nome de tabela/coluna/sequence.
 - **A origem nunca é alterada**: SQLs "FB - Ajuste..." do Pentaho viram filtro/regra de leitura.
@@ -196,6 +229,8 @@ Regras fixas combinadas com o usuário:
   registro novo ganha o próximo código vago e válido (nunca EAN; balança mantém; EAN antigo vira
   código de barras; a `alteracao_produto_sped` mantém as trocas anteriores com as datas e só insere
   as novas com `aps_data_exportacao` de hoje, como o kit); virada repetida não duplica.
+  Código de benefício fiscal do produto (`PROBENFIS` → `cbenef_produto_loja`): sem checkbox, logo
+  depois do Produto, na inicial e na virada (de-para); SysPDV sem a coluna = aviso e segue.
   Sem opção **Simular** na tela: confirmação (aba, itens, banco, arquivos) antes de gravar.
 - **Windows**: Python 64 bits obrigatório (psycopg-binary) → client Firebird 2.5.9 64 bits
   oficial em `windows\firebird_client_x64`; instaladores dos programas vêm do Drive interno
@@ -211,6 +246,8 @@ Regras fixas combinadas com o usuário:
 - **Alguém pediu o migrador?** Gere o zip pronto a partir da skill (seção 10 da referência:
   `scripts/recriar_migrador.py` + DLLs oficiais do client Firebird 64 bits conferidas por SHA-256)
   e entregue o arquivo — é a versão atual, não reescreva nada.
+- **Login PENDENTE**: o usuário quer "a regra de login igual à do portal de revendas", que NÃO está
+  documentada — perguntar a regra (campos, onde a senha é conferida) antes de implementar; não inventar.
 - Pendentes de confirmação do usuário: "Null if" de marca 3/6 e local 1/2/97 no Produto e o corte
   do EAN em 13 caracteres — mantidos iguais ao Pentaho até ele decidir.
 

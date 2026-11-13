@@ -2,12 +2,10 @@
 
 Uma entrada por merge na `main`. A data é a do merge; o autor fica no histórico do Git.
 
-## 2026-10-22 — migrador 2026.10.31 (v13 da skill)
-- **Migração Virada**: seção 2 da tela com as abas **Migração Inicial** e **Migração Virada** (sempre desmarcadas). A virada usa os mesmos itens da inicial, mais os exclusivos de `comandos_virada/`, e faz o **de-para de códigos** de clientes e produtos pelas planilhas anexadas (`app/virada.py`). Registro novo ganha o próximo código vago e válido (nunca EAN; balança mantém); virada repetida não duplica.
-- `comandos_virada/20_virada_codigos_produto`: EAN antigo dos produtos novos vira código de barras e a `alteracao_produto_sped` segue o padrão do kit, mantendo as datas de exportação das trocas anteriores (correção da 2026.10.30, que apagava a tabela).
-- Tela sem a opção **Simular**: confirmação (aba, itens, banco e arquivos de códigos) antes de gravar. A simulação continua só pela API, para testes.
-- Referência do Pentaho: achados do `Migrador_virada` (caminhos fixos de CSV, sequence acima de 999999, Insert SPED que perde datas, job de contas a receber desligado).
-- Skill: `SKILL.md` e referência do migrador atualizados para a 2026.10.31; parágrafo "Fonte oficial" mantido.
+## 2026-11-13 — migrador 2026.11.41
+- Traz para o repositório tudo o que a skill instalada já tinha desde a 2026.10.31 (o repositório estava na 10.31): tela nova com menu lateral e servidor MCP (11.02/11.03), **Validação de Integridade** (Firebird/SQL Server, backup .GBK/.FBK, "Usar este banco na migração"), driver ODBC do SQL Server no `instalar.sh`, erros por tabela (`<etapa>_erros.csv`), "Não migrados" do Produto com o motivo, limpeza dos códigos auxiliares (EAN) após a troca de códigos, menu **Relatórios** (formulário de validação em Word e relatório padrão do kit), "se já existe, passa" pelas chaves únicas, opção "Só com movimentação desde [data]", saldo pela diferença, benefício fiscal do produto (`20_produto_beneficio_fiscal`), barra de progresso e correção no ajuste de códigos.
+- `tools/empacotar_migrador.py`: passa a aceitar arquivos binários do app (guardados em `arquivos_base64` no JSON da skill), necessário para o modelo `.docx` do formulário de validação.
+- Skill: `SKILL.md` (volta a existir com esse nome), referência do migrador e `pentaho_migradores_repositorio.md` atualizados; `scripts/recriar_migrador.py` recria também os binários.
 
 ## 2026-10-20 — migrador 2026.10.27
 - Tempo de cada etapa (tabela) e tempo total da migração: coluna **Tempo** na tabela de progresso (com tempo corrente da etapa em andamento), resumo "Tempo por etapa" e "TEMPO TOTAL DA MIGRAÇÃO" no log, e `reports/<id>/tempos.csv`.

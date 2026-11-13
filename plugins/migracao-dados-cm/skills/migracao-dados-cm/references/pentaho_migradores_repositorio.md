@@ -157,3 +157,6 @@ Encontrados ao converter os `.ktr`/`.kjb` para o migrador Python
 | `JOB-TituloReceber_virada.kjb` | não está ligado ao `Migrador_virada.kjb` | contas a receber da virada precisa ser rodado à parte |
 | `Migrador_virada` em geral | produto novo sempre ganha novo número | rodar a virada de novo duplica os produtos novos |
 | `JOB-Produto_virada` → "Insert SPED" | `DELETE FROM alteracao_produto_sped` e reinsere tudo sem `aps_data_exportacao` | perde as datas de exportação das trocas da primeira migração e renumera os `aps_codigo` |
+| Migração com as triggers da `produto` desligadas (Pentaho e migrador) | ITEM_CARGA_PRODUTO, ITEM_CARGA_PRECO, ITEM_CARGA_PRODUTOAUX e PRODUTO_LOJA não são alimentadas | rodar a recarga (DELETE item_carga + UPDATE mix_id/id_externo = NULL) com as triggers ligadas — o migrador faz isso nos Ajustes de Produto |
+| `T-Produto_Codigo_Beneficio_fiscal_virada.ktr` | CSV de códigos em caminho fixo (`/home/[TECNICO]/.../[CLIENTE]/`); Merge Join INNER com a planilha; sem TRIM/MAIÚSCULO no PROBENFIS | produtos novos da virada ficam sem o código de benefício |
+| `T-Produto_Codigo_Beneficio_fiscal_inicial.ktr` | sem filtro de produto migrado / fora de linha | produto não migrado dá erro de chave no `cbenef_produto_loja` |

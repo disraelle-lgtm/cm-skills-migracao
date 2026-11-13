@@ -9,6 +9,7 @@ Uso (na raiz do repositorio):
     python tools/empacotar_migrador.py            -> regrava o JSON
     python tools/empacotar_migrador.py --conferir -> so confere se o JSON esta em dia (exit 1 se nao)
 """
+import base64
 import json
 import re
 import sys
@@ -31,8 +32,9 @@ def versao() -> str:
     return m.group(1)
 
 
-def arquivos() -> dict:
-    saida = {}
+def arquivos() -> tuple:
+    """(texto, binarios): texto em UTF-8 puro; o que nao for texto (ex.: modelo .docx do formulario) vai em base64."""
+    saida, binarios = {}, {}
     for p in sorted(APP.rglob("*")):
         rel = p.relative_to(APP)
         if not p.is_file() or set(rel.parts) & IGNORAR_PASTAS or p.suffix.lower() in IGNORAR_SUFIXOS:
@@ -42,12 +44,13 @@ def arquivos() -> dict:
         try:
             saida[rel.as_posix()] = p.read_bytes().decode("utf-8")   # bytes: preserva \r\n de .bat/.ps1
         except UnicodeDecodeError:
-            sys.exit(f"Arquivo nao-texto no app (nao cabe no JSON): {rel}")
-    return saida
+            binarios[rel.as_posix()] = base64.b64encode(p.read_bytes()).decode("ascii")
+    return saida, binarios
 
 
 def montar() -> dict:
     v = versao()
+    texto, binarios = arquivos()
     return {
         "_leia_me": (f"Projeto migrador_syspdv_varejo (versao {v}) em um arquivo so. Recrie a pasta com: "
                      "python3 scripts/recriar_migrador.py <destino>. Sem as DLLs do client Firebird "
@@ -55,7 +58,8 @@ def montar() -> dict:
                      "GERADO por tools/empacotar_migrador.py - nao editar a mao."),
         "versao": v,
         "pastas_vazias": PASTAS_VAZIAS,
-        "arquivos": arquivos(),
+        "arquivos": texto,
+        "arquivos_base64": binarios,
     }
 
 
@@ -63,12 +67,13 @@ def main() -> None:
     novo = montar()
     if "--conferir" in sys.argv:
         atual = json.loads(JSON.read_text(encoding="utf-8"))
-        if atual.get("arquivos") != novo["arquivos"] or atual.get("versao") != novo["versao"]:
+        if (atual.get("arquivos") != novo["arquivos"] or atual.get("arquivos_base64", {}) != novo["arquivos_base64"]
+                or atual.get("versao") != novo["versao"]):
             sys.exit("assets/migrador_syspdv_varejo.json DESATUALIZADO: rode python tools/empacotar_migrador.py")
-        print(f"JSON em dia com migrador_syspdv_varejo/ (versao {novo['versao']}, {len(novo['arquivos'])} arquivos)")
+        print(f"JSON em dia com migrador_syspdv_varejo/ (versao {novo['versao']}, {len(novo['arquivos']) + len(novo['arquivos_base64'])} arquivos)")
         return
     JSON.write_text(json.dumps(novo, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"{JSON.relative_to(RAIZ)} regravado: versao {novo['versao']}, {len(novo['arquivos'])} arquivos")
+    print(f"{JSON.relative_to(RAIZ)} regravado: versao {novo['versao']}, {len(novo['arquivos']) + len(novo['arquivos_base64'])} arquivos")
 
 
 if __name__ == "__main__":
