@@ -1,6 +1,0 @@
-{
-  "nome": "Finalizar estoque",
-  "grupo": "Estoque",
-  "descricao": "Sem checkbox: roda sozinho DEPOIS dos itens de Estoque e religa as triggers da tabela produto.",
-  "automatico_com_grupo": "Estoque"
-}

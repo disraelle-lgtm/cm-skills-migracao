@@ -1,1 +1,0 @@
-{ "nome": "NCMs do cenário", "chave": ["cfn_codigo", "ncm_codigo"], "mensagem_validacao": "nao ha cenario fiscal por NCM com este CST e classificacao no VarejoFacil" }
