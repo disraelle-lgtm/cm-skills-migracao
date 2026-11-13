@@ -1,9 +1,0 @@
-{
-  "nome": "Produto na família",
-  "chave": [
-    "codigo_produto"
-  ],
-  "depara": {
-    "codigo_produto": "produto"
-  }
-}

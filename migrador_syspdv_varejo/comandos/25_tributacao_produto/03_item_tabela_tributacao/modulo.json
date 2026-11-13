@@ -1,2 +1,0 @@
-{ "nome": "Item da tabela tributária", "chave": ["trbid"],
-  "mensagem_validacao": "esta tributacao nao tem tabela tributaria no VarejoFacil (rode Situacao fiscal e Tabela tributaria antes)" }
