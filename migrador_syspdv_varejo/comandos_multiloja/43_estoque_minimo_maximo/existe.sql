@@ -1,0 +1,1 @@
+SELECT peq_id FROM produto_estoque WHERE procod = (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'produto' AND codigo_origem = %(procod)s::text) AND loj_codigo = {{loja_destino}}

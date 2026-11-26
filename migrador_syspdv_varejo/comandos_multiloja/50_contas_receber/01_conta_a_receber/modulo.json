@@ -1,0 +1,9 @@
+{
+  "nome": "Conta a receber",
+  "chave": [
+    "ctr_id",
+    "cli_codigo"
+  ],
+  "mensagem_validacao": "cliente não migrado nesta loja (sem CPF/CNPJ ou com erro — veja o cartão do Cliente)",
+  "validar_pula": true
+}

@@ -1,0 +1,5 @@
+{
+  "nome": "Dados da Loja",
+  "grupo": "Cadastro de Pessoas",
+  "descricao": "PROPRIO -> pessoa + pessoa_loja com o CODIGO INFORMADO NA TELA, como loja NAO matriz. A pessoa da loja (CNPJ) que ja existir no VarejoFacil e mantida como esta."
+}

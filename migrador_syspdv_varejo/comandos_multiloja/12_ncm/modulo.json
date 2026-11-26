@@ -1,0 +1,8 @@
+{
+  "nome": "NCM",
+  "grupo": "Cadastros Padrão",
+  "descricao": "LOJA ADICIONAL: so inclui o que falta no VarejoFacil; o que ja existe (matriz) nao e alterado. JOB-NCM_inicial: cadastra como INATIVO todo NCM usado nos produtos que ainda nao existe no VarejoFacil.",
+  "chave": [
+    "ncm_codigo"
+  ]
+}

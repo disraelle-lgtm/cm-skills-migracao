@@ -1,0 +1,10 @@
+{
+  "nome": "Cliente",
+  "grupo": "Cadastro de Pessoas",
+  "chave": [
+    "cli_codigo",
+    "pes_num_documento"
+  ],
+  "descricao": "CLIENTE da loja adicional. Sem CPF/CNPJ nao migra. Mesmo CPF/CNPJ = ja existe: mantido como na matriz (so ligado). Novo: proximo codigo livre (< 999999) e a loja nova.",
+  "contagem_origem": "SELECT COUNT(*) FROM CLIENTE WHERE REPLACE(CLICOD, '0', '') <> '' AND CLIDES IS NOT NULL"
+}

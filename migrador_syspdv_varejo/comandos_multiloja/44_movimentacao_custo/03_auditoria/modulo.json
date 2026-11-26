@@ -1,0 +1,8 @@
+{
+  "nome": "Auditoria de custo",
+  "chave": [
+    "procod"
+  ],
+  "validar_pula": true,
+  "mensagem_validacao": "produto não foi migrado nesta loja (veja o cartão do Produto)"
+}

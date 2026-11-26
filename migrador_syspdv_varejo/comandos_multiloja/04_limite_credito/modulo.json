@@ -1,0 +1,10 @@
+{
+  "nome": "Limite de Crédito",
+  "grupo": "Cadastro de Pessoas",
+  "descricao": "Limite de credito SO dos clientes criados por esta loja adicional (sempre BOLETO RECEBER).",
+  "chave": [
+    "cli_codigo"
+  ],
+  "mensagem_validacao": "cliente já existia na matriz (limite da matriz mantido) ou não foi migrado nesta loja",
+  "validar_pula": true
+}

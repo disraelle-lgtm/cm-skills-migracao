@@ -1,0 +1,10 @@
+{
+  "nome": "Saldo negativo",
+  "grupo": "Estoque",
+  "chave": [
+    "procod"
+  ],
+  "descricao": "LOJA ADICIONAL: na loja nova, produto pelo vinculo. T-MovimentacaoEstoque_negativo_inicial: saldo do SysPDV como ajuste de estoque (9002, MIGRACAO).",
+  "validar_pula": true,
+  "mensagem_validacao": "produto não foi migrado nesta loja (veja o cartão do Produto)"
+}

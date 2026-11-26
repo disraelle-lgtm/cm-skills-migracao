@@ -68,7 +68,10 @@ from .ajudantes import Pular
 RAIZ = Path(__file__).resolve().parent.parent
 PASTA_COMANDOS = RAIZ / "comandos"
 # Abas da tela "2. Dados a serem migrados": cada uma tem a sua pasta de comandos (mesma estrutura)
-CONJUNTOS = {"inicial": PASTA_COMANDOS, "virada": RAIZ / "comandos_virada"}
+CONJUNTOS = {"inicial": PASTA_COMANDOS, "virada": RAIZ / "comandos_virada", "multiloja": RAIZ / "comandos_multiloja"}
+# Multi loja (loja adicional): os SQL usam {{loja_destino}} = codigo da loja nova no VarejoFacil, informado na tela.
+CONTEXTO: dict = {"loja_destino": None}
+RE_LOJA_DESTINO = re.compile(r"\{\{\s*loja_destino\s*\}\}")
 
 
 def descobrir_conjunto(conjunto: str) -> list["Modulo"]:
@@ -78,6 +81,9 @@ def descobrir_conjunto(conjunto: str) -> list["Modulo"]:
         return descobrir(PASTA_COMANDOS)
     if conjunto == "virada":
         return sorted(descobrir(PASTA_COMANDOS) + descobrir(CONJUNTOS["virada"]), key=lambda m: m.id)
+    if conjunto in ("multiloja", "multiloja_virada"):
+        # loja adicional: itens proprios (comandos_multiloja/); a virada usa os mesmos ("se ja existe, passa")
+        return descobrir(CONJUNTOS["multiloja"])
     raise ValueError(f"Conjunto de comandos desconhecido: {conjunto}")
 
 
@@ -129,6 +135,11 @@ class Etapa:
             return None
         linhas = [l for l in p.read_text(encoding="utf-8").splitlines() if not l.strip().startswith("--")]
         texto = "\n".join(linhas).strip().rstrip(";").strip()
+        if texto and RE_LOJA_DESTINO.search(texto):
+            loja = CONTEXTO.get("loja_destino")
+            if loja is None:
+                raise ErroValidacao(f"{nome}: informe o codigo da loja de destino (Migração Multi Loja)")
+            texto = RE_LOJA_DESTINO.sub(str(int(loja)), texto)      # sempre inteiro: sem risco de injecao
         return texto or None
 
     def arquivos(self) -> list[str]:
@@ -269,8 +280,71 @@ def valores_opcoes(modulos: list[Modulo], escolhidas: dict | None) -> dict[str, 
     """Padrao de cada opcao declarada nos modulos, sobreposto pelo que veio da tela."""
     valores = {o["id"]: bool(o.get("padrao", False)) for m in modulos for o in m.opcoes}
     for k, v in (escolhidas or {}).items():
-        valores[k] = v if k.endswith("_data") else bool(v)      # opcao de data (ex.: movimentacao_data) guarda o valor
+        valores[k] = v if k.endswith("_data") or k == "loja_destino" else bool(v)   # data / loja guardam o valor
     return valores
+
+
+# Sequencias que o migrador usa (nextval) e a coluna que cada uma preenche. Numa base que JA tem dados (ex.: lojas e
+# funcionarios cadastrados), a sequencia pode estar atras dos codigos gravados e o insert colide ("ja existe outro
+# registro com pfl_id = 35"). Caso real: sq_funcionario_loja (a do Pentaho) nunca usada, enquanto a aplicacao usa
+# sq_pessoa_funcionario_loja (ja em 76). No inicio de toda migracao cada sequencia AVANCA ate o maior codigo da faixa
+# normal (< 1000000000: os cadastros de sistema ficam de fora); nunca volta.
+SEQUENCIAS = [
+    ("sq_alt_produto_sped", "alteracao_produto_sped", "aps_codigo"), ("sq_auditoria_custo", "auditoria_custo", "ac_id"),
+    ("sq_cbenef_produto_loja", "cbenef_produto_loja", "cpl_id"), ("sq_componentes_composicao", "componentes_composicao", "cc_id"),
+    ("sq_composicao", "composicao", "comp_id"), ("sq_encarte_produto", "encarte_produto", "id"),
+    ("sq_fila_sincronizacao_panama", "fila_sincronizacao_panama", "id"),
+    ("sq_funcionario_loja", "pessoa_funcionario_loja", "pfl_id"), ("sq_pessoa_funcionario_loja", "pessoa_funcionario_loja", "pfl_id"),
+    ("sq_grupo_produto", "grupo_produto", "grpid"), ("sq_impostos_federais_atacado", "impostos_federais_atacado", "impfedatacadoid"),
+    ("sq_impostos_federais_geral", "impostos_federais_geral", "impfedgeralid"),
+    ("sq_impostos_federais_produto", "impostos_federais_produto", "impfpid"),
+    ("sq_impostos_federais_simples", "impostos_federais_simples", "impfedsimplesid"),
+    ("sq_impostos_federais_varejo", "impostos_federais_varejo", "impfedvarejoid"),
+    ("sq_item_tabela_tributacao", "item_tabela_tributacao", "itt_id"), ("sq_limite_credito", "limite_de_credito", "lcr_id"),
+    ("sq_mov_custo_dia", "custo_dia", "cd_id"), ("sq_movimentacao_custo", "movimentacao_de_custo", "moc_id"),
+    ("sq_movimentacao_estoque", "estoque_movimentacao", "mov_id"), ("sq_movimentacao_titulo_pag", "movimentacao_titulo_pagar", "mov_id"),
+    ("sq_movimentacao_titulo_recb", "movimentacao_titulo_receber", "mov_id"), ("sq_pessoa", "pessoa", "pes_codigo"),
+    ("sq_preco", "preco", "prcid"), ("sq_produto", "produto", "prodid"), ("sq_produto_estoque", "produto_estoque", "peq_id"),
+    ("sq_produto_familia", "produto_familia", "codigo"), ("sq_produto_fornecedor", "produto_fornecedor", "prfid"),
+    ("sq_resumo_estoque", "estoque_resumo", "res_id"), ("sq_local_da_loja", "local_da_loja", "lcl_id"),
+    ("sq_programacao_preco", "programacao_preco", "id"), ("sq_secao", "secao", "secid"),
+    ("sq_sub_grupo_produto", "subgrupo_produto", "sgpid"), ("sq_tabela_tributacao", "tabela_tributacao", "tbt_id"),
+    ("sq_tabela_varejofacil", "tabela_varejofacil", "id_tabela"), ("sq_titulo_a_pagar", "titulo_a_pagar", "ttlp_id"),
+    ("sq_titulo_a_receber", "titulo_a_receber", "ttlr_id"), ("sq_unidade", "unidade", "undid"),
+]
+
+
+def alinhar_sequencias(con_pg, log) -> int:
+    """Avanca cada sequencia de SEQUENCIAS quando ela esta ATRAS dos codigos ja gravados (faixa < 1000000000).
+    Vai ate o fim do bloco continuo de codigos: para no primeiro salto grande (> 100000), para nao pular para um
+    codigo especial isolado (ex.: pessoa 4444444 numa base com pessoas 1..134). Nunca volta. Devolve quantas mudaram."""
+    from psycopg import sql as _sql
+    ajustadas = 0
+    for seq, tabela, coluna in SEQUENCIAS:
+        try:
+            with con_pg.transaction():
+                existe = con_pg.execute("SELECT 1 FROM pg_class WHERE relkind = 'S' AND relname = %s "
+                                        "AND relnamespace = 'public'::regnamespace", (seq,)).fetchone()
+                if not existe:
+                    continue                                   # sequencia nao existe nesta versao do VarejoFacil
+                ultimo, chamada = con_pg.execute(_sql.SQL("SELECT last_value, is_called FROM {s}").format(s=_sql.Identifier(seq))).fetchone()
+                proximo = int(ultimo) + (1 if chamada else 0)  # o proximo codigo que a sequencia vai gerar
+                c, t = _sql.Identifier(coluna), _sql.Identifier(tabela)
+                maior = con_pg.execute(_sql.SQL("SELECT max({c}) FROM {t} WHERE {c} < 1000000000").format(c=c, t=t)).fetchone()[0]
+                if maior is None or int(maior) < proximo:
+                    continue                                   # a sequencia ja esta a frente: nada a fazer
+                alvo = con_pg.execute(_sql.SQL("""
+                    WITH s AS (SELECT {c} AS v, {c} - lag({c}) OVER (ORDER BY {c}) AS salto FROM {t} WHERE {c} < 1000000000),
+                         corte AS (SELECT min(v) AS c FROM s WHERE salto > 100000 AND v >= %s)
+                    SELECT max(v) FROM s WHERE v < COALESCE((SELECT c FROM corte), 1000000000)""").format(c=c, t=t), (proximo,)).fetchone()[0]
+                if alvo is not None and int(alvo) >= proximo:
+                    con_pg.execute("SELECT setval(%s, %s)", (seq, int(alvo)))
+                    log(f"Sequência {seq} ajustada: o próximo código passa de {proximo} para {int(alvo) + 1} "
+                        f"(a tabela {tabela} já tinha registros nessa faixa)")
+                    ajustadas += 1
+        except Exception as e:                                 # tabela/coluna de outra versao: segue com as demais
+            log(f"AVISO: não consegui conferir a sequência {seq}: {str(e).splitlines()[0][:120]}")
+    return ajustadas
 
 
 def executar(modulos: list[Modulo], con_fb, con_pg, simular: bool, estado: dict,
@@ -279,8 +353,17 @@ def executar(modulos: list[Modulo], con_fb, con_pg, simular: bool, estado: dict,
     Simulacao: tudo numa transacao so, desfeita no final (as etapas seguintes enxergam
     o que as anteriores 'gravariam', ex.: o grupo ve as secoes novas)."""
     log = estado["log"].append
+    CONTEXTO["loja_destino"] = (opcoes or {}).get("loja_destino")
+    if alinhar_sequencias(con_pg, log) and not simular:
+        con_pg.commit()
     pasta_exec = PASTA_RELATORIOS / estado["id"]
     pasta_exec.mkdir(parents=True, exist_ok=True)
+    try:      # de qual banco / loja e esta execucao: o formulario junta os motivos (pulados, erros, nao migrados) por ela
+        (pasta_exec / "execucao.json").write_text(json.dumps({
+            "banco": estado.get("banco"), "conjunto": estado.get("conjunto"), "loja_destino": (opcoes or {}).get("loja_destino"),
+            "data": time.strftime("%d/%m/%Y %H:%M"), "simulacao": bool(simular)}, ensure_ascii=False), encoding="utf-8")
+    except Exception:
+        pass
     fila = []
     for m in modulos:
         for e in m.etapas:

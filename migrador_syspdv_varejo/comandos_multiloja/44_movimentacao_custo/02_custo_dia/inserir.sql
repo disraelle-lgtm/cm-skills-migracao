@@ -1,0 +1,2 @@
+INSERT INTO custo_dia (cd_id, loj_codigo, procod, cd_data, cd_data_registro, cd_custo_fiscal, cd_custo_reposicao, cd_custo_medio)
+VALUES (nextval('sq_mov_custo_dia'), {{loja_destino}}, (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'produto' AND codigo_origem = %(procod)s::text), %(data)s, %(data)s, %(custo_fiscal)s, %(custo_reposicao)s, %(custo_medio)s)

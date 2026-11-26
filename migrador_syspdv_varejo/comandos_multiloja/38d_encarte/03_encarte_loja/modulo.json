@@ -1,0 +1,9 @@
+{
+  "nome": "Lojas do encarte",
+  "chave": [
+    "enccod",
+    "lojcod"
+  ],
+  "validar_pula": true,
+  "mensagem_validacao": "encarte não migrado nesta loja"
+}

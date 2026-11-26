@@ -5,8 +5,9 @@
   "chave": [
     "cli_codigo"
   ],
-  "mensagem_validacao": "o cliente nao existe no VarejoFacil (migre o Cliente antes)",
+  "mensagem_validacao": "o cliente não foi migrado (veja o motivo no cartão do Cliente)",
   "depara": {
     "cli_codigo": "cliente"
-  }
+  },
+  "validar_pula": true
 }

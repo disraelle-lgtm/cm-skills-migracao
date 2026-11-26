@@ -1,0 +1,9 @@
+{
+  "nome": "Zerar saldo já lançado",
+  "chave": [
+    "procod"
+  ],
+  "sem_contagem_origem": true,
+  "mensagem_validacao": "produto não foi migrado nesta loja (veja o cartão do Produto)",
+  "validar_pula": true
+}

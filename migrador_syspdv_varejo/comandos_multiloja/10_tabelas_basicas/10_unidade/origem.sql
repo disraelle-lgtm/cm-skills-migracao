@@ -1,0 +1,5 @@
+-- Pentaho: FB - UNIDADE
+SELECT UNDCOD
+     , UNDDES
+     , UNDFATREF
+  FROM UNIDADE

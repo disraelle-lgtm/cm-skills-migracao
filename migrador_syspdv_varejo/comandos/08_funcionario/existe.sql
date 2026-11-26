@@ -1,3 +1,5 @@
+-- So o vinculo com a LOJA MATRIZ e conferido: os vinculos do funcionario com as outras lojas (base multi loja) nao
+-- entram na comparacao (antes um LEFT JOIN com todos os vinculos podia pegar o de outra loja).
 -- Procura o funcionario pelo CODIGO e, se nao achar, pelo CPF (no VarejoFacil o CPF da pessoa e unico):
 -- * mesmo codigo: compara as colunas e atualiza o que mudou (como antes);
 -- * ja cadastrado com o MESMO CPF e outro codigo (ex.: virada): devolve os proprios valores do SysPDV -> "sem
@@ -14,10 +16,10 @@ SELECT CASE WHEN pf.fun_codigo = %(funcod)s THEN pf.fun_cargo_syspdv::text ELSE 
      , CASE WHEN pf.fun_codigo = %(funcod)s THEN pf.fun_ace::text ELSE %(fun_ace)s::text END AS fun_ace
      , CASE WHEN pf.fun_codigo = %(funcod)s THEN pfl.pfl_ativo::text ELSE %(pfl_ativo)s::text END AS pfl_ativo
      , CASE WHEN pf.fun_codigo = %(funcod)s THEN pfl.pfl_principal ELSE TRUE END AS pfl_principal
-     , CASE WHEN pf.fun_codigo = %(funcod)s THEN (pfl.loj_codigo IS NOT DISTINCT FROM (SELECT loj_codigo FROM pessoa_loja WHERE loj_matriz = 'S' ORDER BY loj_codigo LIMIT 1)) ELSE TRUE END AS loja_matriz_ok
+     , CASE WHEN pf.fun_codigo = %(funcod)s THEN (pfl.pfl_id IS NOT NULL) ELSE TRUE END AS loja_matriz_ok
   FROM pessoa_funcionario pf
   JOIN pessoa p ON (p.pes_codigo = pf.pes_codigo)
-  LEFT JOIN pessoa_funcionario_loja pfl ON (pfl.fun_codigo = pf.fun_codigo)
+  LEFT JOIN pessoa_funcionario_loja pfl ON (pfl.fun_codigo = pf.fun_codigo AND pfl.loj_codigo = (SELECT loj_codigo FROM pessoa_loja WHERE loj_matriz = 'S' ORDER BY loj_codigo LIMIT 1))
  WHERE pf.fun_codigo = %(funcod)s
     OR (NULLIF(%(pes_num_documento)s::varchar, '') IS NOT NULL AND p.pes_num_documento = %(pes_num_documento)s::varchar)
  ORDER BY (pf.fun_codigo = %(funcod)s) DESC

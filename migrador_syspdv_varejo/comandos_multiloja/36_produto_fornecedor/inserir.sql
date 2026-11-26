@@ -1,0 +1,2 @@
+INSERT INTO produto_fornecedor (prfid, procod, forcod, prfreffor, prfunid, prfqtd, prfnivel)
+VALUES (nextval('sq_produto_fornecedor'), (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'produto' AND codigo_origem = %(procod)s::text), (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'fornecedor' AND codigo_origem = %(forcod)s::text), %(prfreffor)s, %(prfunid)s, %(prfqtd)s, %(prfnivel)s)

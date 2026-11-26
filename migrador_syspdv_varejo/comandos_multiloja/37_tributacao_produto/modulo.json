@@ -1,0 +1,5 @@
+{
+  "nome": "Tributação do produto",
+  "grupo": "Cadastro de Produto",
+  "descricao": "LOJA ADICIONAL: so inclui o que falta no VarejoFacil; o que ja existe (matriz) nao e alterado. T-define-sequence-stf-codigo + T-CriaSituacaoFiscalProduto + T-AtualizaSituacaoFiscalProduto + T-ItemTabelaTributaria + T-ItemTabelaTributaria2."
+}

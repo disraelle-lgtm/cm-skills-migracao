@@ -1,0 +1,1 @@
+SELECT ac_id FROM auditoria_custo WHERE loj_codigo = {{loja_destino}} AND procod = (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'produto' AND codigo_origem = %(procod)s::text)

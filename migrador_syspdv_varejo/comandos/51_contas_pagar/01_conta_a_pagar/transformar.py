@@ -9,6 +9,7 @@ def transformar(linha):
     ctp_id = inteiro(linha["ctpid"], "CTPID")
     valor = linha["ctpvlrnom"]
     return {
+        "especie_ok": True,      # titulo com a especie certa (BOLETO RECEBER / PAGAR pelo nome)
         "ctp_id": ctp_id,
         "for_codigo": inteiro(linha["forcod"], "FORCOD"),
         "forcgc": so_digitos(linha["forcgc"]),

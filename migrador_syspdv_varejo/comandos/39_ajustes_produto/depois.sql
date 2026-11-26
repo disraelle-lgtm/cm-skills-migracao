@@ -59,12 +59,12 @@ UPDATE produto SET profin = '1' WHERE profin IS NULL;
 UPDATE produto SET prodatforlin = CURRENT_DATE WHERE proforlin = 'S';
 UPDATE produto SET protaba = 0 WHERE protaba IS NULL;
 UPDATE produto SET propesvar = 'N' WHERE propesvar IS NULL;
+-- (v2026.11.54, pedido do usuario) sem "propesvar = 'S' WHERE prounid = 'KG'" e sem "proenvbal = 'S' WHERE
+-- propesvar = 'S'": peso variavel e envio a balanca ficam como no SysPDV (errado la = errado no VarejoFacil).
 UPDATE produto SET provld = 0 WHERE provld IS NULL;
 UPDATE produto SET proctrest = 'S' WHERE proctrest IS NULL OR proctrest = 'N';
-UPDATE produto SET propesvar = 'S' WHERE prounid = 'KG';
 UPDATE produto SET propesbrt = 1 WHERE propesbrt IS NULL OR propesbrt = 0;
 UPDATE produto SET propesliq = 1 WHERE propesliq IS NULL OR propesliq = 0;
-UPDATE produto SET proenvbal = 'S' WHERE propesvar = 'S';
 UPDATE produto SET proprcvar = 'N' WHERE proprcvar = '0';
 UPDATE produto SET natcodigo = NULL WHERE natcodigo = 0;
 UPDATE produto SET proestmin = NULL WHERE proestmin = 0;

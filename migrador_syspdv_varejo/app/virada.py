@@ -180,3 +180,28 @@ class Depara:
                     w.writerows(cur.fetchall())
                 arquivos.append(nome)
         return arquivos
+
+
+
+def corrigir_vinculo_multiloja(con_pg, mapas: dict[str, dict[int, int]]) -> dict[str, int]:
+    """Migracao Multi Loja depois de uma troca de codigos (Ajustar codigos): o vinculo da multi loja guardava os
+    codigos do VarejoFacil ANTES da troca. Aplica os arquivos de codigos (antigo -> novo) ao vinculo (e ao procod_vf
+    dos codigos de barras). Rodar de novo nao muda nada: o codigo antigo ja nao esta mais la. Devolve quantos mudaram."""
+    feito = {}
+    if con_pg.execute("SELECT to_regclass('migracao_multiloja.vinculo')").fetchone()[0] is None:
+        return feito
+    for tipo, mapa in mapas.items():
+        pares = [(a, n) for a, n in mapa.items() if a != n]
+        if not pares:
+            continue
+        antigos, novos = [a for a, _ in pares], [n for _, n in pares]
+        cur = con_pg.execute(
+            "UPDATE migracao_multiloja.vinculo v SET codigo_vf = m.novo "
+            "  FROM unnest(%s::bigint[], %s::bigint[]) AS m(antigo, novo) "
+            " WHERE v.tipo = %s AND v.codigo_vf = m.antigo", (antigos, novos, tipo))
+        feito[tipo] = cur.rowcount
+        if tipo == "produto" and con_pg.execute("SELECT to_regclass('migracao_multiloja.produto_ean')").fetchone()[0]:
+            con_pg.execute(
+                "UPDATE migracao_multiloja.produto_ean e SET procod_vf = m.novo "
+                "  FROM unnest(%s::bigint[], %s::bigint[]) AS m(antigo, novo) WHERE e.procod_vf = m.antigo", (antigos, novos))
+    return feito

@@ -1,0 +1,8 @@
+{
+  "nome": "Funcionário",
+  "grupo": "Cadastro de Pessoas",
+  "chave": [
+    "funcod"
+  ],
+  "descricao": "FUNCIONARIO da loja adicional. Pelo vinculo, pelo CPF ou - sem CPF - pelo NOME (so se houver um unico funcionario com esse nome): o que ja existe no VarejoFacil e mantido e so ganha ACESSO a loja nova; o novo recebe o proximo codigo livre e fica principal na loja nova."
+}

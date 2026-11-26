@@ -1,0 +1,8 @@
+-- subgrupo NOVO (outra descricao ou codigo livre): proximo codigo e vinculo novo = TRUE.
+WITH novo AS (
+    INSERT INTO subgrupo_produto (sgpid, seccod, grpcod, sgpcod, sgpdes)
+    SELECT nextval('sq_sub_grupo_produto'), (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'secao' AND codigo_origem = %(seccod)s::int::text), (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'grupo' AND codigo_origem = %(seccod)s::int::text || '|' || %(grpcod)s::int::text), (CASE WHEN NOT EXISTS (SELECT 1 FROM subgrupo_produto WHERE seccod = (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'secao' AND codigo_origem = %(seccod)s::int::text) AND grpcod = (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'grupo' AND codigo_origem = %(seccod)s::int::text || '|' || %(grpcod)s::int::text) AND sgpcod = %(sgpcod)s::int) THEN %(sgpcod)s::int ELSE (SELECT COALESCE(MAX(sgpcod), 0) + 1 FROM subgrupo_produto WHERE seccod = (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'secao' AND codigo_origem = %(seccod)s::int::text) AND grpcod = (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'grupo' AND codigo_origem = %(seccod)s::int::text || '|' || %(grpcod)s::int::text)) END), %(sgpdes)s::varchar
+    RETURNING sgpcod
+)
+INSERT INTO migracao_multiloja.vinculo (loj_codigo, tipo, codigo_origem, codigo_vf, novo)
+SELECT {{loja_destino}}, 'subgrupo', %(seccod)s::int::text || '|' || %(grpcod)s::int::text || '|' || %(sgpcod)s::int::text, sgpcod, TRUE FROM novo

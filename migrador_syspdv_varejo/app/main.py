@@ -24,7 +24,7 @@ from .firebird_conexao import (ConexaoServidor, aviso_permissao, conectar_servid
                                localizar_fbclient, mensagem_amigavel)
 
 RAIZ = Path(__file__).resolve().parent.parent
-VERSAO = "2026.11.41"
+VERSAO = "2026.11.61"
 app = FastAPI(title="Migrador SysPDV -> VarejoFacil")
 EXECUCOES: dict[str, dict] = {}
 
@@ -255,6 +255,7 @@ class MigrarIn(BaseModel):
     modulos: list[str]
     simular: bool = True
     opcoes: dict = {}   # ex.: {"fora_de_linha": false, "movimentacao": true, "movimentacao_data": "2025-01-01"}
+    loja_destino: int | None = None          # Migracao Multi Loja: codigo da loja nova no VarejoFacil
 
 
 @app.post("/migrar")
@@ -266,6 +267,18 @@ def migrar(req: MigrarIn):
     except ValueError as e:
         raise HTTPException(400, str(e))
     depara = None
+    mapas_multiloja = None
+    if req.conjunto == "multiloja_virada" and (req.depara_clientes or req.depara_produtos):
+        # Virada multi loja depois de uma troca de codigos: os arquivos corrigem o vinculo da multi loja antes de migrar
+        from app import virada
+        try:
+            mapas_multiloja = {}
+            if req.depara_clientes:
+                mapas_multiloja["cliente"] = virada.ler_arquivo(req.depara_clientes, "cliente")
+            if req.depara_produtos:
+                mapas_multiloja["produto"] = virada.ler_arquivo(req.depara_produtos, "produto")
+        except virada.ArquivoInvalido as e:
+            raise HTTPException(400, str(e))
     if req.conjunto == "virada" and (req.depara_clientes or req.depara_produtos):
         from app import virada
         try:
@@ -302,6 +315,20 @@ def migrar(req: MigrarIn):
             raise HTTPException(400, "SQL Server: " + sq.mensagem_amigavel(e))
         raise HTTPException(400, "Firebird: " + mensagem_amigavel(e))
     con_pg = _pg(req.postgres)
+    if req.conjunto in ("multiloja", "multiloja_virada"):
+        # loja adicional: a matriz ja tem de estar no VarejoFacil e o codigo informado nao pode ser o dela
+        if not req.loja_destino or req.loja_destino < 1:
+            con_pg.close()
+            raise HTTPException(400, "Informe o código da loja de destino no VarejoFácil (ex.: 2).")
+        matriz = con_pg.execute("SELECT loj_codigo FROM pessoa_loja WHERE loj_matriz = 'S' ORDER BY loj_codigo LIMIT 1").fetchone()
+        con_pg.rollback()
+        if not matriz:
+            con_pg.close()
+            raise HTTPException(400, "Não há loja matriz no VarejoFácil: migre primeiro o banco da loja matriz (menu Migração).")
+        if int(matriz[0]) == int(req.loja_destino):
+            con_pg.close()
+            raise HTTPException(400, f"O código {req.loja_destino} é o da loja matriz. Informe o código da loja nova (ex.: 2).")
+        req.opcoes = {**(req.opcoes or {}), "loja_destino": int(req.loja_destino)}
 
     exec_id = motor.novo_id()
     estado = {"id": exec_id, "status": "em_andamento", "simulacao": req.simular, "log": [],
@@ -312,8 +339,15 @@ def migrar(req: MigrarIn):
     def rodar():
         try:
             opcoes = motor.valores_opcoes(lista, req.opcoes)   # padrao vem de todos os itens
-            estado["log"].append(f"Migração {'VIRADA' if req.conjunto == 'virada' else 'INICIAL'} | "
+            estado["log"].append(("Migração MULTI LOJA (loja " + str(req.loja_destino) + ") " if req.conjunto.startswith("multiloja") else "Migração ")
+                                  + f"{'VIRADA' if req.conjunto.endswith('virada') else 'INICIAL'} | "
                                  f"origem: {'SQL Server' if dialeto == 'sqlserver' else 'Firebird'}")
+            if mapas_multiloja:
+                from app import virada
+                feito = virada.corrigir_vinculo_multiloja(con_pg, mapas_multiloja)
+                con_pg.commit()
+                for tipo in mapas_multiloja:
+                    estado["log"].append(f"Vínculo da multi loja corrigido pelos arquivos de códigos: {feito.get(tipo, 0)} {tipo}(s)")
             if opcoes:
                 estado["log"].append("Opções: " + ", ".join(
                     f"{k}={v}" if k.endswith("_data") else f"{k}={'sim' if v else 'não'}" for k, v in opcoes.items()
@@ -351,7 +385,8 @@ def _registrar_migracao(req, opcoes: dict) -> None:
         anterior = {}
     dados = {"banco": req.postgres.dbname, "conjunto": req.conjunto, "origem_tipo": req.origem_tipo,
              "data": time.strftime("%d/%m/%Y %H:%M"), "versao": VERSAO, "opcoes": opcoes,
-             "inicial_concluida": bool(anterior.get("inicial_concluida")) or req.conjunto == "inicial"}
+             "inicial_concluida": bool(anterior.get("inicial_concluida")) or req.conjunto in ("inicial", "multiloja"),
+             "loja_destino": req.loja_destino if str(req.conjunto).startswith("multiloja") else None}
     ARQ_ULTIMA.parent.mkdir(parents=True, exist_ok=True)
     ARQ_ULTIMA.write_text(json.dumps(dados, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -372,6 +407,7 @@ class FormularioIn(BaseModel):
     postgres: Postgres
     troca_produtos: bool | None = None
     troca_clientes: bool | None = None
+    loja_destino: int | None = None        # Multi Loja: formulario da loja adicional (vazio = matriz)
     nome_cliente: str | None = None
     analista: str | None = None
 
@@ -406,7 +442,8 @@ def gerar_formulario(req: FormularioIn):
                                 respostas={"Nome Cliente": (req.nome_cliente or "").strip(),
                                            "Analista de Migração": (req.analista or "").strip(),
                                            "Mudou Codigo Produto": sim_nao(req.troca_produtos),
-                                           "Mudou Codigo Cliente": sim_nao(req.troca_clientes)})
+                                           "Mudou Codigo Cliente": sim_nao(req.troca_clientes)},
+                                loja_destino=req.loja_destino or None)
     finally:
         for c in (con_o, con_pg):
             try:

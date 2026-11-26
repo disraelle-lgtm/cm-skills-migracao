@@ -1,0 +1,6 @@
+{
+  "nome": "Preparar estoque",
+  "grupo": "Estoque",
+  "descricao": "Sem checkbox: roda sozinho ANTES dos itens de Estoque - cria os tipos de ajuste 9001/9002 e desliga as triggers da tabela produto (ALTER TABLE produto DISABLE TRIGGER ALL). Religadas no 49_fim_estoque e, por garantia, no finalizar.sql (roda mesmo se a migracao parar com erro).",
+  "automatico_com_grupo": "Estoque"
+}

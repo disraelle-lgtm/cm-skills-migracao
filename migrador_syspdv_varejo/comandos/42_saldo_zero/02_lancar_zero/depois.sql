@@ -1,35 +1,57 @@
--- Script do usuario ("INSERT ESTOQUE ... ZERADO"): um INSERT so, com o movimento zerado de todos os produtos
--- que ainda nao tem movimento na loja matriz / local 1. Ajustes: loja 1 fixa -> loja matriz; NOT IN -> NOT EXISTS
--- (o NOT IN montava a lista de todos os movimentos para cada produto); os tipos de ajuste 9001/9002 ja sao
--- criados pelo 40_inicio_estoque; o SELECT COUNT(*) do script era so conferencia.
+-- COMPLETAR O ESTOQUE EM TODAS AS LOJAS (pedido do usuario): todo produto precisa ter saldo - mesmo que zero - em TODAS
+-- as lojas do VarejoFacil, senao o extrato / a posicao de estoque dao erro. Nada que ja existe e alterado.
+-- 0) LOCAL DE ESTOQUE DA LOJA (local_da_loja): sem ele a tela do produto nao mostra o "Locais" daquela loja.
+--    Local 1 para cada loja que ainda nao tem; na MATRIZ lcl_padrao / lcl_insumo = TRUE, nas outras NULL
+--    (o mesmo comando que o usuario usava a mao). Sem restricao unica (loja, local) no VarejoFacil: NOT EXISTS.
+INSERT INTO local_da_loja (lcl_id, loj_codigo, loc_codigo, lcl_padrao, lcl_insumo, id_externo)
+SELECT NEXTVAL('sq_local_da_loja'), l.loj_codigo, 1,
+       CASE WHEN l.loj_matriz = 'S' THEN TRUE END, CASE WHEN l.loj_matriz = 'S' THEN TRUE END, NULL
+  FROM pessoa_loja l
+ WHERE EXISTS (SELECT 1 FROM local_estoque le WHERE le.loc_codigo = 1)
+   AND NOT EXISTS (SELECT 1 FROM local_da_loja x WHERE x.loj_codigo = l.loj_codigo AND x.loc_codigo = 1)
+ ORDER BY l.loj_codigo;
+
+-- 1) movimento de saldo zero (MIGRACAO) para cada produto x loja sem movimento no local 1
 INSERT INTO estoque_movimentacao (mov_id, procod, loj_codigo, loc_codigo, mov_quantidade, mov_data, mov_data_registro,
                                   mov_tipo, eta_codigo, mov_historico, fun_codigo)
-SELECT NEXTVAL('sq_movimentacao_estoque'), p.procod, m.loj_codigo, 1, 0.00, CURRENT_DATE, CURRENT_DATE,
+SELECT NEXTVAL('sq_movimentacao_estoque'), p.procod, l.loj_codigo, 1, 0.00, CURRENT_DATE, CURRENT_DATE,
        'AJUSTE', 9002, 'MIGRACAO', 1
   FROM produto p
- CROSS JOIN (SELECT loj_codigo FROM pessoa_loja WHERE loj_matriz = 'S' ORDER BY loj_codigo LIMIT 1) m
+ CROSS JOIN pessoa_loja l
  WHERE NOT EXISTS (SELECT 1 FROM estoque_movimentacao em
-                    WHERE em.procod = p.procod AND em.loj_codigo = m.loj_codigo AND em.loc_codigo = 1)
- ORDER BY p.procod;
+                    WHERE em.procod = p.procod AND em.loj_codigo = l.loj_codigo AND em.loc_codigo = 1)
+ ORDER BY l.loj_codigo, p.procod;
 
--- Recalcula o estoque_resumo (loja matriz, local 1) com a soma da estoque_movimentacao.
--- LEFT JOIN: produto que ficou sem nenhum movimento (ex.: so tinha MIGRACAO e foi apagado) vai a 0;
--- sem ele, esse produto ficaria com o saldo antigo no resumo.
--- Desempenho: atualiza as estatisticas antes do recalculo. Logo depois de gravar milhares de movimentos
--- (na mesma transacao) o PostgreSQL ainda "acha" que as tabelas estao vazias e cruza linha por linha
--- (15 mil x 15 mil): o recalculo levava mais de 1 minuto; com ANALYZE leva menos de 1 segundo.
 ANALYZE estoque_movimentacao;
 ANALYZE estoque_resumo;
 
+-- 2) a linha do resumo (o "Locais" da tela do produto) e CRIADA quando falta: com os gatilhos desligados na migracao,
+--    o movimento nao cria o resumo, e o recalculo abaixo so atualiza linhas que ja existem
+INSERT INTO estoque_resumo (res_id, procod, loj_codigo, loc_codigo, res_saldo)
+SELECT NEXTVAL('sq_resumo_estoque'), mv.procod, mv.loj_codigo, 1, mv.saldo
+  FROM (SELECT em.procod, em.loj_codigo, SUM(em.mov_quantidade) AS saldo
+          FROM estoque_movimentacao em
+         WHERE em.loc_codigo = 1
+         GROUP BY em.procod, em.loj_codigo) mv
+ WHERE NOT EXISTS (SELECT 1 FROM estoque_resumo er
+                    WHERE er.procod = mv.procod AND er.loj_codigo = mv.loj_codigo AND er.loc_codigo = 1)
+ON CONFLICT (procod, loj_codigo, loc_codigo) DO NOTHING;
+
+-- 3) recalculo do saldo de TODAS as lojas (local 1) = soma dos movimentos
 UPDATE estoque_resumo er
    SET res_saldo = COALESCE(mv.saldo, 0)
   FROM estoque_resumo base
-  LEFT JOIN (SELECT em.procod, SUM(em.mov_quantidade) AS saldo
+  LEFT JOIN (SELECT em.procod, em.loj_codigo, SUM(em.mov_quantidade) AS saldo
                FROM estoque_movimentacao em
-              WHERE em.loj_codigo = (SELECT loj_codigo FROM pessoa_loja WHERE loj_matriz = 'S' ORDER BY loj_codigo LIMIT 1)
-                AND em.loc_codigo = 1
-              GROUP BY em.procod) mv ON mv.procod = base.procod
+              WHERE em.loc_codigo = 1
+              GROUP BY em.procod, em.loj_codigo) mv ON mv.procod = base.procod AND mv.loj_codigo = base.loj_codigo
  WHERE base.procod = er.procod AND base.loj_codigo = er.loj_codigo AND base.loc_codigo = er.loc_codigo
-   AND er.loj_codigo = (SELECT loj_codigo FROM pessoa_loja WHERE loj_matriz = 'S' ORDER BY loj_codigo LIMIT 1)
    AND er.loc_codigo = 1
-   AND er.res_saldo IS DISTINCT FROM COALESCE(mv.saldo, 0)
+   AND er.res_saldo IS DISTINCT FROM COALESCE(mv.saldo, 0);
+
+-- 4) o estoque da loja (minimo / maximo) zerado para cada produto x loja que ainda nao tem
+INSERT INTO produto_estoque (peq_id, procod, loj_codigo, peq_minimo, peq_maximo)
+SELECT NEXTVAL('sq_produto_estoque'), p.procod, l.loj_codigo, 0, 0
+  FROM produto p
+ CROSS JOIN pessoa_loja l
+ WHERE NOT EXISTS (SELECT 1 FROM produto_estoque pe WHERE pe.procod = p.procod AND pe.loj_codigo = l.loj_codigo)

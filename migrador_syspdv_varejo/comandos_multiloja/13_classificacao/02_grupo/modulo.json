@@ -1,0 +1,9 @@
+{
+  "nome": "Grupo",
+  "chave": [
+    "seccod",
+    "grpcod"
+  ],
+  "validar_pula": true,
+  "mensagem_validacao": "a seção não foi migrado nesta loja"
+}

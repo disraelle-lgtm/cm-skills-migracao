@@ -1,0 +1,5 @@
+{
+  "nome": "Contas a receber",
+  "grupo": "Financeiro",
+  "descricao": "LOJA ADICIONAL: titulos na loja nova, cliente pelo vinculo (sem documento/nao migrado = pulado). JOB-TituloReceber_inicial (sem o 'VF - Ajuste Juros e Mora Diaria', particular de cada cliente): conta, titulo aberto e parcial, movimentacoes, categoria/centro de custo/configuracao de lancamento e fila Panama."
+}

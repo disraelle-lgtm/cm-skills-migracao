@@ -1,0 +1,5 @@
+{
+  "nome": "Compostos",
+  "grupo": "Cadastro de Produto",
+  "descricao": "LOJA ADICIONAL: so dos produtos CRIADOS por esta loja; o componente precisa estar migrado. T-Produto_Composicao + componentes (PROCOMP = 'S' no SysPDV, 'C' no VarejoFacil) + historico."
+}

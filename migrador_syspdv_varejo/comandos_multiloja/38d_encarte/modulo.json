@@ -1,0 +1,5 @@
+{
+  "nome": "Encarte",
+  "grupo": "Cadastro de Produto",
+  "descricao": "LOJA ADICIONAL: encartes da loja nova (o codigo do encarte e unico no banco: se colidir, outro codigo, pelo vinculo). JOB-Encarte_inicial: ENCARTE, ENCARTE_PRODUTO -> encarte, encarte_produto, encarte_loja + programacao_preco."
+}

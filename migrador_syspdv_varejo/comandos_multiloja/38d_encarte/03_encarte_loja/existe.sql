@@ -1,0 +1,1 @@
+SELECT enccod FROM encarte_loja WHERE enccod = (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'encarte' AND codigo_origem = %(enccod)s::text) AND lojcod = {{loja_destino}}

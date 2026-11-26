@@ -1,0 +1,9 @@
+{
+  "nome": "Componentes",
+  "chave": [
+    "procod",
+    "cc_procod"
+  ],
+  "mensagem_validacao": "produto já existia no VarejoFácil (dados da matriz mantidos), ou o produto ou o componente não foi migrado nesta loja",
+  "validar_pula": true
+}

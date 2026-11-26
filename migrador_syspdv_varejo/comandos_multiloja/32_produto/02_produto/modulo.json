@@ -1,0 +1,9 @@
+{
+  "nome": "Produto",
+  "chave": [
+    "procod"
+  ],
+  "contagem_origem": "SELECT COUNT(*) FROM PRODUTO WHERE REPLACE(PROCOD, '0', '') <> ''",
+  "validar_pula": true,
+  "mensagem_validacao": "produto sem código de barras: não é migrado na loja adicional (regra do usuário)"
+}

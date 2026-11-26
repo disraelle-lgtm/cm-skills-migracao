@@ -1,0 +1,8 @@
+{
+  "nome": "Conta a pagar",
+  "chave": [
+    "ctp_id"
+  ],
+  "mensagem_validacao": "fornecedor não migrado nesta loja (sem CNPJ/CPF ou com erro — veja o cartão do Fornecedor)",
+  "validar_pula": true
+}

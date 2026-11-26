@@ -1,0 +1,2 @@
+SELECT 1 WHERE EXISTS (SELECT 1 WHERE (SELECT t.ttlr_id FROM titulo_a_receber t WHERE t.ctr_id = (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'conta_receber' AND codigo_origem = %(ctr_id)s::text) AND t.ttlr_status = 'PARCIALMENTE_LIQUIDADO' ORDER BY t.ttlr_id LIMIT 1) IS NOT NULL)
+   AND EXISTS (SELECT 1 FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'conta_receber' AND codigo_origem = %(ctr_id)s::text)

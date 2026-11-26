@@ -1,0 +1,3 @@
+INSERT INTO componentes_composicao (cc_id, cc_comp_id, cc_procod, cc_quantidade, cc_preco1, cc_preco2, cc_preco3)
+VALUES (nextval('sq_componentes_composicao'), (SELECT comp_id FROM composicao WHERE comp_procod = (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'produto' AND codigo_origem = %(procod)s::text) ORDER BY comp_id LIMIT 1), (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'produto' AND codigo_origem = %(cc_procod)s::text), %(cc_quantidade)s,
+        %(cc_preco1)s, %(cc_preco2)s, %(cc_preco3)s)

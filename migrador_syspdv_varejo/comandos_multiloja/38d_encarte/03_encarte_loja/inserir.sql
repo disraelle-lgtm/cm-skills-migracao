@@ -1,0 +1,1 @@
+INSERT INTO encarte_loja (enccod, lojcod) VALUES ((SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'encarte' AND codigo_origem = %(enccod)s::text), {{loja_destino}})

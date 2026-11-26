@@ -143,6 +143,19 @@ def ajustar(con, quais: list[str], banco: str, log, progresso: dict | None = Non
             # As FKs DEFERRABLE INITIALLY DEFERRED do VarejoFacil deixam conferencias pendentes depois da troca, e com
             # elas pendentes o PostgreSQL nao deixa alterar a tabela ("cannot ALTER TABLE ... because it has pending
             # trigger events"). SET CONSTRAINTS ALL IMMEDIATE confere AGORA (chave errada = erro e tudo desfeito).
+            # Multi Loja: o vinculo (codigo da loja adicional -> codigo no VarejoFacil) acompanha a troca, na mesma transacao
+            if con.execute("SELECT to_regclass('migracao_multiloja.vinculo')").fetchone()[0] is not None:
+                if q == "clientes":
+                    n = con.execute("UPDATE migracao_multiloja.vinculo v SET codigo_vf = pc.cli_codigo FROM pessoa_cliente pc "
+                                    "WHERE v.tipo = 'cliente' AND v.codigo_vf = pc.codigo_cliente_antigo "
+                                    "AND pc.cli_codigo <> pc.codigo_cliente_antigo").rowcount
+                else:
+                    n = con.execute("UPDATE migracao_multiloja.vinculo v SET codigo_vf = p.procod FROM produto p "
+                                    "WHERE v.tipo = 'produto' AND v.codigo_vf = p.codigo_produto_antigo "
+                                    "AND p.procod <> p.codigo_produto_antigo").rowcount
+                    con.execute("UPDATE migracao_multiloja.produto_ean e SET procod_vf = p.procod FROM produto p "
+                                "WHERE e.procod_vf = p.codigo_produto_antigo AND p.procod <> p.codigo_produto_antigo")
+                log(f"[{q}] vínculo da Migração Multi Loja atualizado: {n} código(s)")
             con.execute("SET CONSTRAINTS ALL IMMEDIATE")
             con.execute(cfg["drop"])
             con.execute("SET CONSTRAINTS ALL DEFERRED")

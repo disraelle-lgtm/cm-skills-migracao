@@ -137,6 +137,70 @@ com cabeçalho, UTF-8 com BOM (acentos no Excel), os mesmos nomes do kit; a tela
 uma e oferece cada arquivo e um .zip com os três (`reports/relatorios/`). Consulta o VarejoFácil de Conexões; nada é
 gravado.
 
+## Formulário de validação: modelo novo (2026.11.55)
+
+`app/formulario_modelo/validacao_migracao.docx` é o modelo repaginado (identidade visual, caixa de Observações,
+quadro-resumo, seções com título, cabeçalho/rodapé com paginação; 2 páginas no modelo). O gerador encontra cada tabela
+pelo **título** (`formulario._achar`: "Migração", "Dados Migrados", "Informações Complementares", "Respostas do
+analista", "Situação Fiscal", "Imposto…", "Tabelas conferidas"), sem depender da posição — e ainda aceita o modelo
+antigo. Preenche o **quadro-resumo** (tabelas conferidas / sem divergência / com divergência, a partir dos Dados
+Migrados), repete o cabeçalho "Tabelas | Origem | Destino" em cada página e só aplica as bordas pretas no modelo antigo
+(o novo tem bordas próprias). O modelo enviado tinha 4 erros de esquema (ordem do `pBdr` no cabeçalho/rodapé e zoom sem
+percentual) — corrigidos sem mudar o visual (páginas idênticas).
+
+## Formulário: divergências explicadas (2026.11.56)
+
+No fim do formulário, a seção **Divergências explicadas** lista cada linha dos Dados Migrados que não bateu, com
+origem → destino e o motivo (`formulario._motivo`): **✓ Esperada** quando a regra da migração explica (lojas a mais no
+VarejoFácil, clientes de mesmo CPF/CNPJ, sem CPF/CNPJ na loja adicional, agente financeiro padrão, produto sem código
+de barras na loja adicional, saldo zero completado, preço espelhado, cadastros de outras lojas) e **⚠ Conferir**
+quando não (aí olhar o cartão do item no Progresso). Duas contagens passaram a comparar a mesma coisa: limite de
+crédito só > 0 nos dois lados e produto × fornecedor sem os vínculos sem referência (que a migração não leva).
+
+## Produto Fornecedor: "VF - Limpa Duplicidade" executado (2026.11.59)
+
+No fim do item Produto Fornecedor (normal e multi loja), na ordem do fluxo do Pentaho: "VF - Limpa" (referência
+numérica sem zeros à esquerda) → **"VF - Limpa Duplicidade"** → "VF - Define ref principal". O Pentaho só montava o texto
+dos DELETE num SELECT; aqui um DELETE executa o mesmo: mesmo produto + fornecedor + referência repetidos ficam com o
+de menor prfid (o "Limpa" pode criar a repetição: '0123' e '123').
+Desde a 2026.11.60, logo depois: a **mesma referência do fornecedor em produtos diferentes** (era um script manual)
+— todos os registros do grupo saem (não há como saber qual produto é o certo), num comando só que guarda a cópia em
+`migracao_auditoria.produto_fornecedor_removido` (schema separado, com motivo e data) para conferir ou restaurar.
+O "Define ref principal" roda depois, então o produto que perdeu o principal ganha outro. No formulário, a diferença
+da linha Produto Fornecedor é explicada pela auditoria. Na multi loja vale o mesmo (a referência ambígua sai também do
+produto da matriz).
+
+## Espécie de documento das contas pelo nome (2026.11.61)
+
+Contas a receber usam o **BOLETO RECEBER** e contas a pagar o **BOLETO PAGAR**, procurados **pelo nome** (preferindo a
+sigla BR/BP e o gênero R/P) — antes eram os códigos fixos 2 e 1, que só valem numa base vazia (o item Cliente cria
+BOLETO PAGAR = 1 e BOLETO RECEBER = 2). Numa base que já tinha espécies, os códigos eram outros (caso real: BOLETO
+RECEBER = 3) e o título ia com a espécie errada. O `antes.sql` das contas cria a espécie se faltar; títulos já migrados
+com a espécie errada são corrigidos ao rodar de novo (indicador `especie_ok` no `existe.sql`), só os que vieram do
+SysPDV. Normal e multi loja. (O Limite de Crédito já usava BOLETO RECEBER pelo nome desde a 2026.11.30.)
+
+## Formulário: motivos do Progresso (2026.11.57)
+
+Cada migração grava `reports/<execução>/execucao.json` (banco, conjunto, loja, data). O formulário
+(`formulario.motivos_da_migracao`) junta, das migrações daquele banco/loja — para cada etapa, a execução mais recente —
+os pulados, erros e não migrados com o motivo e os registros (relatório linha a linha e `_nao_migrados.csv`):
+- **Divergências explicadas:** quando o registrado explica a diferença, o motivo vem do Progresso ("registrado na
+  migração — 3 pulado(s): outro cliente com o mesmo CPF/CNPJ… (1001, …)"); erros = ⚠ Conferir.
+- **Registros não migrados (motivos do Progresso):** todos os itens com pulados/erros/não migrados, mesmo onde os números
+  bateram (ex.: imposto federal descartado por ser o 2º do mesmo tipo).
+Migrações feitas antes da 2026.11.57 não têm o `execucao.json`: rodar de novo (fica "sem alteração") para registrar.
+Desde a 2026.11.58 a linha "Imp. Federais Produtos" usa a MESMA origem do Progresso (todos os impostos dos produtos
+migrados): o 2º imposto do mesmo tipo no mesmo produto aparece como divergência, explicada pelo motivo registrado ou,
+sem registro, pela regra calculada.
+
+## Peso variável e envio à balança: como no SysPDV
+
+Desde a 2026.11.54 (pedido do usuário) o migrador NÃO corrige mais: sem "KG = peso variável" e sem "peso variável =
+envia para balança" (transformação do Produto e Ajustes finais, normal e multi loja). Errado no SysPDV = errado no
+VarejoFácil; só '0' / vazio viram 'N'. A listagem "UNIDADE DE MEDIDA ERRADO" do relatório padrão mostra todos os casos
+incoerentes (peso variável S/P/D com unidade ≠ KG, KG sem peso variável, balança sem peso variável, peso variável sem
+balança) com o MOTIVO.
+
 ## Relatórios → Relatório padrão (kit-migração)
 
 No menu Relatórios, o quadro **Relatório padrão (kit-migração)** gera as três listagens do kit
@@ -195,6 +259,100 @@ lista uma vez e ligue: `FROM (SELECT DISTINCT p.PRONCM FROM PRODUTO p WHERE ...)
 10.500 NCMs e 60 mil produtos: NCMs do cenário 105 s → 0,11 s; item da tabela tributária 5,5 s → 0,05 s (mesmo
 resultado). Comparar pela chave (`PROCOD IN (SELECT PROCOD FROM PRODUTO ...)`) usa o índice e é rápido.
 
+## Base que já tem dados (ex.: lojas e funcionários cadastrados)
+
+- **Sequências alinhadas no início de toda migração** (`motor.alinhar_sequencias`, lista `SEQUENCIAS`): cada sequência
+  que o migrador usa avança, se estiver atrás, até o fim do bloco contínuo de códigos já gravados (faixa < 1000000000;
+  para no primeiro salto > 100000, ignorando códigos especiais isolados como 4444444). Nunca volta; o log mostra cada
+  ajuste. Caso real: `sq_funcionario_loja` (a do Pentaho) atrás dos vínculos já existentes → "já existe outro registro
+  com pfl_id = 35".
+- **Funcionário (migração normal):** a atualização mexe só no vínculo com a **matriz**. Antes movia todos os vínculos do
+  funcionário para a matriz e, com acesso a várias lojas, a restrição `unique_pes_func_loj` recusava a etapa inteira.
+
+## Cliente com CPF/CNPJ repetido no SysPDV
+
+O VarejoFácil aceita **um cliente por pessoa** (gatilho `pessoa_cliente_trigger`: "clientes {a,b} com o mesmo código de
+pessoa"). Quando o SysPDV tem clientes diferentes com o mesmo CPF/CNPJ, o primeiro é migrado e os outros ficam como
+**pulado** (`09_cliente/validar.sql`, `validar_pula`), com o motivo; o limite de crédito deles também fica como pulado.
+O cartão de cada item no Progresso lista os **Pulados (N)** com registro e motivo (como os erros).
+
+## Migração Multi Loja (loja adicional) — fase 1: loja e pessoas
+
+Menu **Migração Multi Loja › Migração Inicial / Migração Virada**: migra o banco SysPDV (Firebird ou SQL Server) de uma
+**loja adicional** para o VarejoFácil onde a **matriz já foi migrada** (menu Migração). Itens próprios em
+`comandos_multiloja/` (conjunto `multiloja` / `multiloja_virada`; os itens da migração normal não mudam).
+
+- **Código da loja no VarejoFácil** informado na tela (ex.: 2). Recusado se não houver matriz, se for o código da
+  matriz, se já for de outra loja (outro CNPJ) ou se o CNPJ já for uma loja com outro código. Os SQL usam
+  `{{loja_destino}}`, trocado pelo motor (sempre inteiro) na leitura de cada arquivo.
+- **Vínculo** `migracao_multiloja.vinculo` (loja, tipo, código no SysPDV da loja → código no VarejoFácil, novo):
+  criado pelo item automático `00_inicio_multiloja`; garante que rodar de novo e a virada não dupliquem nada.
+- **Loja:** pessoa pelo CNPJ (mantida se já existir); pessoa_loja com o código informado, **não matriz** — loja que já
+  existe (ex.: criada na implantação) é **mantida como está**; acesso à loja
+  para o administrador e os usuários de sistema.
+- **Funcionário:** pelo vínculo, pelo CPF ou — **sem CPF** — pelo **nome** (só se houver um único funcionário com esse
+  nome; homônimos viram cadastro novo) — o que já existe é mantido e só ganha acesso à loja nova; o novo recebe o
+  próximo código livre e fica principal na loja nova.
+- **Cliente / Fornecedor:** **sem CPF/CNPJ não migra** (lista "não migrados" com o motivo); pelo vínculo ou documento,
+  o que já existe é **mantido como na matriz** (só ligado); o novo recebe o próximo código livre (< 999999); a pessoa de
+  mesmo documento (ex.: fornecedor virando cliente) é reaproveitada sem alterar. Cliente novo fica na loja nova.
+- **Limite de crédito:** só para os clientes criados por esta loja (os da matriz ficam como estão — "pulado").
+- **Fase 2 — produtos:**
+  - **Classificação** (seção, grupo, subgrupo): mesmo código E mesma descrição = reaproveita a da matriz; senão cria
+    uma nova (mesmo código se estiver livre, senão o próximo) e liga; os produtos novos usam a classificação traduzida.
+  - **Tabelas de referência** (tabelas básicas, impostos federais, NCM, tributação): só inclui o que falta; o que já
+    existe não é alterado (itens sem `atualizar.sql`).
+  - **Produto:** a etapa "Códigos de barras" lê todos os códigos de barras da loja (PRODUTOAUX e o código > 999999)
+    para `migracao_multiloja.produto_ean` e cruza **em bloco** com os do VarejoFácil. Já existe = mantido como na
+    matriz (só ligado); novo = mesmo código se estiver livre (inclusive o EAN como código), senão o próximo; **sem
+    código de barras não migra** (pulado, com o motivo).
+  - **Preço:** para todos os produtos da loja (novos e já existentes), **na loja adicional**.
+  - **Espelha preço** (como o Pentaho multi loja): no fim do Preço, toda loja do VarejoFácil que ainda não tem preço
+    para um produto recebe a cópia — da matriz quando ela tem; senão da loja migrada. Preço existente nunca é alterado
+    (cada loja mantém o seu); quando a outra loja for migrada, o item Preço atualiza a cópia para o preço dela. A
+    recarga da carga do PDV (Ajustes finais) vale para todas as lojas.
+  - **Código de barras, impostos federais e fornecedor do produto:** só para os produtos criados pela loja.
+  - Os Ajustes finais de Produto recarregam a carga do PDV da matriz e da loja adicional.
+- **Fase 3 — demais itens:**
+  - **Família, compostos, kit, cenário fiscal do produto:** só para os produtos criados pela loja (os da matriz ficam
+    como estão); o componente precisa estar migrado. A loja nova entra nos cenários fiscais (os vínculos da matriz não
+    são movidos).
+  - **Encarte:** encartes da loja nova; o código é único no banco — se colidir com outro, recebe outro código (vínculo
+    `encarte`), e produtos/lojas do encarte o acompanham.
+  - **Estoque** (saldo positivo/negativo pela diferença, saldo zero, mínimo/máximo, custo): sempre na **loja nova**,
+    produto pelo vínculo; a matriz não é tocada.
+  - **Contas a receber / a pagar:** na loja nova, cliente/fornecedor pelo vínculo (sem documento ou não migrado =
+    pulado). O identificador da conta é **novo** no VarejoFácil (vínculos `conta_receber` / `conta_pagar`): o
+    CTRID/CTPID do SysPDV recomeça em cada banco e colidia com o da matriz.
+  - Nos SQL copiados, a loja matriz vira `(SELECT {{loja_destino}} AS loj_codigo)` (serve como valor e como tabela).
+
+## Ajuste de códigos de clientes otimizado
+
+`app/codigos/ajusta_cliente.sql` é a versão **otimizada** do script do kit-migração, com o **mesmo resultado**: o
+original, para cada cliente, procurava o menor código livre cruzando a pessoa_cliente com ela mesma e rodava 6 UPDATEs
+(~1 cliente/segundo numa base real). Agora monta uma vez o mapa código antigo → código novo (os códigos ≥ 999999, em
+ordem crescente, recebem os menores códigos livres de 1 a 999998) e atualiza cada tabela uma vez; continua avisando
+CODIGO ANTIGO / CODIGO NOVO de cada um (barra de progresso). Medido com 3.606 clientes: 192,8 s → 1,9 s, mesmos códigos.
+O script de produtos continua o do kit.
+
+## Multi Loja e troca de códigos (Ajustar códigos)
+
+O vínculo da multi loja guarda os códigos do VarejoFácil do momento da migração. Depois de uma troca de códigos:
+- **Ajustar códigos** (a partir da 2026.11.53) atualiza o vínculo (`migracao_multiloja.vinculo` e o `procod_vf` dos
+  códigos de barras) na mesma transação da troca.
+- Base trocada por uma versão anterior: na **Migração Multi Loja › Virada**, anexe os mesmos **arquivos de códigos**
+  da virada normal (CSV "alterados": CODIGO NOVO;CODIGO ANTIGO). Antes de migrar, o vínculo é corrigido por eles
+  (`virada.corrigir_vinculo_multiloja`; o log do Progresso mostra quantos). Rodar de novo não muda nada. Sem a
+  correção, preço/estoque/títulos dos clientes e produtos trocados apontariam para códigos que não existem mais.
+
+## Relatórios na Migração Multi Loja
+
+A migração multi loja (inicial) também libera o menu Relatórios e guarda a loja. O formulário tem o campo **Loja
+adicional** (vazio = matriz; vem com a loja da última migração multi loja): com ele, o destino de cada linha é o que
+foi gravado **para aquela loja** (`formulario.destino_multiloja`: vínculos da loja, preços/saldos/títulos da loja;
+impostos federais, local de estoque, agente e família continuam gerais), o título vira "Multi Loja (Loja X)" e o
+arquivo leva o CNPJ da loja e "- Loja X" no nome.
+
 ## Ajuste de códigos: barra de progresso
 
 Em Códigos → Ajustar códigos, a tela mostra a barra geral (percentual e tempo, como a da migração) e uma barra por tipo
@@ -203,6 +361,16 @@ verdade ("1.250 de 22.710 códigos", 0–85%); a limpeza dos códigos de barras 
 100%. Antes de remover a coluna temporária do kit, o ajuste roda `SET CONSTRAINTS ALL IMMEDIATE`: as FKs deferidas do
 VarejoFácil deixavam conferências pendentes e o `ALTER TABLE ... DROP COLUMN` falhava ("pending trigger events"),
 desfazendo o ajuste de clientes.
+
+## Estoque completo em todas as lojas
+
+A etapa automática **"Completar o estoque em todas as lojas (saldo zero)"** (`42_saldo_zero/02_lancar_zero`, migração
+normal e multi loja) garante que todo produto tenha saldo — mesmo que zero — em **todas** as lojas do VarejoFácil (o
+extrato e a posição de estoque dão erro sem isso): movimento de saldo zero (MIGRACAO) para cada produto × loja sem
+movimento no local 1; o **local de estoque da loja** (`local_da_loja`, local 1; matriz com `lcl_padrao`/
+`lcl_insumo` = TRUE, demais NULL — sem ele o "Locais" não aparece); **cria a linha do `estoque_resumo`** quando falta (o "Locais" da tela do produto — com os gatilhos
+desligados o movimento não a criava, e o recálculo só atualizava linhas existentes); recálculo de todas as lojas; e o
+`produto_estoque` (mínimo/máximo) zerado onde falta. Nada que já existe é alterado.
 
 ## Saldo de estoque: ajuste pela diferença (sem apagar movimentos)
 

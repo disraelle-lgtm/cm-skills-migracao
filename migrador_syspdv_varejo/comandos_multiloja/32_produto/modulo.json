@@ -1,0 +1,20 @@
+{
+  "nome": "Produto",
+  "grupo": "Cadastro de Produto",
+  "descricao": "LOJA ADICIONAL: o produto e reconhecido por QUALQUER codigo de barras. Ja existe = mantido como na matriz (so ligado); novo = mesmo codigo se estiver livre (senao o proximo) e classificacao traduzida; sem codigo de barras nao migra.",
+  "opcoes": [
+    {
+      "id": "fora_de_linha",
+      "rotulo": "Incluir produtos fora de linha",
+      "padrao": true,
+      "dica": "Marcado: migra todos os produtos (PROFORLIN S e N). Desmarcado: so os em linha (PROFORLIN = 'N')."
+    },
+    {
+      "id": "movimentacao",
+      "rotulo": "Só com movimentação desde",
+      "padrao": false,
+      "tipo": "data",
+      "dica": "Somente produtos com venda, nota fiscal, movimento de estoque ou cadastro a partir desta data (vale para todos os itens de produto e de estoque)"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "nome": "Movimentação das liquidações parciais",
+  "chave": [
+    "ctr_id",
+    "mov_data"
+  ],
+  "mensagem_validacao": "conta não migrada nesta loja (veja a etapa da conta)",
+  "validar_pula": true
+}

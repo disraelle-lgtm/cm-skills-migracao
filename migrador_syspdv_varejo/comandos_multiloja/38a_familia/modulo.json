@@ -1,0 +1,5 @@
+{
+  "nome": "Família (produtos similares)",
+  "grupo": "Cadastro de Produto",
+  "descricao": "LOJA ADICIONAL: familia so dos produtos CRIADOS por esta loja (a da matriz e mantida). T-Familia_Produto_inicial + T-Produto-Familia_inicial: SIMILARES -> familia_produto; ITEM_SIMILARES -> produto_familia."
+}

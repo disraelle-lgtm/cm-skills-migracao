@@ -59,12 +59,11 @@ def transformar(linha):
     propesvar = texto(linha["propesvar"]) or "N"
     if propesvar == "0":                                   # higieniza: '0' = 'N'
         propesvar = "N"
-    if prounid == "KG":                                    # Ajusta Produto: KG e pesavel
-        propesvar = "S"
+    # (v2026.11.54, pedido do usuario) SEM a regra "KG = pesavel": o peso variavel vem como esta no SysPDV - se estiver
+    # errado la, fica errado no VarejoFacil (aparece na listagem "UNIDADE DE MEDIDA ERRADO" do relatorio padrao).
 
     proenvbal = _mapear(texto(linha["proenvbal"]), {" ": "N", "": "N"}) or "N"
-    if propesvar == "S":                                   # Ajusta Produto
-        proenvbal = "S"
+    # (v2026.11.54) SEM a regra "peso variavel = envia para balanca": o envio a balanca vem como esta no SysPDV.
 
     proiteemb = linha["proiteemb"] if linha["proiteemb"] not in (None, 0) else 1      # If null + higieniza
     proiteembvda = linha["proiteembvda"] if linha["proiteembvda"] not in (None, 0) else 1

@@ -1,0 +1,8 @@
+{
+  "nome": "Produto na família",
+  "chave": [
+    "codigo_produto"
+  ],
+  "validar_pula": true,
+  "mensagem_validacao": "produto já existia no VarejoFácil (dados da matriz mantidos) ou não foi migrado nesta loja"
+}

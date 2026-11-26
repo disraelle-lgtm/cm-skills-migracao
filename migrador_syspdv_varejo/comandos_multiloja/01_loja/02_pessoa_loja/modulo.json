@@ -1,0 +1,7 @@
+{
+  "nome": "Pessoa Loja",
+  "chave": [
+    "loj_codigo"
+  ],
+  "mensagem_validacao": "a loja nao pode ser gravada: o codigo informado ja e de OUTRA loja (outro CNPJ) no VarejoFacil, ou este CNPJ ja e uma loja com outro codigo - confira o codigo da loja de destino"
+}

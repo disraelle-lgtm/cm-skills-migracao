@@ -1,0 +1,10 @@
+{
+  "nome": "Produto Auxiliar (EAN)",
+  "grupo": "Cadastro de Produto",
+  "descricao": "T-ProdutoAuxiliar_inicial + T-ProdutoAuxiliar_limpeza_inicial: PRODUTOAUX -> produtoaux (EAN ou LITERAL).",
+  "chave": [
+    "procodaux"
+  ],
+  "validar_pula": true,
+  "mensagem_validacao": "produto já existia no VarejoFácil (dados da matriz mantidos) ou não foi migrado nesta loja"
+}

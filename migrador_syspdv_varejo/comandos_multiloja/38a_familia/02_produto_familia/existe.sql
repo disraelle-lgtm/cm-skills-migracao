@@ -1,0 +1,1 @@
+SELECT codigo_familia FROM produto_familia WHERE codigo_produto = (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'produto' AND codigo_origem = %(codigo_produto)s::text)

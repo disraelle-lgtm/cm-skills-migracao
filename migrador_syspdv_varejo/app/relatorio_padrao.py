@@ -38,17 +38,27 @@ RELATORIOS_PADRAO = [
     ),
     (
         "LISTAGEM DOS PRODUTOS UNIDADE DE MEDIDA ERRADO.csv",
+        # (v2026.11.54) o migrador NAO corrige mais peso variavel / balanca (vem como no SysPDV): a listagem mostra TODOS
+        # os casos incoerentes, com o motivo (o kit listava so peso variavel + balanca com unidade diferente de KG).
+        # Peso variavel = S, P ou D (como no envio ao Panama).
         """
-        SELECT procod AS "CODIGO",
-               prodes AS "DESCRICAO",
-               prounid AS "UNIDADE VENDA",
-               proundcmp AS "UNIDADE COMPRA",
+        SELECT procod AS "CODIGO PRODUTO",
+               prodes AS "DESCRIÇÃO",
+               TRIM(prounid) AS "UNIDADE VENDA",
+               TRIM(proundcmp) AS "UNIDADE COMPRA",
                propesvar AS "PESO VARIAVEL",
-               proenvbal AS "ENVIA PARA BALANCA"
-        FROM produto
-        WHERE propesvar IN ('S', 'P')
-          AND prounid != 'KG'
-          AND proenvbal = 'S'
+               proenvbal AS "ENVIA PARA BALANÇA",
+               CONCAT_WS(' | ',
+                   CASE WHEN pesavel AND COALESCE(TRIM(prounid), '') <> 'KG' THEN 'peso variável com unidade de venda diferente de KG' END,
+                   CASE WHEN NOT pesavel AND TRIM(prounid) = 'KG' THEN 'unidade de venda KG sem peso variável' END,
+                   CASE WHEN NOT pesavel AND proenvbal = 'S' THEN 'enviado à balança sem peso variável' END,
+                   CASE WHEN pesavel AND COALESCE(proenvbal, 'N') <> 'S' THEN 'peso variável sem envio à balança' END
+               ) AS "MOTIVO"
+        FROM (SELECT p.*, COALESCE(p.propesvar, 'N') IN ('S', 'P', 'D') AS pesavel FROM produto p) x
+        WHERE (pesavel AND COALESCE(TRIM(prounid), '') <> 'KG')
+           OR (NOT pesavel AND TRIM(prounid) = 'KG')
+           OR (NOT pesavel AND proenvbal = 'S')
+           OR (pesavel AND COALESCE(proenvbal, 'N') <> 'S')
         ORDER BY procod
         """,
     ),

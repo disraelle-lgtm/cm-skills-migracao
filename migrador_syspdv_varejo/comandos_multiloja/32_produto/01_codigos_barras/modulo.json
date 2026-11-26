@@ -1,0 +1,8 @@
+{
+  "nome": "Códigos de barras",
+  "chave": [
+    "procod",
+    "ean"
+  ],
+  "sem_contagem_origem": true
+}

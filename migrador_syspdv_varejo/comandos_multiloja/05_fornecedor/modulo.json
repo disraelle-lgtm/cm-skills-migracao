@@ -1,0 +1,10 @@
+{
+  "nome": "Fornecedor",
+  "grupo": "Cadastro de Pessoas",
+  "chave": [
+    "for_codigo",
+    "pes_num_documento"
+  ],
+  "descricao": "FORNECEDOR da loja adicional. Sem CNPJ/CPF nao migra. Mesmo documento = ja existe: mantido como na matriz (so ligado). Novo: proximo codigo livre (< 999999).",
+  "contagem_origem": "SELECT COUNT(*) FROM FORNECEDOR WHERE REPLACE(FORCOD, '0', '') <> ''"
+}

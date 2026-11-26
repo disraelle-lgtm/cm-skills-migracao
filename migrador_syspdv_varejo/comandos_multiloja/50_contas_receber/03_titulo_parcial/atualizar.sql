@@ -1,0 +1,1 @@
+UPDATE titulo_a_receber SET ttlr_status = %(ttlr_status)s WHERE ctr_id = (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'conta_receber' AND codigo_origem = %(ctr_id)s::text)

@@ -1,0 +1,10 @@
+{
+  "nome": "Sub Grupo",
+  "chave": [
+    "seccod",
+    "grpcod",
+    "sgpcod"
+  ],
+  "validar_pula": true,
+  "mensagem_validacao": "o grupo não foi migrado nesta loja"
+}

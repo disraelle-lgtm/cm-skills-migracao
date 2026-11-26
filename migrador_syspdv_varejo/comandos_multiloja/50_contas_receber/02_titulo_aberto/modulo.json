@@ -1,0 +1,8 @@
+{
+  "nome": "Título aberto",
+  "chave": [
+    "ctr_id"
+  ],
+  "mensagem_validacao": "conta não migrada nesta loja (veja a etapa da conta)",
+  "validar_pula": true
+}

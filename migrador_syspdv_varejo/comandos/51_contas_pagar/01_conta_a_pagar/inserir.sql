@@ -5,4 +5,4 @@ INSERT INTO conta_a_pagar (ctp_id, ctp_data_emissao, ctp_primeiro_vencimento, ct
 VALUES (%(ctp_id)s, %(ctp_data_emissao)s, %(ctp_primeiro_vencimento)s, %(ctp_observacao)s, %(ctp_valor_nominal)s,
         %(ctp_valor_bruto)s, %(loj_codigo)s, %(for_codigo)s, 0, %(cfnc_codigo)s, 'S',
         0, 0, 0,
-        0, 1, 'AVULSO', %(ctp_num_documento)s, 1)
+        0, 1, 'AVULSO', %(ctp_num_documento)s, (SELECT edc_codigo FROM especie_documento WHERE UPPER(TRIM(edc_descricao)) = 'BOLETO PAGAR' ORDER BY (UPPER(TRIM(edc_sigla)) = 'BP') DESC, (UPPER(TRIM(edc_genero)) = 'P') DESC, edc_codigo LIMIT 1))

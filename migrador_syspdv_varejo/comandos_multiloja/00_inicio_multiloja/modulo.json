@@ -1,0 +1,6 @@
+{
+  "nome": "Início da loja adicional",
+  "grupo": "Multi Loja",
+  "descricao": "Sem checkbox: roda sozinho no inicio de toda migracao multi loja. Cria a tabela de vinculo (codigo do SysPDV da loja adicional -> codigo no VarejoFacil) que garante que rodar de novo e a virada nao dupliquem nada.",
+  "automatico_sempre": true
+}

@@ -1,0 +1,5 @@
+{
+  "nome": "Classificação (seção, grupo, subgrupo)",
+  "grupo": "Cadastros Padrão",
+  "descricao": "LOJA ADICIONAL: mesmo codigo E mesma descricao = reaproveita a da matriz; senao cria uma nova (mesmo codigo se estiver livre, senao o proximo) e liga. Os produtos novos usam a classificacao traduzida pelo vinculo."
+}

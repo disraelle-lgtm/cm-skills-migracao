@@ -1,0 +1,5 @@
+{
+  "nome": "Cenário fiscal por produto",
+  "grupo": "Cadastro de Produto",
+  "descricao": "LOJA ADICIONAL: cenario do produto so dos produtos CRIADOS por esta loja; a loja nova entra nos cenarios. JOB-Cenario_Fiscal_Produto: produtos com classificacao diferente da do NCM -> cenario_fiscal_produto (+ produtos, loja e UF de destino). Usa a classificacao tributaria do Cenario fiscal por NCM."
+}

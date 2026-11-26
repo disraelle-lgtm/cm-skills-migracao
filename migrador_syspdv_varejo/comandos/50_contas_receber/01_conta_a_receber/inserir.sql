@@ -7,4 +7,4 @@ VALUES (%(ctr_id)s, %(cli_codigo)s, %(loj_codigo)s, %(ctr_num_documento)s, %(ctr
         %(ctr_primeiro_vencimento)s, %(ctr_valor_nominal)s, %(ctr_valor_bruto)s, %(cfnc_codigo)s, 0,
         0, 0, 0,
         0, 'A_VISTA', 1, 'S',
-        'AVULSO', 2)
+        'AVULSO', (SELECT edc_codigo FROM especie_documento WHERE UPPER(TRIM(edc_descricao)) = 'BOLETO RECEBER' ORDER BY (UPPER(TRIM(edc_sigla)) = 'BR') DESC, (UPPER(TRIM(edc_genero)) = 'R') DESC, edc_codigo LIMIT 1))

@@ -22,8 +22,40 @@ UPDATE produto_fornecedor
 UPDATE produto_fornecedor SET prfreffor = CAST(prfreffor AS bigint)
  WHERE prfreffor ~ '^[0-9]{1,18}$' AND prfreffor <> CAST(CAST(prfreffor AS bigint) AS varchar);
 
--- "VF - Limpa Duplicidade" do Pentaho so monta o texto de DELETEs num SELECT e nao executa
--- nada; aqui nao existe duplicidade (a chave e produto + fornecedor + referencia).
+-- "VF - Limpa Duplicidade" (v2026.11.59, pedido do usuario): o Pentaho so MONTAVA o texto dos DELETE num SELECT e
+-- nao executava. Aqui executa, com o mesmo resultado: o MESMO produto + fornecedor + referencia gravado mais de uma vez
+-- fica com o registro de menor prfid. Roda depois do "VF - Limpa" porque e ele que cria a duplicidade ('0123' e '123'
+-- do mesmo produto viram iguais). Nao trata a mesma referencia em produtos DIFERENTES (outra situacao).
+DELETE FROM produto_fornecedor pf
+ USING (SELECT procod, forcod, prfreffor, MIN(prfid) AS manter
+          FROM produto_fornecedor
+         GROUP BY procod, forcod, prfreffor
+        HAVING COUNT(*) > 1) d
+ WHERE pf.procod = d.procod AND pf.forcod = d.forcod AND pf.prfreffor = d.prfreffor
+   AND pf.prfid <> d.manter;
+
+-- MESMA referencia do fornecedor em produtos DIFERENTES (v2026.11.60, pedido do usuario - era o Script 7 manual):
+-- nao ha como saber qual produto e o certo (a nota de entrada iria para o produto errado), entao TODOS os registros
+-- do grupo saem. Um comando so: apaga e guarda a copia em migracao_auditoria.produto_fornecedor_removido (schema
+-- separado, com a data) para conferir ou restaurar - sem tabela temporaria para criar e apagar a mao.
+CREATE SCHEMA IF NOT EXISTS migracao_auditoria;
+CREATE TABLE IF NOT EXISTS migracao_auditoria.produto_fornecedor_removido (
+    removido_em timestamp NOT NULL DEFAULT now(),
+    motivo      varchar(80),
+    LIKE public.produto_fornecedor
+);
+WITH removidos AS (
+    DELETE FROM produto_fornecedor pf
+     USING (SELECT forcod, prfreffor
+              FROM produto_fornecedor
+             GROUP BY forcod, prfreffor
+            HAVING COUNT(DISTINCT procod) > 1) d
+     WHERE pf.forcod = d.forcod AND pf.prfreffor = d.prfreffor
+    RETURNING pf.*
+)
+INSERT INTO migracao_auditoria.produto_fornecedor_removido
+SELECT now(), 'mesma referencia do fornecedor em produtos diferentes', r.* FROM removidos r;
+
 -- "VF - Define ref principal" (mesmo SQL do Define Principal, rodado de novo)
 UPDATE produto_fornecedor
    SET prfnivel = 'S'

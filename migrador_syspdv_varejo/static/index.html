@@ -407,6 +407,17 @@
   .cod-tipo-barra { flex: 0 0 220px; height: 8px; background: #e6ebf0; border-radius: 4px; overflow: hidden; }
   .cod-tipo-barra span { display: block; height: 100%; background: linear-gradient(90deg, #2e9d4a, #3fbf5f); transition: width .4s; }
   .cod-tipo-fase { color: #44516b; }
+  .multiloja-campos { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; margin: .2rem 0 .8rem; padding: .6rem .8rem;
+                      background: #eef6ff; border: 1px solid #c9dcf2; border-radius: 8px; }
+  .multiloja-campos input { width: 110px; padding: .3rem .4rem; font-size: .95rem; }
+  .multiloja-campos .nota { font-size: .8rem; color: #44516b; }
+  .regras-multiloja ul { margin: .3rem 0 .2rem; padding-left: 1.2rem; }
+  .regras-multiloja li { font-size: .82rem; line-height: 1.35; margin: .15rem 0; color: #334; }
+  #menu #grupoMultiLojaBtn .rotulo { white-space: normal; line-height: 1.15; overflow: visible; }
+  .etapa-pulados { max-height: 240px; overflow: auto; }
+  .etapa-pulados-titulo { margin: 10px 0 4px; font-weight: 700; color: #3d5372; font-size: .88rem; }
+  .etapa-pulados-tab th { background: #eef2f7; color: #2c3e57; }
+  .etapa-pulados-tab td { border-top: 1px solid #dde4ee; }
 </style>
 </head>
 <body>
@@ -429,6 +440,13 @@
       <div class="sub">
         <a href="#/migracao/inicial" data-view="migracao" data-sub="inicial">Migração Inicial</a>
         <a href="#/migracao/virada" data-view="migracao" data-sub="virada">Migração Virada</a>
+      </div>
+    </div>
+    <div class="grupo" id="grupoMultiLoja">
+      <button type="button" class="item" id="grupoMultiLojaBtn" title="Migração Multi Loja" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l1.5-5h15L21 9"/><path d="M4 9v11h16V9"/><path d="M3 9h18"/><path d="M9 20v-6h6v6"/></svg><span class="rotulo">Migração Multi Loja</span><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+      <div class="sub">
+        <a href="#/migracao/multiloja" data-view="migracao" data-sub="multiloja">Migração Inicial</a>
+        <a href="#/migracao/multiloja_virada" data-view="migracao" data-sub="multiloja_virada">Migração Virada</a>
       </div>
     </div>
     <a class="item" href="#/progresso" data-view="progresso" title="Progresso"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></svg><span class="rotulo">Progresso</span></a>
@@ -619,6 +637,35 @@
   <button type="button" data-conjunto="virada">Migração Virada</button>
   <span class="nota" id="notaConjunto">Itens da pasta comandos/</span>
 </div>
+<div id="multiLojaCampos" class="multiloja-campos" style="display:none;">
+  <label for="lojaDestino"><b>Código da loja no VarejoFácil</b></label>
+  <input type="number" id="lojaDestino" class="lembrar" min="2" step="1" placeholder="ex.: 2">
+  <span class="nota">A loja matriz já precisa estar migrada (menu Migração). Use um código que ainda não seja de outra loja.</span>
+</div>
+<details class="detalhes regras-multiloja" open style="display:none;">
+  <summary>Regras da loja adicional (Migração Multi Loja)</summary>
+  <ul>
+    <li>A loja é gravada com o <b>código informado acima</b>, como <b>não matriz</b>. Se ela <b>já existe</b> no VarejoFácil
+        (mesmo CNPJ e código — ex.: criada na implantação), é <b>mantida como está</b>. O migrador recusa se o código já for de
+        outra loja (outro CNPJ) ou se este CNPJ já for uma loja com outro código.</li>
+    <li><b>Cliente e fornecedor sem CPF/CNPJ não são migrados</b> (aparecem no cartão com o motivo).</li>
+    <li>Quem <b>já existe</b> no VarejoFácil (mesmo CPF/CNPJ) é <b>mantido como na matriz</b> — só é ligado a esta loja.
+        Quem é novo recebe o <b>próximo código livre</b>.</li>
+    <li><b>Funcionário</b> que já existe (mesmo CPF; sem CPF, mesmo <b>nome</b> — se for um só) só ganha <b>acesso à loja nova</b>;
+        o novo fica principal na loja nova.</li>
+    <li><b>Limite de crédito</b> só para os clientes criados por esta loja; o da matriz é mantido.</li>
+    <li><b>Produto</b> reconhecido pelo <b>código de barras</b>: o que já existe é mantido como na matriz e recebe o <b>preço desta
+        loja</b>; o novo é cadastrado (mesmo código se estiver livre). <b>Produto sem código de barras não é migrado.</b></li>
+    <li><b>Espelha preço:</b> loja sem preço para um produto recebe a cópia (da matriz; se ela não tiver, desta loja).
+        Preço que já existe não muda — cada loja mantém o seu.</li>
+    <li><b>Família, compostos, kit e cenário fiscal</b> só dos produtos criados por esta loja. <b>Encarte, estoque</b> (saldo pela
+        diferença, saldo zero, mínimo/máximo, custo) e <b>contas a receber/pagar</b> sempre <b>nesta loja</b>; títulos de cliente ou
+        fornecedor não migrado ficam como pulados.</li>
+    <li><b>Seção, grupo e subgrupo</b>: mesmo código e mesma descrição = o da matriz; senão um novo. Tabelas de referência
+        (unidade, NCM, impostos, tributação): só entra o que falta.</li>
+    <li>Um <b>vínculo</b> (código do SysPDV desta loja → código no VarejoFácil) garante que rodar de novo e a virada não dupliquem nada.</li>
+  </ul>
+</details>
 <details class="detalhes regras-migracao" open>
   <summary>Regras da migração — são o padrão e valem sempre (Migração Inicial e Virada)</summary>
   <div class="regras-grade">
@@ -667,8 +714,9 @@
       </ul>
       <h4>Estoque</h4>
       <ul>
-        <li>Saldo positivo e negativo vêm do SysPDV; os produtos sem saldo recebem automaticamente o <b>movimento de saldo
-            zero</b>.</li>
+        <li>Saldo positivo e negativo vêm do SysPDV; todo produto sem saldo recebe automaticamente o <b>movimento de saldo
+            zero</b> em <b>todas as lojas</b> do VarejoFácil (com o local de estoque e o estoque da loja), para o extrato e a
+            posição de estoque não darem erro.</li>
         <li>Produto que <b>já tem saldo</b> no VarejoFácil (ex.: virada, com vendas e inventários depois da migração inicial):
             é lançado um <b>movimento de ajuste com a diferença</b> para ficar igual ao SysPDV — nenhum movimento é apagado.</li>
       </ul>
@@ -746,6 +794,8 @@
     <select id="relTrocaProd"><option value="">Selecione…</option><option value="sim">Sim</option><option value="nao">Não</option></select></div>
   <div class="rel-pergunta"><label for="relTrocaCli"><b>Teve troca de códigos dos clientes?</b></label>
     <select id="relTrocaCli"><option value="">Selecione…</option><option value="sim">Sim</option><option value="nao">Não</option></select></div>
+  <div class="rel-pergunta"><label for="relLoja"><b>Loja adicional (Migração Multi Loja)</b></label>
+    <input type="number" id="relLoja" min="1" step="1" placeholder="vazio = matriz" style="width:140px;"></div>
   <div class="codigos-acoes"><button type="button" id="btnGerarFormulario">Gerar formulário</button></div>
   <div id="relResultado"></div>
 </div>
@@ -756,7 +806,8 @@
   <ul class="rel-lista">
     <li><b>LISTAGEM DOS PRODUTOS PRECO ZERO</b> — produtos sem preço de venda.</li>
     <li><b>LISTAGEM DOS PRODUTOS QUE O NCM ESTA INATIVO</b> — produtos com NCM inativo.</li>
-    <li><b>LISTAGEM DOS PRODUTOS UNIDADE DE MEDIDA ERRADO</b> — produtos de peso variável enviados à balança com unidade diferente de KG.</li>
+    <li><b>LISTAGEM DOS PRODUTOS UNIDADE DE MEDIDA ERRADO</b> — código, descrição, unidade de venda e de compra, peso variável e
+        envio à balança dos produtos com essas informações incoerentes (vêm como no SysPDV), com o motivo.</li>
   </ul>
   <div class="codigos-acoes"><button type="button" id="btnRelPadrao">Gerar relatório padrão</button></div>
   <div id="relPadraoResultado"></div>
@@ -831,12 +882,18 @@ function sincronizarRota() {
     const ativo = el.dataset.view === r.pagina && (!el.dataset.sub || el.dataset.sub === subAtual);
     if (ativo) el.setAttribute('aria-current', 'page'); else el.removeAttribute('aria-current');
   });
-  const migalha = r.pagina === 'home' ? 'Início' : r.pagina === 'migracao' ? 'Migração' : 'Migrador';
-  const titulo = r.pagina === 'migracao' ? (conjuntoAtual === 'virada' ? 'Migração Virada' : 'Migração Inicial')
+  // "Migração" e "Migração Multi Loja" abrem a mesma pagina: destaca so o grupo do modo atual
+  if (r.pagina === 'migracao' && modoMultiLoja()) $('grupoMigracaoBtn').removeAttribute('aria-current');
+  if (r.pagina === 'migracao' && modoMultiLoja()) $('grupoMultiLojaBtn').setAttribute('aria-current', 'page');
+  else $('grupoMultiLojaBtn').removeAttribute('aria-current');
+  const multi = r.pagina === 'migracao' && modoMultiLoja();
+  const migalha = r.pagina === 'home' ? 'Início' : multi ? 'Migração Multi Loja' : r.pagina === 'migracao' ? 'Migração' : 'Migrador';
+  const titulo = r.pagina === 'migracao' ? (conjuntoAtual.endsWith('virada') ? 'Migração Virada' : 'Migração Inicial')
     : r.pagina === 'validacao' ? 'Validação de Integridade — ' + (abaVal === 'sqlserver' ? 'SQL Server' : 'Firebird') : PAGINAS[r.pagina];
   $('migalha').textContent = migalha; $('titulo').textContent = titulo;
   document.title = 'Migrador — ' + titulo;
-  if (r.pagina === 'migracao') { $('grupoMigracao').classList.add('aberto'); $('grupoMigracaoBtn').setAttribute('aria-expanded', 'true'); }
+  if (r.pagina === 'migracao' && !multi) { $('grupoMigracao').classList.add('aberto'); $('grupoMigracaoBtn').setAttribute('aria-expanded', 'true'); }
+  if (multi) { $('grupoMultiLoja').classList.add('aberto'); $('grupoMultiLojaBtn').setAttribute('aria-expanded', 'true'); }
   if (r.pagina === 'validacao') { $('grupoValidacao').classList.add('aberto'); $('grupoValidacaoBtn').setAttribute('aria-expanded', 'true'); }
   if (r.pagina === 'progresso') limparChip();
   const corpo = document.querySelector('.pagina.ativa .pagina-corpo'); if (corpo) corpo.scrollTop = 0;
@@ -848,9 +905,9 @@ function aoMudarRota() {
     if (r.sub === 'firebird' || r.sub === 'sqlserver') { if (r.sub !== abaVal) mostrarAbaValidacao(r.sub, false); }
     else history.replaceState(null, '', '#/validacao/' + abaVal);
   }
-  if (r.pagina === 'migracao' && (r.sub === 'inicial' || r.sub === 'virada') && r.sub !== conjuntoAtual) {
-    const b = document.querySelector(`.abas-migracao button[data-conjunto="${r.sub}"]`);
-    if (b) b.click();           // o clique recarrega os itens e chama sincronizarRota()
+  if (r.pagina === 'migracao' && ['inicial', 'virada', 'multiloja', 'multiloja_virada'].includes(r.sub) && r.sub !== conjuntoAtual) {
+    if ($('btnMigrar').disabled) history.replaceState(null, '', '#/migracao/' + conjuntoAtual);   // migracao em andamento
+    else aplicarConjunto(r.sub);           // recarrega os itens e chama sincronizarRota()
   }
   sincronizarRota();
 }
@@ -863,6 +920,11 @@ function iniciarMenu() {
   let escolha = null; try { escolha = localStorage.getItem(CHAVE_MENU); } catch (e) {}
   definirMenu(escolha === null ? window.innerWidth < 1000 : escolha === '1', false);
   $('btnRecolher').addEventListener('click', () => definirMenu(!document.body.classList.contains('menu-recolhido')));
+  $('grupoMultiLojaBtn').addEventListener('click', () => {
+    if (document.body.classList.contains('menu-recolhido')) { location.hash = '#/migracao/multiloja'; return; }
+    const g = $('grupoMultiLoja'); g.classList.toggle('aberto');
+    $('grupoMultiLojaBtn').setAttribute('aria-expanded', String(g.classList.contains('aberto')));
+  });
   $('grupoValidacaoBtn').addEventListener('click', () => {
     if (document.body.classList.contains('menu-recolhido')) { location.hash = '#/validacao/' + abaVal; return; }
     const g = $('grupoValidacao'); g.classList.toggle('aberto');
@@ -946,7 +1008,7 @@ function criarEtapa(id, indice) {
   el.innerHTML = `<button type="button" class="etapa-cab" aria-expanded="false" aria-controls="etapa-corpo-${indice}">
       <svg class="etapa-seta" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
       <span class="etapa-nome"></span><span class="etapa-resumo"></span><span class="etapa-situacao"></span><span class="etapa-tempo"></span></button>
-    <div class="etapa-corpo" id="etapa-corpo-${indice}"><div class="etapa-barra"><i></i></div><dl class="etapa-numeros"></dl><p class="etapa-msg"></p><div class="etapa-erros"></div><div class="etapa-naolidos"></div><p class="etapa-rel"></p></div>`;
+    <div class="etapa-corpo" id="etapa-corpo-${indice}"><div class="etapa-barra"><i></i></div><dl class="etapa-numeros"></dl><p class="etapa-msg"></p><div class="etapa-erros"></div><div class="etapa-pulados"></div><div class="etapa-naolidos"></div><p class="etapa-rel"></p></div>`;
   el.querySelector('.etapa-cab').addEventListener('click', () => { abertoManual[id] = !estaAberta(id); aplicarAbertura(id); });
   $('listaEtapas').appendChild(el);
   return el;
@@ -984,7 +1046,8 @@ function renderEtapas(modulos) {
     el.querySelector('.etapa-tempo').textContent = m.duracao === null || m.duracao === undefined ? '' : formatarDuracao(m.duracao);
     el.querySelector('.etapa-barra i').style.width = (temOrigem && m.total_origem ? Math.min(100, Math.round(100 * m.lidos / m.total_origem)) : 50) + '%';
     const sig = [m.total_origem, m.lidos, m.inseridos, m.atualizados, m.sem_alteracao, m.pulados, m.erros, naoMigrados, m.relatorio, m.mensagem,
-                 m.relatorio_erros, (m.amostra_erros || []).length, m.nao_lidos_total, m.relatorio_nao_lidos].join('|');
+                 m.relatorio_erros, (m.amostra_erros || []).length, m.nao_lidos_total, m.relatorio_nao_lidos,
+                 (m.amostra_pulados || []).length].join('|');
     if (el.dataset.sig !== sig) {
       el.dataset.sig = sig;
       el.querySelector('.etapa-numeros').replaceChildren(
@@ -1009,6 +1072,18 @@ function renderEtapas(modulos) {
         const tb = document.createElement('tbody');
         for (const e of amostra) { const tr = document.createElement('tr'); tr.append(criarEl('td', '', e.chave), criarEl('td', '', e.mensagem)); tb.append(tr); }
         tab.append(tb); caixaErros.append(tab);
+      }
+      // registros PULADOS (lidos, mas nao gravados por uma regra: cliente repetido, produto nao migrado...), com o motivo
+      const caixaPul = el.querySelector('.etapa-pulados'); caixaPul.replaceChildren();
+      const pulados = m.amostra_pulados || [];
+      if (m.pulados > 0 && pulados.length) {
+        caixaPul.append(criarEl('p', 'etapa-pulados-titulo', `Pulados (${m.pulados})` +
+          (m.pulados > pulados.length ? ` — mostrando ${pulados.length}; o relatório linha a linha tem todos` : '') + ':'));
+        const tab = document.createElement('table'); tab.className = 'etapa-erros-tab etapa-pulados-tab';
+        tab.innerHTML = '<thead><tr><th>Registro</th><th>Motivo</th></tr></thead>';
+        const tb = document.createElement('tbody');
+        for (const e of pulados) { const tr = document.createElement('tr'); tr.append(criarEl('td', '', e.chave), criarEl('td', '', e.mensagem)); tb.append(tr); }
+        tab.append(tb); caixaPul.append(tab);
       }
       // registros que a selecao deixou de fora (nem foram lidos), com o motivo - ex.: produto sem descricao
       const caixaNao = el.querySelector('.etapa-naolidos'); caixaNao.replaceChildren();
@@ -1357,15 +1432,26 @@ for (const [inp, info, tipo] of [['arqClientes', 'infoClientes', 'clientes'], ['
     $(info).textContent = `✔ ${f.name} — ${linhas} código(s)`; $(info).classList.add('ok');
   });
 }
-document.querySelectorAll('.abas-migracao button').forEach(b => b.addEventListener('click', () => {
-  if ($('btnMigrar').disabled) return;          // nao troca de aba com migracao em andamento
-  conjuntoAtual = b.dataset.conjunto;
-  document.querySelectorAll('.abas-migracao button').forEach(x => x.classList.toggle('ativa', x === b));
-  $('notaConjunto').textContent = conjuntoAtual === 'virada'
-    ? 'Mesmos itens da migração inicial + de-para de códigos' : 'Itens da pasta comandos/';
-  $('anexosVirada').style.display = conjuntoAtual === 'virada' ? '' : 'none';
+function modoMultiLoja(c = conjuntoAtual) { return c === 'multiloja' || c === 'multiloja_virada'; }
+// Troca o conjunto da pagina de migracao: inicial / virada / multiloja / multiloja_virada
+function aplicarConjunto(c) {
+  conjuntoAtual = c;
+  const base = c.endsWith('virada') ? 'virada' : 'inicial';
+  document.querySelectorAll('.abas-migracao button').forEach(x => x.classList.toggle('ativa', x.dataset.conjunto === base));
+  const multi = modoMultiLoja(c);
+  $('notaConjunto').textContent = multi ? 'Loja adicional — itens da pasta comandos_multiloja/'
+    : c === 'virada' ? 'Mesmos itens da migração inicial + de-para de códigos' : 'Itens da pasta comandos/';
+  $('anexosVirada').style.display = (c === 'virada' || c === 'multiloja_virada') ? '' : 'none';
+  $('multiLojaCampos').style.display = multi ? '' : 'none';
+  document.querySelector('.regras-multiloja').style.display = multi ? '' : 'none';
+  document.querySelector('.regras-migracao').style.display = multi ? 'none' : '';
   carregarModulos();
   sincronizarRota();
+}
+document.querySelectorAll('.abas-migracao button').forEach(b => b.addEventListener('click', () => {
+  if ($('btnMigrar').disabled) return;          // nao troca de aba com migracao em andamento
+  const base = b.dataset.conjunto;              // inicial / virada
+  aplicarConjunto(modoMultiLoja() ? (base === 'virada' ? 'multiloja_virada' : 'multiloja') : base);
 }));
 $('btnMarcar').addEventListener('click', () => { document.querySelectorAll('.chkModulo:not(:disabled)').forEach(c => c.checked = true); lembrar(); });
 $('btnDesmarcar').addEventListener('click', () => { document.querySelectorAll('.chkModulo').forEach(c => c.checked = false); lembrar(); });
@@ -1388,7 +1474,9 @@ $('btnMigrar').addEventListener('click', async () => {
   const dMov = document.querySelector('.chkOpcaoData[data-opcao="movimentacao"]');
   const avisoMov = dMov && !dMov.disabled && dMov.value
     ? `\n\nSomente produtos com movimentação desde ${dMov.value.split('-').reverse().join('/')}.` : '';
-  if (!confirm(`${conjuntoAtual === 'virada' ? 'MIGRAÇÃO VIRADA' : 'MIGRAÇÃO INICIAL'}: gravar ${modulos.length} item(ns)${avisoMov} ` +
+  const lojaDestino = parseInt($('lojaDestino').value, 10);
+  if (modoMultiLoja() && !(lojaDestino >= 1)) { alert('Informe o código da loja no VarejoFácil (ex.: 2).'); $('lojaDestino').focus(); return; }
+  if (!confirm(`${modoMultiLoja() ? 'MULTI LOJA — LOJA ' + lojaDestino + ' — ' : ''}${conjuntoAtual.endsWith('virada') ? 'MIGRAÇÃO VIRADA' : 'MIGRAÇÃO INICIAL'}: gravar ${modulos.length} item(ns)${avisoMov} ` +
                `no PostgreSQL ${pg.host}/${pg.dbname}?${anexos}\n\nOs dados serão gravados de verdade.`)) return;
   $('btnMigrar').disabled = true; $('msgAcao').textContent = '';
   try {
@@ -1396,12 +1484,12 @@ $('btnMigrar').addEventListener('click', async () => {
     for (const d of document.querySelectorAll('.chkOpcaoData'))
       if (opcoes[d.dataset.opcao]) opcoes[d.dataset.opcao + '_data'] = d.value;
     const origem_tipo = $('origemTipo').value || 'firebird';
-    const lerArq = async id => (conjuntoAtual === 'virada' && $(id).files[0]) ? await $(id).files[0].text() : null;
+    const lerArq = async id => ((conjuntoAtual === 'virada' || conjuntoAtual === 'multiloja_virada') && $(id).files[0]) ? await $(id).files[0].text() : null;
     const depara_clientes = await lerArq('arqClientes'), depara_produtos = await lerArq('arqProdutos');
     $('arquivosVirada').innerHTML = '';
     const r = await postar('/migrar', { depara_clientes, depara_produtos, origem_tipo, firebird: origem_tipo === 'firebird' ? fb : null,
       sqlserver: origem_tipo === 'sqlserver' ? sqlserver() : null, postgres: pg, modulos, simular, opcoes,
-      conjunto: conjuntoAtual });
+      conjunto: conjuntoAtual, loja_destino: modoMultiLoja() ? lojaDestino : null });
     execId = r.exec_id; posLog = 0; $('log').textContent = ''; reiniciarEtapas(); mostrarBarra(0, false, false);
     $('statusGeral').className = ''; $('statusGeral').textContent = simular ? 'Simulando...' : 'Migrando...';
     clearInterval(timer); timer = setInterval(acompanhar, 800);
@@ -1719,9 +1807,10 @@ async function atualizarRelatorios() {
   try { e = await (await fetch('/relatorios/estado')).json(); } catch (err) { return; }
   $('menuRelatorios').style.display = e.disponivel ? '' : 'none';
   $('relInfo').innerHTML = e.disponivel
-    ? `Última migração concluída: <b>${e.conjunto === 'virada' ? 'Virada' : 'Inicial'}</b> em <b>${escapar(e.data || '')}</b> · banco <b>${escapar(e.banco || '')}</b>` +
+    ? `Última migração concluída: <b>${String(e.conjunto || '').startsWith('multiloja') ? 'Multi Loja (loja ' + escapar(String(e.loja_destino || '')) + ') — ' : ''}${String(e.conjunto || '').endsWith('virada') ? 'Virada' : 'Inicial'}</b> em <b>${escapar(e.data || '')}</b> · banco <b>${escapar(e.banco || '')}</b>` +
       ` · origem ${e.origem_tipo === 'sqlserver' ? 'SysPDV (SQL Server)' : 'SysPDV (Firebird)'}`
     : 'Os relatórios ficam disponíveis depois que uma migração inicial termina.';
+  if (e.loja_destino && !$('relLoja').value) $('relLoja').value = e.loja_destino;   // ultima migracao multi loja
   if (e.disponivel && postgres().dbname && e.banco && postgres().dbname !== e.banco)
     $('relInfo').innerHTML += `<br><span class="status-erro">Atenção: o banco de destino em Conexões (${escapar(postgres().dbname)}) é diferente do migrado (${escapar(e.banco)}).</span>`;
 }
@@ -1749,7 +1838,8 @@ $('btnGerarFormulario').addEventListener('click', async () => {
     lembrar();
     const r = await postar('/relatorios/formulario', { origem_tipo: origem, firebird: origem === 'firebird' ? firebird() : null,
       sqlserver: origem === 'sqlserver' ? sqlserver() : null, postgres: postgres(), troca_produtos: tp, troca_clientes: tc,
-      nome_cliente: $('relCliente').value.trim(), analista: $('relAnalista').value.trim() });
+      nome_cliente: $('relCliente').value.trim(), analista: $('relAnalista').value.trim(),
+      loja_destino: parseInt($('relLoja').value, 10) || null });
     $('relResultado').innerHTML = `✔ Formulário gerado: <a href="${r.url}">⬇ ${escapar(r.arquivo)}</a>`;
   } catch (e) {
     $('relResultado').innerHTML = `<span class="status-erro">✖ ${escapar(e.message)}</span>`;

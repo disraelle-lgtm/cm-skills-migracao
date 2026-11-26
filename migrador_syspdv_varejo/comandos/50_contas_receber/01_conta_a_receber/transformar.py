@@ -10,6 +10,7 @@ def transformar(linha):
     ctr_id = inteiro(linha["ctrid"], "CTRID")
     valor = linha["ctrvlrnom"]
     return {
+        "especie_ok": True,      # titulo com a especie certa (BOLETO RECEBER / PAGAR pelo nome)
         "ctr_id": ctr_id,
         "cli_codigo": inteiro(linha["clicod"], "CLICOD"),
         "loj_codigo": inteiro(linha["prpcod"], "PRPCOD"),

@@ -1,0 +1,2 @@
+-- Encarte desta loja: pelo vinculo (o codigo no VarejoFacil pode ser outro).
+SELECT encdes, encdatini, encdatfim, encstatus, enc_atualiza_preco_1, enc_atualiza_preco_2, enc_atualiza_preco_3, enc_produto_fora_linha FROM encarte WHERE enccod = (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'encarte' AND codigo_origem = %(enccod)s::text) AND loj_codigo = {{loja_destino}}

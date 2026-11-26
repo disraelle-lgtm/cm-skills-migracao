@@ -1,0 +1,2 @@
+-- Conta desta loja ja gravada (pelo vinculo): sem alteracao.
+SELECT (edc_codigo IS NOT DISTINCT FROM (SELECT edc_codigo FROM especie_documento WHERE UPPER(TRIM(edc_descricao)) = 'BOLETO RECEBER' ORDER BY (UPPER(TRIM(edc_sigla)) = 'BR') DESC, (UPPER(TRIM(edc_genero)) = 'R') DESC, edc_codigo LIMIT 1)) AS especie_ok, ctr_id AS ja_existe FROM conta_a_receber WHERE ctr_id = (SELECT codigo_vf FROM migracao_multiloja.vinculo WHERE loj_codigo = {{loja_destino}} AND tipo = 'conta_receber' AND codigo_origem = %(ctr_id)s::text)
